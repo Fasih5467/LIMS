@@ -1,0 +1,80 @@
+<?php
+
+use App\Http\Controllers\Admin\AdminDashboardController;
+use App\Http\Controllers\Admin\DoctorController;
+use App\Http\Controllers\Admin\PatientController;
+use App\Http\Controllers\Admin\TestController;
+use App\Http\Controllers\Admin\TestCategoryController;
+use App\Http\Controllers\Auth\LoginController;
+use App\Http\Middleware\WebGuard;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\Session;
+
+Route::get('/', function () {
+    return view('welcome');
+});
+
+Route::get('/login',[LoginController::class,'create']);
+Route::post('/login_user',[LoginController::class,'authenticate']);
+Route::get('/logout',function(Request $request){
+    Auth::logout();
+    $request->session()->invalidate();
+    $request->session()->regenerateToken();
+    return redirect('/login')->with('success','Logout Successfuly.');
+});
+
+Route::get('/dashboard',[AdminDashboardController::class,'index'])->name('admin.dashboard')->middleware(WebGuard::class);
+
+Route::get('/lead', function(){
+    return view('welcome');
+})->name('lead.list');
+
+
+// Tests Route
+Route::middleware([WebGuard::class])->prefix('/test')->group(function(){
+
+    Route::get('/list',[TestController::class,'index']);
+    Route::get('/create',[TestController::class,'create']);
+    Route::post('/store',[TestController::class,'store']);
+    Route::get('/edit/{id}',[TestController::class,'edit']);
+    Route::post('/update',[TestController::class,'update']);
+    Route::get('/delete/{id}',[TestController::class,'delete']);
+
+// Test Category Route
+    Route::get('/category/list',[TestCategoryController::class,'index']);
+    Route::get('/category/create',[TestCategoryController::class,'create']);
+    Route::post('/category/store',[TestCategoryController::class,'store']);
+    Route::get('/category/edit/{id}',[TestCategoryController::class,'edit']);
+    Route::post('/category/update',[TestCategoryController::class,'update']);
+    Route::get('/category/delete/{id}',[TestCategoryController::class,'delete']);
+});
+
+// Patients Route
+Route::middleware([WebGuard::class])->prefix('/patient')->group(function(){
+    Route::get('/list',[PatientController::class,'index']);
+    Route::get('/create',[PatientController::class,'create']);
+    Route::post('/store',[PatientController::class,'store']);
+    Route::get('/edit/{id}',[PatientController::class,'edit']);
+    Route::post('/update',[PatientController::class,'update']);
+    Route::get('/delete/{id}',[PatientController::class,'delete']);
+});
+
+// Doctors Route
+Route::middleware([WebGuard::class])->prefix('/doctor')->group(function(){
+    Route::get('/list',[DoctorController::class,'index']);
+    Route::get('/create',[DoctorController::class,'create']);
+    Route::post('/store',[DoctorController::class,'store']);
+    Route::get('/edit/{id}',[DoctorController::class,'edit']);
+    Route::post('/update',[DoctorController::class,'update']);
+    Route::get('/delete/{id}',[DoctorController::class,'delete']);
+});
+
+// Route::get('/test/list',[TestController::class,'index']);
+// Route::get('/test/create',[TestController::class,'create']);
+// Route::post('/test/store',[TestController::class,'store']);
+// Route::get('/test/edit/{id}',[TestController::class,'edit']);
+// Route::post('/test/update',[TestController::class,'update']);
+// Route::get('/test/delete/{id}',[TestController::class,'delete']);
+
