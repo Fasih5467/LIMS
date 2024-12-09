@@ -24,7 +24,7 @@
                                                         name="Tname"
                                                         autocomplete="off"
                                                         placeholder="Test Name"
-                                                        value="{{ $test->name }}">
+                                                        value="{{ $labTest->name }}">
                                                 </div>
                                                 @error('Tname')
                                                 <div class="alert alert-danger">
@@ -45,7 +45,7 @@
                                                             name="price"
                                                             autocomplete="off"
                                                             placeholder="Price"
-                                                            value="{{ $test->price }}">
+                                                            value="{{ $labTest->price }}">
                                                     </span>
                                                 </div>
                                                 @error('price')
@@ -62,9 +62,8 @@
                                                 <label class="form-label mb-2">Category</label>
                                                 <div>
                                                     <select class="input" name="category">
-                                                        <option>Select...</option>
                                                         @foreach($categories as $category)
-                                                        <option value="{{ $category->id }}">{{ $category->name }}</option>
+                                                            <option value="{{ $category->id }}" {{$category->id == $labTest->category_id ? 'selected' : ''}} >{{ $category->name }}</option>
                                                         @endforeach
                                                     </select>
                                                 </div>
@@ -85,7 +84,7 @@
                                                         name="keyword"
                                                         autocomplete="off"
                                                         placeholder="RBC"
-                                                        value="{{ $test->keyword }}">
+                                                        value="{{ $labTest->keyword }}">
                                                 </div>
                                                 @error('keyword')
                                                 <div class="alert alert-danger">
@@ -104,7 +103,7 @@
                                                         name="duration"
                                                         autocomplete="off"
                                                         placeholder="Day"
-                                                        value="{{ $test->duration }}">
+                                                        value="{{ $labTest->duration }}">
                                                 </div>
                                                 @error('duration')
                                                 <div class="alert alert-danger">
@@ -113,7 +112,7 @@
                                                 @enderror
                                             </div>
                                         </div>
-                                        <input type="hidden" value="{{ $test->id }}" name="id" />
+                                        <input type="hidden" value="{{ $labTest->id }}" name="id" />
                                     </div>
                                 </div>
                             </div>

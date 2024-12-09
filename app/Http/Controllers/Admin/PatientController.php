@@ -4,8 +4,8 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\Patient;
-use App\Models\Test;
-use App\Models\TestCategory;
+use App\Models\LabTest;
+use App\Models\LabTestCategory;
 use Illuminate\Http\Request;
 
 class PatientController extends Controller
@@ -18,20 +18,20 @@ class PatientController extends Controller
 
     public function create()
     {
-        $tests = Test::leftJoin('test_categories as c', 'tests.category_id', '=', 'c.id')
-            ->select('c.name as category_name', 'c.id as category_id', 'tests.*')
+        $labTests = LabTest::Join('lab_test_categories as c', 'lab_tests.category_id', '=', 'c.id')
+            ->select('c.name as category_name', 'c.id as category_id', 'lab_tests.*')
             ->get();
 
-        $categories = TestCategory::get();
+        $categories = LabTestCategory::get();
         // $patients = Patient::get();
-        return view('admin.patient.create', compact('tests', 'categories'));
+        return view('admin.patient.create', compact('labTests', 'categories'));
     }
 
     public function store(Request $request)
     {
         $request->validate([
-            'contact'=>'required',
-            'testValue' => 'required|array',
+            'contact'=>'required|min:11|max:13',
+            // 'testValue' => 'required|array',
         ]);
         // dd($request);
         $contact = $request->contact;

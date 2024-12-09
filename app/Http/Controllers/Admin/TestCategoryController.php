@@ -3,14 +3,14 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
-use App\Models\TestCategory;
+use App\Models\LabTestCategory;
 use Illuminate\Http\Request;
 
 class TestCategoryController extends Controller
 {
       public function index()
         {
-            $testCategories = TestCategory::get();
+            $testCategories = LabTestCategory::get();
             return view('admin.test-category.list',compact('testCategories'));
         }
     
@@ -26,7 +26,7 @@ class TestCategoryController extends Controller
                 'category' => 'required',
             ]);
             // dd($request);
-            $testCategory = new TestCategory;
+            $testCategory = new LabTestCategory;
             $testCategory->name = $request->category;
             $testCategory->save();
     
@@ -35,7 +35,7 @@ class TestCategoryController extends Controller
     
         public function edit($id)
         {
-            $testCategory = TestCategory::find($id);
+            $testCategory = LabTestCategory::find($id);
             // dd($test);
             return view('admin.test-category.edit',compact('testCategory'));
         }
@@ -47,7 +47,7 @@ class TestCategoryController extends Controller
     
             $id = $request->id;
     
-            TestCategory::where('id',$id)
+            LabTestCategory::where('id',$id)
             ->update([
                 'name' => $request->category,
             ]);
@@ -58,7 +58,7 @@ class TestCategoryController extends Controller
     
         public function delete($id)
         {
-            TestCategory::where('id',$id)->delete();
+            LabTestCategory::where('id',$id)->delete();
             // dd($test);
             return redirect('/test/category/list')->with('success','Remove Successfuly.');
         }

@@ -9,7 +9,9 @@
 				<div class="card-body">
 					<div class="lg:flex items-center justify-between mb-4">
 						<h3 class="mb-4 lg:mb-0">Tests</h3>
-						<button class="btn btn-solid"><a href="{{ url('/test/category/create') }}">ADD NEW</a></button>
+						<a href="{{ url('/test/category/create') }}">
+							<button class="btn btn-solid">ADD NEW</button>
+						</a>
 					</div>
 					<div class="overflow-x-auto">
 						<table id="product-list-data-table" class="table-default table-hover data-table">

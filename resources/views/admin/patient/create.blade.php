@@ -132,7 +132,7 @@
                                     </div>
                                     <div class="form-item vertical">
 
-                                        <div class="searchable-select">
+                                        <!-- <div class="searchable-select">
                                             <div class="searchable-dropdown">
                                                 <label class="form-label mb-2">Select Test</label>
                                                 <input
@@ -142,14 +142,18 @@
                                                     class="input"
                                                     autocomplete="off"
                                                     onfocus="showDropdown()"
-                                                    oninput="filterCategories()" />
+                                                    oninput="filterCategories()"  multiple/>
                                                 <ul id="dropdown-options" class="dropdown-options" style="position: absolute; width: 100%; max-height: 150px; overflow-y: auto; border: 1px solid #ccc; background: white; display: none; z-index: 1000;">
                                              
                                                 </ul>
                                             </div>
                                             <input type="hidden" name="testValue[]" id="collect-test-value" />
 
-                                        </div>
+                                        </div> -->
+                                        <select class="js-example-basic-multiple" id="dropdown" name="states[]" multiple="multiple" onfocus="showDropdown()">
+                                            <option value="AL">Alabama</option>
+                                            <option value="WY">Wyoming</option>
+                                        </select>
                                     </div>
                                 </div>
                             </div>
@@ -164,7 +168,7 @@
                                     </tr>
                                 </thead>
                                 <tbody id="test-done">
-                             
+
                                 </tbody>
                                 <tfoot>
                                     <tr>
@@ -204,38 +208,40 @@
 </script>
 @endif
 <script>
-
     // Section Lab Tests
-    let tests = <?php echo $tests; ?>;
+    let tests = <?php echo $labTests; ?>;
     let collectSelectItems = [];
 
-    function showDropdown() {
-        const dropdown = document.getElementById('dropdown-options');
-        dropdown.style.display = 'block';
-        tests.forEach(test => {
-            dropdown.innerHTML += `<li data-value='${test.id}' onclick='selectCategory(this)'>${test.name}</li>`
-        })
+    // document.getElementsByTagName('').addEventListener('focus',function(){
+    //     const options = document.getElementById('dropdown-options');
+    //     console.log("enter");
+    // })
+    
+        
+        // tests.forEach(test => {
+        //     options.innerHTML += `<option value='${test.id}' onclick='selectCategory(this)'>${test.name}</option>`;
+        // })
 
-    }
+    
 
     function hideDropdown() {
         const dropdown = document.getElementById('dropdown-options');
         setTimeout(() => dropdown.style.display = 'none', 200); // Delay to allow selection
     }
 
-    function filterCategories() {
-        const searchValue = document.getElementById('test-search').value.toLowerCase();
-        const options = document.querySelectorAll('#dropdown-options li');
+    // function filterCategories() {
+    //     const searchValue = document.getElementById('test-search').value.toLowerCase();
+    //     const options = document.querySelectorAll('#dropdown-options li');
 
-        options.forEach(option => {
-            const text = option.textContent.toLowerCase();
-            if (text.includes(searchValue)) {
-                option.style.display = ''; // Show matching options
-            } else {
-                option.style.display = 'none'; // Hide non-matching options
-            }
-        });
-    }
+    //     options.forEach(option => {
+    //         const text = option.textContent.toLowerCase();
+    //         if (text.includes(searchValue)) {
+    //             option.style.display = ''; // Show matching options
+    //         } else {
+    //             option.style.display = 'none'; // Hide non-matching options
+    //         }
+    //     });
+    // }
 
     function selectCategory(element) {
 
@@ -245,7 +251,7 @@
         // Set the input value to the selected option
         document.getElementById('test-search').value = selectedText;
 
-       
+
 
         let value = tests.find(test => test.id == selectedValue);
         let checkValue = collectSelectItems.find(collectSelectItem => collectSelectItem.id == selectedValue);
@@ -254,8 +260,8 @@
             collectSelectItems.push(value);
         }
 
-         // Update the hidden input value for form submission
-         document.getElementById('collect-test-value').value = JSON.stringify(collectSelectItems);
+        // Update the hidden input value for form submission
+        document.getElementById('collect-test-value').value = JSON.stringify(collectSelectItems);
 
         showSelectedTests();
 
@@ -264,12 +270,12 @@
     }
 
     // Close dropdown on outside click
-    document.addEventListener('click', function(event) {
-        const dropdown = document.getElementById('dropdown-options');
-        if (!dropdown.contains(event.target) && event.target.id !== 'test-search') {
-            dropdown.style.display = 'none';
-        }
-    });
+    // document.addEventListener('click', function(event) {
+    //     const dropdown = document.getElementById('dropdown-options');
+    //     if (!dropdown.contains(event.target) && event.target.id !== 'test-search') {
+    //         dropdown.style.display = 'none';
+    //     }
+    // });
 
 
     function showSelectedTests() {
@@ -310,17 +316,26 @@
 <script>
     // Previous patients
     document.getElementById('prePatient').addEventListener('change', function() {
+
+        let newPatient = document.getElementById('newPatient')
+        let age = document.getElementById('age')
+        let maleRadio = document.getElementById('maleRadio')
+        let femaleRadio = document.getElementById('femaleRadio')
         if (this.value == 'new') {
             document.getElementById('newPatient').type = 'text'
             this.className += ' hidden';
+            newPatient.value = '';
+            age.value = '';
+            maleRadio.checked = false;
+            femaleRadio.checked = false;
         } else {
             let selectValue = patients.find(patient => patient.name == this.value);
-            document.getElementById('age').value = selectValue['age'];
-            document.getElementById('newPatient').value = selectValue['name']
+            age.value = selectValue['age'];
+            newPatient.value = selectValue['name']
             if (selectValue['gender'] === 'male') {
-                document.getElementById('maleRadio').checked = true;
+                maleRadio.checked = true;
             } else if (selectValue['gender'] === 'female') {
-                document.getElementById('femaleRadio').checked = true;
+                femaleRadio.checked = true;
             }
         }
     })
@@ -403,4 +418,16 @@
 
 <!-- Page js -->
 <script src="{{url('assets/js/pages/new-product.js')}}"></script>
+<script>
+    const options = tests.map(test => {
+      return `<option value="<option value='${test.id}' onclick='selectCategory(this)'>${test.name}</option>`;
+    }).join(' | ');
+
+   $(document).ready(function() {
+    $('.js-example-basic-multiple').select2();
+    $('.js-example-basic-multiple').html(options);
+});
+
+
+</script>
 @endsection
