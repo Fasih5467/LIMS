@@ -24,10 +24,12 @@ class LoginController extends Controller
         $user = User::where('status', '0')
             ->get();
 
+
+
         if (count($user) == 1) {
             return redirect()->back()->withErrors(['error' => 'Please Contact Support...!']);
         }
-        if (Auth::attempt(['email' => $credentials['email'], 'password' => $credentials['password']])) {
+        if (Auth::attempt($credentials)) {
             $user = Auth::User();
             $request->session()->regenerate();
             if ($user->user_type == 1) {

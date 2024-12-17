@@ -22,7 +22,7 @@
                                                 $patients = session('patients');
                                                 @endphp
                                                 <select class="input" id="prePatient">
-                                                    <option selected>Select Category</option>
+                                                    <option selected>Select Patient</option>
                                                     @foreach($patients as $patient)
                                                     <option value="{{ $patient->name }}">{{ $patient->name }}</option>
                                                     @endforeach
@@ -48,7 +48,7 @@
                                                 </div>
                                                 @endif
                                                 @error('name')
-                                                <div class="alert alert-danger">
+                                                <div class="text-red-500 mt-2">
                                                     {{ $message }}
                                                 </div>
                                                 @enderror
@@ -83,7 +83,7 @@
                                                 </div>
                                             </div>
                                             @error('contact')
-                                            <div class="alert alert-danger">
+                                            <div class="text-red-500">
                                                 {{ $message }}
                                             </div>
                                             @enderror
@@ -103,7 +103,7 @@
                                                         placeholder="years">
                                                 </div>
                                                 @error('age')
-                                                <div class="alert alert-danger">
+                                                <div class="text-red-500 mt-2">
                                                     {{ $message }}
                                                 </div>
                                                 @enderror
@@ -123,7 +123,7 @@
                                                     </label>
                                                 </div>
                                                 @error('gender')
-                                                <div class="alert alert-danger">
+                                                <div class="text-red-500 mt-2">
                                                     {{ $message }}
                                                 </div>
                                                 @enderror
@@ -131,40 +131,33 @@
                                         </div>
                                     </div>
                                     <div class="form-item vertical">
-
-                                        <!-- <div class="searchable-select">
-                                            <div class="searchable-dropdown">
-                                                <label class="form-label mb-2">Select Test</label>
-                                                <input
-                                                    type="text"
-                                                    id="test-search"
-                                                    placeholder="Select or Search Category"
-                                                    class="input"
-                                                    autocomplete="off"
-                                                    onfocus="showDropdown()"
-                                                    oninput="filterCategories()"  multiple/>
-                                                <ul id="dropdown-options" class="dropdown-options" style="position: absolute; width: 100%; max-height: 150px; overflow-y: auto; border: 1px solid #ccc; background: white; display: none; z-index: 1000;">
-                                             
-                                                </ul>
-                                            </div>
-                                            <input type="hidden" name="testValue[]" id="collect-test-value" />
-
-                                        </div> -->
-                                        <select class="js-example-basic-multiple" id="dropdown" name="states[]" multiple="multiple" onfocus="showDropdown()">
-                                            <option value="AL">Alabama</option>
-                                            <option value="WY">Wyoming</option>
+                                        <label class="form-label mb-2">Ref By</label>
+                                        <select class="input searchPicker" data-live-search="true" name="refBy">
+                                            <option selected>Select Doctor</option>
+                                            @foreach($doctors as $doctor)
+                                            <option value="{{$doctor->id}}">{{ $doctor->name }}</option>
+                                            @endforeach
                                         </select>
                                     </div>
+                                    <div class="form-item vertical">
+                                        <label class="form-label mb-2">Select Test</label>
+                                        <select class="js-example-basic-multiple" id="dropdown" name="selectedTests[]" multiple="multiple">
+
+                                        </select>
+                                    </div>
+                                    <!-- Amount Manage -->
+                                    <input type="hidden" name="totalAmount" id="total-amount-value" />
+                                    <input type="hidden" name="disAmount" id="dis-amount-value" />
+                                    <input type="hidden" name="netAmount" id="net-amount-value" />
                                 </div>
                             </div>
                         </div>
-                        <div class="lg:col-span-1 card adaptable-card !border-b pb-6 py-4 rounded-br-none rounded-bl-none">
-                            <table class="table-default table-hover">
+                        <div class="lg:col-span-1 card adaptable-card !border-b pb-6  rounded-br-none rounded-bl-none">
+                            <table class="table-default table-">
                                 <thead>
                                     <tr>
-                                        <th>Selected Test</th>
+                                        <th class="w-[250px]">Selected Test</th>
                                         <th>Price</th>
-                                        <th></th>
                                     </tr>
                                 </thead>
                                 <tbody id="test-done">
@@ -172,8 +165,27 @@
                                 </tbody>
                                 <tfoot>
                                     <tr>
-                                        <td>Total Price</td>
-                                        <td id="total-price"></td>
+                                        <td class="font-bold">Total Amount</td>
+                                        <td id="total-amount"></td>
+                                    </tr>
+                                    <tr>
+                                        <td class="font-bold">Discount</td>
+                                        <td id="discount">
+                                            <input
+                                                class="input "
+                                                type="text"
+                                                name="discount"
+                                                autocomplete="off"
+                                                id="dis-amount"
+                                                placeholder="10%" />
+                                            <div class="hidden" id="dis-error">
+
+                                            </div>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td class="font-bold">Net Amount</td>
+                                        <td id="net-amount"></td>
                                     </tr>
                                 </tfoot>
                             </table>
@@ -207,111 +219,6 @@
     let patients = <?php echo $patients ?>;
 </script>
 @endif
-<script>
-    // Section Lab Tests
-    let tests = <?php echo $labTests; ?>;
-    let collectSelectItems = [];
-
-    // document.getElementsByTagName('').addEventListener('focus',function(){
-    //     const options = document.getElementById('dropdown-options');
-    //     console.log("enter");
-    // })
-    
-        
-        // tests.forEach(test => {
-        //     options.innerHTML += `<option value='${test.id}' onclick='selectCategory(this)'>${test.name}</option>`;
-        // })
-
-    
-
-    function hideDropdown() {
-        const dropdown = document.getElementById('dropdown-options');
-        setTimeout(() => dropdown.style.display = 'none', 200); // Delay to allow selection
-    }
-
-    // function filterCategories() {
-    //     const searchValue = document.getElementById('test-search').value.toLowerCase();
-    //     const options = document.querySelectorAll('#dropdown-options li');
-
-    //     options.forEach(option => {
-    //         const text = option.textContent.toLowerCase();
-    //         if (text.includes(searchValue)) {
-    //             option.style.display = ''; // Show matching options
-    //         } else {
-    //             option.style.display = 'none'; // Hide non-matching options
-    //         }
-    //     });
-    // }
-
-    function selectCategory(element) {
-
-        const selectedText = element.textContent;
-        const selectedValue = element.getAttribute('data-value');
-
-        // Set the input value to the selected option
-        document.getElementById('test-search').value = selectedText;
-
-
-
-        let value = tests.find(test => test.id == selectedValue);
-        let checkValue = collectSelectItems.find(collectSelectItem => collectSelectItem.id == selectedValue);
-
-        if (!checkValue) {
-            collectSelectItems.push(value);
-        }
-
-        // Update the hidden input value for form submission
-        document.getElementById('collect-test-value').value = JSON.stringify(collectSelectItems);
-
-        showSelectedTests();
-
-        // Hide the dropdown
-        hideDropdown();
-    }
-
-    // Close dropdown on outside click
-    // document.addEventListener('click', function(event) {
-    //     const dropdown = document.getElementById('dropdown-options');
-    //     if (!dropdown.contains(event.target) && event.target.id !== 'test-search') {
-    //         dropdown.style.display = 'none';
-    //     }
-    // });
-
-
-    function showSelectedTests() {
-        let testData = document.getElementById('test-data')
-        let testDone = document.getElementById('test-done');
-        let totalPrice = document.getElementById('total-price');
-        testDone.innerHTML = '';
-        let price = 0;
-        let row = '';
-        collectSelectItems.forEach((item, index) => {
-            row += `<tr>
-                        <td>${item.name}</td>
-                        <td>${item.price}</td>
-                        <td>
-                            <span onclick = "deleteItem(${index})" class="cursor-pointer p-2 hover:text-red-500">
-                                <svg stroke="currentColor" fill="none" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true" height="1em" width="1em" xmlns="http://www.w3.org/2000/svg">
-                                    <path stroke-linecap="round" stroke-linejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
-                                </svg>
-                            </span>
-                        </td>
-                    </tr>`;
-
-            price += item.price
-        })
-
-        totalPrice.innerHTML = price;
-        testDone.innerHTML += row;
-
-        testData.value = collectSelectItems
-    }
-
-    function deleteItem(index) {
-        collectSelectItems.splice(index, 1);
-        showSelectedTests();
-    }
-</script>
 
 <script>
     // Previous patients
@@ -339,95 +246,140 @@
             }
         }
     })
-
-
-
-    // let selectCategory = document.getElementById('select-category');
-    // let showLabTests = document.getElementById('show-lab-tests')
-    // let selectLabTest = document.getElementById('select-lab-tests')
-    // let testData = document.getElementById('test-data')
-
-    // selectCategory.addEventListener('change', function() {
-    //     showLabTests.className = "";
-    //     let selected_id = selectCategory.value;
-    //     selectLabTest.innerHTML = "<option selected>Select Test</option>";
-
-    //     for (let x = 0; x < tests.length; x++) {
-    //         if (tests[x].category_id == selected_id) {
-    //             selectLabTest.innerHTML += `<option value="${tests[x].id}">${ tests[x].name }</option>`;
-
-    //         }
-    //     }
-    // });
-
-
-    // showLabTests.addEventListener('change', () => {
-    //     let value = tests.find(test => test.id == selectLabTest.value);
-    //     let checkValue = collectSelectItems.find(collectSelectItem => collectSelectItem.id == selectLabTest.value);
-    //     if (!checkValue) {
-    //         console.log(checkValue);
-    //         collectSelectItems.push(value);
-    //     }
-    //     showSelectedTests();
-    // });
-
-    // function showSelectedTests() {
-    //     let testDone = document.getElementById('test-done');
-    //     let totalPrice = document.getElementById('total-price');
-    //     testDone.innerHTML = '';
-    //     let price = 0;
-    //     let row = '';
-    //     collectSelectItems.forEach((item, index) => {
-    //         row += `<tr>
-    //                     <td>${item.name}</td>
-    //                     <td>${item.price}</td>
-    //                     <td>
-    //                         <span onclick = "deleteItem(${index})" class="cursor-pointer p-2 hover:text-red-500">
-    //                             <svg stroke="currentColor" fill="none" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true" height="1em" width="1em" xmlns="http://www.w3.org/2000/svg">
-    //                                 <path stroke-linecap="round" stroke-linejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
-    //                             </svg>
-    //                         </span>
-    //                     </td>
-    //                 </tr>`;
-
-    //         price += item.price
-    //     })
-
-    //     totalPrice.innerHTML = price;
-    //     testDone.innerHTML += row;
-
-    //     testData.value = collectSelectItems
-    // }
-
-
-
-
-
-    // function deleteItem(index) {
-    //     collectSelectItems.splice(index, 1);
-    //     showSelectedTests();
-    // }
 </script>
 
 @endsection
 
 @section('scripts')
 
+<script>
+    // Section Lab Tests
+    let tests = <?php echo $labTests; ?>;
+    let collectSelectItems = [];
+
+    let options = '';
+    tests.map(test => {
+        return options += `<option value='${test.id}'>${test.name}</option>`;
+    });
+
+    $(document).ready(function() {
+
+
+
+
+        $('.js-example-basic-multiple').html(options).select2();
+
+        $('#dropdown').on('change', function() {
+
+            collectSelectItems = [];
+            const selectedValues = $(this).val();
+            selectedValues.forEach(selectedValue => {
+                let value = tests.find(test => test.id == selectedValue);
+                collectSelectItems.push(value);
+            })
+
+
+
+
+
+            showSelectedTests();
+        });
+    });
+
+    function showSelectedTests() {
+        let testData = document.getElementById('test-data')
+        let testDone = document.getElementById('test-done');
+        let totalAmount = document.getElementById('total-amount');
+        let totalAmountValue = document.getElementById('total-amount-value');
+        let netAmount = document.getElementById('net-amount');
+        let netAmountValue = document.getElementById('net-amount-value')
+        let disAmount = document.getElementById('dis-amount');
+        let disAmountValue = document.getElementById('dis-amount-value');
+
+
+        testDone.innerHTML = '';
+        let price = 0;
+        let row = '';
+        collectSelectItems.forEach((item, index) => {
+            row += `<tr>
+                        <td>${item.name}</td>
+                        <td>${item.price}</td>
+                    </tr>`;
+
+            price += item.price
+        })
+
+        totalAmount.innerHTML = price;
+        totalAmountValue.value = price;
+        testDone.innerHTML += row;
+        netAmount.innerHTML = price
+        netAmountValue.value = price;
+        disAmount.value = 0;
+        disAmountValue.value = 0;
+        // testData.value = collectSelectItems
+    }
+
+    document.getElementById('dis-amount').addEventListener('input', (event) => {
+        let disValue = event.target.value;
+        let error = document.getElementById('dis-error')
+        let netAmount = document.getElementById('net-amount')
+        let totalAmount = document.getElementById('total-amount')
+        let totalAmountValue = document.getElementById('total-amount-value')
+        let netAmountValue = document.getElementById('net-amount-value')
+        let disAmountValue = document.getElementById('dis-amount-value')
+        netAmountValue.innerHTML = totalAmountValue.value;
+
+        error.className = 'hidden';
+        if (/[a-zA-Z]/.test(disValue) || disValue[0] == '%' || disValue[3] == '%' || disValue[4] == '%') {
+            error.className = 'text-red-500 text-xs';
+            error.innerHTML = 'Invalid Value';
+        } else if (disValue[1] == '%' || disValue[2] == '%' && disValue.length == 3) {
+            if (disValue[1] == '%') {
+                let res = totalAmountValue.value - totalAmountValue.value * (disValue[0] / 100);
+                netAmount.innerHTML = res
+                netAmountValue.value = res
+            } else if (disValue[2] == '%') {
+                let res = totalAmountValue.value - totalAmountValue.value * (disValue.slice(0, 2) / 100);
+                netAmount.innerHTML = res
+                netAmountValue.value = res
+            }
+            // console.log(netAmountValue-disValue)
+        } else if (disValue.length <= 5 && /[0-9]/.test(disValue)) {
+            let res = totalAmountValue.value - disValue;
+            netAmount.innerHTML = res
+            netAmountValue.value = res
+        } else if (disValue.length >= 5) {
+            error.className = 'text-red-500 text-xs';
+            error.innerHTML = 'Max 5 character';
+        } else if (/[!@#$^&*()_+}{|":?><';/.,<>=-]/.test(disValue)) {
+            error.className = 'text-red-500 text-xs';
+            error.innerHTML = 'Only Numbers'
+        }
+    })
+
+    // Event listener to block typing for alphabets but allow backspace
+    document.getElementById('dis-amount').addEventListener('keydown', function(event) {
+        const disValue = this.value;
+        let error = document.getElementById('dis-error')
+
+        if (/[a-zA-Z]/.test(disValue) && event.key != "Backspace") {
+            // Block all keys if alphabets are typed
+            event.preventDefault();
+            error.className = 'text-red-500 text-xs';
+             error.innerHTML = 'only press backspace';
+        } else if (/[!@#$^&*()_+}{|":?><';/.,<>=-]/.test(disValue) && event.key != "Backspace") {
+            event.preventDefault();
+            error.className = 'text-red-500 text-xs';
+            error.innerHTML = 'only press backspace';
+        }
+    });
+</script>
+
+
+
 <!-- Other Vendors JS -->
 <script src="{{url('assets/vendors/quill/quill.min.js')}}"></script>
 
 <!-- Page js -->
 <script src="{{url('assets/js/pages/new-product.js')}}"></script>
-<script>
-    const options = tests.map(test => {
-      return `<option value="<option value='${test.id}' onclick='selectCategory(this)'>${test.name}</option>`;
-    }).join(' | ');
-
-   $(document).ready(function() {
-    $('.js-example-basic-multiple').select2();
-    $('.js-example-basic-multiple').html(options);
-});
-
-
-</script>
 @endsection

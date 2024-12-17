@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\LabTest;
 use App\Models\LabTestCategory;
+use App\Models\TestFormat;
 use Illuminate\Http\Request;
 
 class TestController extends Controller
@@ -51,8 +52,8 @@ class TestController extends Controller
             ->where('lab_tests.id', $id)
             ->first();
 
-            // dd($labTest->category_id);
-        
+        // dd($labTest->category_id);
+
         $categories = LabTestCategory::get();
         return view('admin.lab-tests.edit', compact('labTest', 'categories'));
     }
@@ -86,5 +87,20 @@ class TestController extends Controller
         $labTest = LabTest::where('id', $id)->delete();
         // dd($labTest);
         return redirect('/test/list')->with('success', 'Remove Successfuly.');
+    }
+
+    public function createFormat()
+    {
+        $test_formats = TestFormat::get();
+        // dd($test_format);
+        return view('admin.lab-tests.report-format' , compact('test_formats'));
+    }
+
+
+    public function storeFormat()
+    {
+        $test_formats = TestFormat::get();
+        // dd($test_format);
+        return view('admin.lab-tests.report-format' , compact('test_formats'));
     }
 }

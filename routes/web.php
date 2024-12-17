@@ -12,9 +12,9 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Session;
 
-Route::get('/', function () {
-    return view('welcome');
-});
+// Route::get('/', function () {
+//     return view('welcome');
+// });
 
 Route::get('/login',[LoginController::class,'create']);
 Route::post('/login_user',[LoginController::class,'authenticate']);
@@ -25,7 +25,7 @@ Route::get('/logout',function(Request $request){
     return redirect('/login')->with('success','Logout Successfuly.');
 });
 
-Route::get('/dashboard',[AdminDashboardController::class,'index'])->name('admin.dashboard')->middleware(WebGuard::class);
+Route::get('/',[AdminDashboardController::class,'index'])->name('admin.dashboard')->middleware(WebGuard::class);
 
 Route::get('/lead', function(){
     return view('welcome');
@@ -41,6 +41,9 @@ Route::middleware([WebGuard::class])->prefix('/test')->group(function(){
     Route::get('/edit/{id}',[TestController::class,'edit']);
     Route::post('/update',[TestController::class,'update']);
     Route::get('/delete/{id}',[TestController::class,'delete']);
+    Route::get('/create-format',[TestController::class,'createFormat']);
+    Route::get('/store-format',[TestController::class,'storeFormat']);
+
 
 // Test Category Route
     Route::get('/category/list',[TestCategoryController::class,'index']);
@@ -49,6 +52,7 @@ Route::middleware([WebGuard::class])->prefix('/test')->group(function(){
     Route::get('/category/edit/{id}',[TestCategoryController::class,'edit']);
     Route::post('/category/update',[TestCategoryController::class,'update']);
     Route::get('/category/delete/{id}',[TestCategoryController::class,'delete']);
+    
 });
 
 // Patients Route

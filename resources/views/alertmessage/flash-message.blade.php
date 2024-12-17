@@ -38,3 +38,9 @@
     <span>{{ $errors->first('category') }}</span>
 </div>
 @endif
+
+@if ($message = Session::get('not found'))
+<div class="text-red-500 mt-2">
+    <strong>{{ $message }}</strong>
+</div>
+@endif
