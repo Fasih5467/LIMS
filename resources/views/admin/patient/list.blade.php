@@ -16,9 +16,8 @@
 								<tr>
 									<th>Name</th>
 									<th>Contact</th>
-									<th>Test</th>
-									<th>Status</th>
-									<th></th>
+									
+									<th>Action</th>
 								</tr>
 							<tbody>
 								@foreach($patients as $patient)
@@ -29,17 +28,10 @@
 										</div>
 									</td>
 									<td>{{ $patient->contact }}</td>
+									
+									
 									<td>
-										<div class="flex items-center">{{ $patient->test_name }}</div>
-									</td>
-									<td>
-										<div class="flex items-center">
-											<span class="badge-dot bg-emerald-500"></span>
-											<span class="ml-2 rtl:mr-2 capitalize">process</span>
-										</div>
-									</td>
-									<td>
-										<div class="text-primary-600 cursor-pointer select-none font-semibold"><a href = "{{ $patient->test_id }}" >Update Record</a></div>
+										<div class="text-primary-600 cursor-pointer select-none font-semibold"><a href="{{url('/patient/tests/'. $patient->id)}}" >Show Tests</a></div>
 									</td>
 								</tr>
 								@endforeach

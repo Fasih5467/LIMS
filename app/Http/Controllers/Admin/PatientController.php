@@ -6,6 +6,9 @@ use App\Http\Controllers\Controller;
 use App\Models\Doctor;
 use App\Models\Patient;
 use App\Models\LabTest;
+use App\Models\PatientRecord;
+use App\Models\TestFormat;
+use App\Models\Result;
 use App\Models\LabTestCategory;
 use Illuminate\Http\Request;
 use PhpParser\Node\Param;
@@ -14,9 +17,9 @@ class PatientController extends Controller
 {
     public function index()
     {
-        $patients = Patient::Join('lab_tests as t','patients.test_id','=','t.id')
-        ->select('t.name as test_name','t.id as test_id','patients.*')->get();
-
+        // $patients = Patient::Join('lab_tests as t','patients.test_id','=','t.id')
+        // ->select('t.name as test_name','t.id as test_id','patients.*')->get();
+        $patients = Patient::get();
         return view('admin.patient.list',compact('patients'));
     }
 
@@ -106,5 +109,36 @@ class PatientController extends Controller
     {
         Patient::whereget('id', $id)->delete();
         return view('admin.patient.list');
+    }
+
+    public function show_patient_test($patient_id){
+        // dd('ss');
+
+        $patient_tests = PatientRecord::join('lab_tests', 'lab_tests.id', 'patient_records.test_id')
+        ->select('lab_tests.name as test_name', 'patient_records.*')
+        ->where('patient_records.patient_id', $patient_id) 
+        ->get();
+        return view('admin.patient.show_patient_test',compact('patient_tests','patient_id'));
+    }
+
+    public function get_test_format($test_id,$patient_id){
+        // dd($patient_id);
+        $test_format = TestFormat::where('test_id',$test_id)->get();
+        return view('admin.patient.test_format',compact('test_format','patient_id'));
+    }
+
+    public function patient_result_store(Request $request){
+        // dd($request->all());
+        $patient_id = $request->patient_id;
+        $keys_id= $request->keys;
+        $results = $request->results;
+
+        foreach($keys_id as $index => $key_id){
+            $result = new Result;
+            $result->test_format_id = $key_id;
+            $result->result = $results[$index];
+            $result->patient_id = $patient_id;
+            $result->save();
+        }
     }
 }

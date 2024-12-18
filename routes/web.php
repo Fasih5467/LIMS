@@ -63,6 +63,9 @@ Route::middleware([WebGuard::class])->prefix('/patient')->group(function(){
     Route::get('/edit/{id}',[PatientController::class,'edit']);
     Route::post('/update',[PatientController::class,'update']);
     Route::get('/delete/{id}',[PatientController::class,'delete']);
+    Route::get('/tests/{id}',[PatientController::class,'show_patient_test']);
+    Route::get('/test/format/{test_id}/{patient_id}',[PatientController::class,'get_test_format'])->name('test.patient');
+    Route::post('/result/store/',[PatientController::class,'patient_result_store']);
 });
 
 // Doctors Route
@@ -74,6 +77,7 @@ Route::middleware([WebGuard::class])->prefix('/doctor')->group(function(){
     Route::post('/update',[DoctorController::class,'update']);
     Route::get('/delete/{id}',[DoctorController::class,'delete']);
 });
+
 
 // Route::get('/test/list',[TestController::class,'index']);
 // Route::get('/test/create',[TestController::class,'create']);
