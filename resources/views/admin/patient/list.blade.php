@@ -32,15 +32,8 @@
 										<div class="text-primary-600 cursor-pointer select-none font-semibold"><a href="{{url('/patient/tests/'. $patient->id)}}" >Show Tests</a></div>
 										<div class="flex items-center">{{ $patient->test_name }}</div>
 									</td>
-									<td>
-										<div class="flex items-center">
-											<span class="badge-dot bg-emerald-500"></span>
-											<span class="ml-2 rtl:mr-2 capitalize">process</span>
-										</div>
-									</td>
-									<td>
-										<div class="text-primary-600 cursor-pointer select-none font-semibold"><a href = "{{ url(''.$patient->test_id }}" >Update Record</a></div>
-									</td>
+									
+									
 								</tr>
 								@endforeach
 								
