@@ -19,9 +19,9 @@
 								<tr>
 									<th>Test Name</th>
 									<th>Category</th>
-									<th>Keyword</th>
 									<th>Duration</th>
 									<th>Price</th>
+									<th>Test-Format</th>
 									<th></th>
 								</tr>
 							</thead>
@@ -36,12 +36,16 @@
 									<td>
 										<span class="capitalize">{{ $labTest->category_name }}</span>
 									</td>
-									<td>{{ $labTest->keyword }}</td>
 									<td>
 										<span>{{ $labTest->duration }} day</span>
 									</td>
 									<td>
 										<span>Rs {{ $labTest->price }}</span>
+									</td>
+									<td>
+										<a href="{{ url('/test/format/create/'.$labTest->id) }}">
+											<button class="btn btn-solid">ADD</button>
+										</a>
 									</td>
 									<td>
 										<div class="flex justify-end text-lg">

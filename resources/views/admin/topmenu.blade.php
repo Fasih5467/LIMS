@@ -31,29 +31,27 @@
         </div>
         <div class="dropdown">
             <div class="dropdown-toggle">
-                <a href="{{ url('/patient/list') }}">
-                    <div class="menu-item menu-item-hoverable">
-                        <span class="text-2xl">
-                            <svg
-                                stroke="currentColor"
-                                fill="none"
-                                stroke-width="2"
-                                viewBox="0 0 24 24"
-                                aria-hidden="true"
-                                height="1em"
-                                width="1em"
-                                xmlns="http://www.w3.org/2000/svg">
-                                <path stroke-linecap="round" stroke-linejoin="round" d="M15 19.128a9.38 9.38 0 002.625.372 9.337 9.337 0 004.121-.952 4.125 4.125 0 00-7.533-2.493M15 19.128v-.003c0-1.113-.285-2.16-.786-3.07M15 19.128v.106A12.318 12.318 0 018.624 21c-2.331 0-4.512-.645-6.374-1.766l-.001-.109a6.375 6.375 0 0111.964-3.07M12 6.375a3.375 3.375 0 11-6.75 0 3.375 3.375 0 016.75 0zm8.25 2.25a2.625 2.625 0 11-5.25 0 2.625 2.625 0 015.25 0z"></path>
-                            </svg>
-                        </span>
-                        <span>Patient</span>
-                    </div>
-                </a>
+                <div class="menu-item menu-item-hoverable">
+                    <span class="text-2xl">
+                        <svg
+                            stroke="currentColor"
+                            fill="none"
+                            stroke-width="2"
+                            viewBox="0 0 24 24"
+                            aria-hidden="true"
+                            height="1em"
+                            width="1em"
+                            xmlns="http://www.w3.org/2000/svg">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M15 19.128a9.38 9.38 0 002.625.372 9.337 9.337 0 004.121-.952 4.125 4.125 0 00-7.533-2.493M15 19.128v-.003c0-1.113-.285-2.16-.786-3.07M15 19.128v.106A12.318 12.318 0 018.624 21c-2.331 0-4.512-.645-6.374-1.766l-.001-.109a6.375 6.375 0 0111.964-3.07M12 6.375a3.375 3.375 0 11-6.75 0 3.375 3.375 0 016.75 0zm8.25 2.25a2.625 2.625 0 11-5.25 0 2.625 2.625 0 015.25 0z"></path>
+                        </svg>
+                    </span>
+                    <span>Patient</span>
+                </div>
             </div>
             <ul class="dropdown-menu">
                 <li data-menu-item="decked-project-dashboard" class="menu-item">
-                    <a class="h-full w-full flex items-center" href="{{url('/post/calendar')}}">
-                        <span>Calendar</span>
+                    <a class="h-full w-full flex items-center" href="{{ url('/patient/list') }}">
+                        <span>List</span>
                     </a>
                 </li>
             </ul>
@@ -85,7 +83,12 @@
                 </li>
                 <li data-menu-item="decked-project-dashboard" class="menu-item">
                     <a class="h-full w-full flex items-center" href="{{ url('/test/category/list') }}">
-                        <span>category</span>
+                        <span>Category</span>
+                    </a>
+                </li>
+                <li data-menu-item="decked-project-dashboard" class="menu-item">
+                    <a class="h-full w-full flex items-center" href="{{ url('/test/format/create') }}">
+                        <span>Add Test Format</span>
                     </a>
                 </li>
             </ul>

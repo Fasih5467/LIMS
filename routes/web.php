@@ -40,9 +40,10 @@ Route::middleware([WebGuard::class])->prefix('/test')->group(function(){
     Route::post('/store',[TestController::class,'store']);
     Route::get('/edit/{id}',[TestController::class,'edit']);
     Route::post('/update',[TestController::class,'update']);
+    Route::get('/report-format',[TestController::class,'show']); 
     Route::get('/delete/{id}',[TestController::class,'delete']);
-    Route::get('/create-format',[TestController::class,'createFormat']);
-    Route::get('/store-format',[TestController::class,'storeFormat']);
+    Route::get('/format/create/{id}',[TestController::class,'createFormat']);
+    Route::post('/format/store',[TestController::class,'storeFormat']);
 
 
 // Test Category Route

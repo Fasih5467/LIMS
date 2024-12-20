@@ -7,6 +7,9 @@ use App\Models\LabTest;
 use App\Models\LabTestCategory;
 use App\Models\TestFormat;
 use Illuminate\Http\Request;
+use Mockery\Undefined;
+
+use function PHPUnit\Framework\isEmpty;
 
 class TestController extends Controller
 {
@@ -89,18 +92,79 @@ class TestController extends Controller
         return redirect('/test/list')->with('success', 'Remove Successfuly.');
     }
 
-    public function createFormat()
+    public function createFormat($id)
     {
-        $test_formats = TestFormat::get();
-        // dd($test_format);
-        return view('admin.lab-tests.report-format' , compact('test_formats'));
+        // dd($id);
+        $test_id = $id;
+        $test_formats = TestFormat::where('test_id', $id)->get();
+        if ($test_formats->Count() > 0) {
+            // dd($test_formats);
+            return view('admin.lab-tests.test-format', compact('test_formats', 'test_id'));
+        } else {
+            // dd('not found');
+            return view('admin.lab-tests.test-format', compact('test_id'));
+        }
     }
 
 
-    public function storeFormat()
+    public function storeFormat(Request $request)
     {
-        $test_formats = TestFormat::get();
-        // dd($test_format);
-        return view('admin.lab-tests.report-format' , compact('test_formats'));
+        // Get All Show Input Values
+        $items = $request->items;
+
+        //    Get Test Id
+        $test_id = $request->test_id;
+
+        // Get All Deleted Values
+        $deletedValues = $request->deleted_id;
+        foreach($deletedValues as $value){
+              if($value != 'undefined' && $value != null ){
+                TestFormat::where('id',$value)->delete();
+              }
+        }
+
+        foreach ($items as $item) {
+
+            if ($item['id']) {
+                // Update Data
+                TestFormat::where('id', $item['id'])
+                    ->update([
+                        'key' => $item['key'],
+                        'type' => $item['type'],
+                        'unit' => $item['unit'],
+                        'value' => $item['value'],
+                    ]);
+
+            } else {
+                // New Entry
+                $add_format = new TestFormat;
+                $add_format['test_id'] = $test_id;
+                $add_format['key'] = $item['key'];
+                $add_format['type'] = $item['type'];
+                $add_format['unit'] = $item['unit'];
+                $add_format['value'] = $item['value'];
+                $add_format->save();
+
+            }
+        }
+
+        return redirect('/test/list')->with('success', 'Test Format Successfuly.');
+
     }
+
+    // public function show(Request $request)
+    // {
+    //     // $test_formats = TestFormat::get();
+
+    //     // dd($request->items);
+    //     // $items = $request->items;
+
+    //     // dd($items[0]['key']);
+    //     // foreach ($items as $index => $item) {
+
+    //     //     echo $index ;
+    //     //     echo $item['key']; // Add space after each array
+    //     // }
+    //     // return view('admin.lab-tests.report-format', compact('test_formats'));
+    // }
 }

@@ -24,7 +24,7 @@
                                                 <select class="input" id="prePatient">
                                                     <option selected>Select Patient</option>
                                                     @foreach($patients as $patient)
-                                                    <option value="{{ $patient->name }}">{{ $patient->name }}</option>
+                                                    <option value="{{ $patient->id }}">{{ $patient->name }}</option>
                                                     @endforeach
                                                     <option value="new">Add New</option>
                                                 </select>
@@ -145,6 +145,8 @@
 
                                         </select>
                                     </div>
+                                    <!-- Hiiden Input -->
+                                    <input type="hidden" name="id" id="patient-id" />
                                     <!-- Amount Manage -->
                                     <input type="hidden" name="totalAmount" id="total-amount-value" />
                                     <input type="hidden" name="disAmount" id="dis-amount-value" />
@@ -193,7 +195,7 @@
                     </div>
                     <div id="stickyFooter" class="sticky -bottom-1 -mx-8 px-8 flex items-center justify-end py-4">
                         <div class="md:flex items-center">
-                            <a class="btn btn-default btn-sm ltr:mr-2 rtl:ml-2" href="{{ url('/test/list') }}">Discard</a>
+                            <a class="btn btn-default btn-sm ltr:mr-2 rtl:ml-2" href="{{ url('/patient/list') }}">Discard</a>
                             <button class="btn btn-solid btn-sm" type="submit">
                                 <span class="flex items-center justify-center">
                                     <span class="text-lg">
@@ -224,6 +226,7 @@
     // Previous patients
     document.getElementById('prePatient').addEventListener('change', function() {
 
+        let id = document.getElementById('patient-id')
         let newPatient = document.getElementById('newPatient')
         let age = document.getElementById('age')
         let maleRadio = document.getElementById('maleRadio')
@@ -236,9 +239,11 @@
             maleRadio.checked = false;
             femaleRadio.checked = false;
         } else {
-            let selectValue = patients.find(patient => patient.name == this.value);
+            let selectValue = patients.find(patient => patient.id == this.value);
             age.value = selectValue['age'];
-            newPatient.value = selectValue['name']
+            newPatient.value = selectValue['name'];
+            id.value = selectValue['id'];
+
             if (selectValue['gender'] === 'male') {
                 maleRadio.checked = true;
             } else if (selectValue['gender'] === 'female') {

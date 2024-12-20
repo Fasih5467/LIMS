@@ -10,6 +10,7 @@ use App\Models\PatientRecord;
 use App\Models\TestFormat;
 use App\Models\Result;
 use App\Models\LabTestCategory;
+use App\Models\PatientRecord;
 use Illuminate\Http\Request;
 use PDF;
 
@@ -45,7 +46,7 @@ class PatientController extends Controller
         $request->validate([
             'contact' => 'required|min:11|max:13',
         ]);
-    
+
         $contact = $request->contact;
         if ($contact && !$request->name && !$request->age && !$request->gender) {
             // Check Patient Exist
@@ -57,37 +58,53 @@ class PatientController extends Controller
                 ]);
             }
             return redirect('/patient/create')->with([
-                'patients' => $patients,    
+                'patients' => $patients,
                 'contact' => $contact,
             ]);
-
         } else {
 
-        //    dd($request->refBy);
+            //    dd($request->refBy);
             $request->validate([
-                'name' => 'required',
+                // 'name' => 'required',
                 'age' => 'required|max:3',
                 'gender' => 'required',
-                'refBy' => 'required',
-                'selectedTests' => 'required|array',
             ]);
+            
+            $patientId = $request->id;
 
-            foreach($request->selectedTests as $selectedValue){
-                $patient = new Patient;
-                $patient->name = $request->name;
-                $patient->age = $request->age;
-                $patient->gender = $request->gender;
-                $patient->contact = $request->contact;
-                $patient->ref_by_id = $request->refBy;
-                $patient->test_id = $selectedValue;
-                $patient->save();
+            // New Patient Save In DB  
+            if($request->id == null){ 
+
+            $patient = new Patient;
+            $patient->name = $request->name;
+            $patient->age = $request->age;
+            $patient->gender = $request->gender;
+            $patient->contact = $request->contact;
+            $patient->save();
+
+            // Get the ID of the newly created patient
+            $patientId = $patient->id;
 
             }
-            $selectedValues = [];
-            foreach($request->selectedTests as $id){
-                   $result = LabTest::select('id','name','price')->where('id',$id)->first();
-                   array_push($selectedValues,$result);
-            };
+
+            
+            // dd($newPatientId);
+            if ($request->selectedTests != null) {
+                foreach ($request->selectedTests as $selectedTest) {
+                    $patient_record = new PatientRecord;
+                    $patient_record->patient_id = $patientId;
+                    $patient_record->test_id = $selectedTest;
+                    $patient_record->ref_by_id = $request->refBy;
+                    $patient_record->save();
+                }
+            }
+
+
+            // $selectedValues = [];
+            // foreach($request->selectedTests as $id){
+            //        $result = LabTest::select('id','name','price')->where('id',$id)->first();
+            //        array_push($selectedValues,$result);
+            // };
             // dd($selectedValues);
             // $array = $request;
             // return view('admin.patient.slip',compact('array','selectedValues'));
