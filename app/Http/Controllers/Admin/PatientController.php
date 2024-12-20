@@ -10,7 +10,7 @@ use App\Models\PatientRecord;
 use App\Models\TestFormat;
 use App\Models\Result;
 use App\Models\LabTestCategory;
-use App\Models\PatientRecord;
+
 use Illuminate\Http\Request;
 use PDF;
 
