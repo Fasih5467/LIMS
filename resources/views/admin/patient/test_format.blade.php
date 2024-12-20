@@ -14,6 +14,7 @@
                                 <div class="card-body">
                                     <h5>Result</h5>
                                   <input type="hidden" name="patient_id" value="{{$patient_id}}">
+                                  <input type="hidden" name="patient_record_id" value="{{$id}}">
                                      <div class="w-full max-w-md p-4 bg-white rounded shadow-md">
                                         @foreach($test_format as $format)
                                         @continue($format->type == 'heading')

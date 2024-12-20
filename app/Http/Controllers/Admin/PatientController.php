@@ -11,7 +11,11 @@ use App\Models\TestFormat;
 use App\Models\Result;
 use App\Models\LabTestCategory;
 use Illuminate\Http\Request;
-use PhpParser\Node\Param;
+use PDF;
+
+use Dompdf\Dompdf;
+use Dompdf\Options;
+
 
 class PatientController extends Controller
 {
@@ -121,15 +125,25 @@ class PatientController extends Controller
         return view('admin.patient.show_patient_test',compact('patient_tests','patient_id'));
     }
 
-    public function get_test_format($test_id,$patient_id){
+    public function get_test_format($id){
         // dd($patient_id);
+        $patient_record = PatientRecord::where('id',$id)->first();
+        if(!$patient_record){
+            return redirect()->back();
+        }
+        $patient_id = $patient_record->patient_id;
+        $test_id = $patient_record->test_id;
         $test_format = TestFormat::where('test_id',$test_id)->get();
-        return view('admin.patient.test_format',compact('test_format','patient_id'));
+        if(empty($test_format)){
+            return redirect()->back();
+        }
+        return view('admin.patient.test_format',compact('test_format','patient_id','id'));
     }
 
     public function patient_result_store(Request $request){
         // dd($request->all());
         $patient_id = $request->patient_id;
+        $patient_record_id = $request->patient_record_id;
         $keys_id= $request->keys;
         $results = $request->results;
 
@@ -138,7 +152,61 @@ class PatientController extends Controller
             $result->test_format_id = $key_id;
             $result->result = $results[$index];
             $result->patient_id = $patient_id;
+            $result->patient_record_id = $patient_record_id;
             $result->save();
         }
+
+        $patient_record = PatientRecord::where('id',$patient_record_id)->first();
+        if(!$patient_record){
+            return;
+        }
+
+        $patient_record->is_result = 'yes';
+        $patient_record->save();
+
+        return redirect('/patient/list');
+    }
+
+
+
+
+
+
+    public function generatePDF($id){
+
+        $patient_record = PatientRecord::where('id',$id)->first();
+
+        if(!$patient_record){
+            return redirect()->back();
+        }
+        $patient_id = $patient_record->patient_id;
+        $patient_test_id = $patient_record->test_id;
+        
+         $data['test_result'] = TestFormat::leftJoin('result as r', 'test_format.id', '=', 'r.test_format_id')
+        ->select('test_format.key', 'test_format.unit', 'test_format.value', 'test_format.type', 'r.result')
+        ->orderBy('test_format.id', 'asc')->where('r.patient_id',$patient_id)->where('r.patient_record_id',$id)
+        ->get();
+
+        if(empty($data['test_result'])){
+            return redirect()->back();
+        }
+
+        $pdf = $this->generatePdfFormat($data);  
+        $pdfContent = $pdf->output();
+        return response($pdfContent, 200)->header('Content-Type', 'application/pdf');
+    }
+
+    private function generatePdfFormat($data)
+    {
+       
+        $pdfView = view('test.pdf_template',$data);
+        $options = new Options();
+        $options->set('isHtml5ParserEnabled', true);
+        $options->set('isPhpEnabled', true);
+        $dompdf = new Dompdf($options);
+        $dompdf->loadHtml($pdfView->render());
+        $dompdf->render();
+
+        return $dompdf;
     }
 }
