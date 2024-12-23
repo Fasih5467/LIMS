@@ -229,15 +229,41 @@ class PatientController extends Controller
         $patient_id = $patient_record->patient_id;
         $patient_test_id = $patient_record->test_id;
 
-        $data['test_result'] = TestFormat::leftJoin('result as r', 'test_format.id', '=', 'r.test_format_id')
-            ->select('test_format.key', 'test_format.unit', 'test_format.value', 'test_format.type', 'r.result')
-            ->orderBy('test_format.id', 'asc')->where('r.patient_id', $patient_id)->where('r.patient_record_id', $id)
+        // $data['test_result'] = TestFormat::leftJoin('result as r', 'test_format.id', '=', 'r.test_format_id')
+        //     ->select('test_format.key', 'test_format.unit', 'test_format.value', 'test_format.type', 'r.result')
+        //     ->orderBy('test_format.id', 'asc')->where('r.patient_id', $patient_id)->where('r.patient_record_id', $id)
+        //     ->get();
+            // dd($data);
+
+            $data['test_result'] = TestFormat::leftJoin('result as r', function ($join) use ($patient_id, $id) {
+                $join->on('test_format.id', '=', 'r.test_format_id')
+                     ->where('r.patient_id', $patient_id)
+                     ->where('r.patient_record_id', $id);
+            })
+            ->select('test_format.id', 'test_format.key', 'test_format.unit', 'test_format.value', 'test_format.type', 'r.result')
+            ->orderBy('test_format.id', 'asc')
             ->get();
+
+            $data['patient_info'] = \DB::table('patient_records as pr')
+            ->join('patients as p', 'pr.patient_id', '=', 'p.id')
+            ->join('lab_tests as lt', 'pr.test_id', '=', 'lt.id')
+            ->join('lab_test_categories as ltc', 'lt.category_id', '=', 'ltc.id')
+            ->join('doctors as d', 'd.id', '=', 'pr.ref_by_id')
+            ->select('p.name as patient_name', 'lt.name as lab_test_name', 'ltc.name as category_name','p.*','d.name as doctor_name')
+            ->where('pr.patient_id', $patient_id)
+            ->where('pr.test_id', $patient_test_id)
+            ->where('pr.id', $id)
+            ->first();
+            // dd($data['patient_info']);
 
         if (empty($data['test_result'])) {
             return redirect()->back();
         }
 
+        if(!$data['patient_info']){
+            return redirect()->back();
+        }
+        
         $pdf = $this->generatePdfFormat($data);
         $pdfContent = $pdf->output();
         return response($pdfContent, 200)->header('Content-Type', 'application/pdf');
