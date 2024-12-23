@@ -88,6 +88,9 @@ class TestController extends Controller
     public function delete($id)
     {
         $labTest = LabTest::where('id', $id)->delete();
+        if (!$labTest) {
+            return redirect()->back();
+        }
         // dd($labTest);
         return redirect('/test/list')->with('success', 'Remove Successfuly.');
     }
@@ -117,11 +120,14 @@ class TestController extends Controller
 
         // Get All Deleted Values
         $deletedValues = $request->deleted_id;
-        foreach($deletedValues as $value){
-              if($value != 'undefined' && $value != null ){
-                TestFormat::where('id',$value)->delete();
-              }
+
+        foreach ($deletedValues as $value) {
+            if ($value != 'undefined' && $value != null) {
+                TestFormat::where('id', $value)->delete();
+            }
+            dd($deletedValues);
         }
+
 
         foreach ($items as $item) {
 
@@ -134,7 +140,6 @@ class TestController extends Controller
                         'unit' => $item['unit'],
                         'value' => $item['value'],
                     ]);
-
             } else {
                 // New Entry
                 $add_format = new TestFormat;
@@ -144,12 +149,10 @@ class TestController extends Controller
                 $add_format['unit'] = $item['unit'];
                 $add_format['value'] = $item['value'];
                 $add_format->save();
-
             }
         }
 
         return redirect('/test/list')->with('success', 'Test Format Successfuly.');
-
     }
 
     // public function show(Request $request)

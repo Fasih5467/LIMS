@@ -75,19 +75,34 @@
                                                 @foreach($selectedValues as $selectedValue)
                                                 <tr>
                                                     <td>{{ $selectedValue->name }}</td>
-                                                    <td class="text-right">{{ $selectedValue->price }}</td>
-                                                    <td class="text-right">{{ $selectedValue->price }}</td>
+                                                    <td class="text-center">{{ $selectedValue->price }}</td>
+                                                    <td class="text-center">{{ $selectedValue->price }}</td>
                                                 </tr>
                                                 @endforeach
-                                                <!-- <tr>
-                                                    <td>Centro comercial Moctezuma</td>
-                                                    <td>Francisco Chang</td>
-                                                    <td>600</td>
-                                                </tr> -->
+                                                <tr>
+                                                    <td class="font-bold text-center h-2" colspan="2">Total Amount</td>
+                                                    <td class="font-bold text-center">1350</td>
+                                                </tr>
+                                                <tr>
+                                                    <td class="font-bold text-center h-2" colspan="2">Discount Amount</td>
+                                                    <td class="font-bold text-center">1350</td>
+                                                </tr>
+                                                <tr>
+                                                    <td class="font-bold text-center h-5" colspan="2">Net Amount</td>
+                                                    <td class="font-bold text-center">1350</td>
+                                                </tr>
+                                                <tr>
+                                                    <td class="font-bold text-center h-5" colspan="2">Recevied Amount</td>
+                                                    <td class="font-bold text-center">1350</td>
+                                                </tr>
+                                                <tr>
+                                                    <td class="font-bold text-center h-5" colspan="2">Balance Amount</td>
+                                                    <td class="font-bold text-center">1350</td>
+                                                </tr>
                                             </tbody>
                                         </table>
                                     </div>
-                                    <div class="overflow-x-auto" style="width:67%;margin-left:33%;">
+                                    <!-- <div class="overflow-x-auto" style="width:67%;margin-left:33%;">
                                         <table class="table-default table-hover table-compact" style="width: 60%;">
                                             <tbody>
                                                 <tr>
@@ -104,7 +119,7 @@
                                                 </tr>
                                             </tbody>
                                         </table>
-                                    </div>
+                                    </div> -->
                                 </div>
                             </div>
                         </div>

@@ -1,10 +1,29 @@
 @extends('admin.master')
 @section('content')
+<style>
+    .input-dropdown-dis {
+        display: flex;
+        align-items: center;
+        gap: 5px;
+    }
 
+    .input-dis {
+        font-size: 14px;
+        box-sizing: border-box;
+    }
+
+    .dropdown-dis {
+        height: 20px;
+        /* Matches input field height */
+        padding: 0 5px;
+        font-size: 10px;
+        cursor: pointer;
+    }
+</style>
 <!-- Content start -->
 <main class="h-full">
     <div class="page-container relative h-full flex flex-auto flex-col px-4 sm:px-6 md:px-8 py-4 sm:py-6">
-        <div class="container mx-auto" style="width:75%;">
+        <div class="container mx-auto" style="width:90%;">
             <form action="{{url('patient/store')}}" method="post" enctype="multipart/form-data">
                 @csrf
                 <div class="form-container vertical">
@@ -141,21 +160,22 @@
                                     </div>
                                     <div class="form-item vertical">
                                         <label class="form-label mb-2">Select Test</label>
-                                        <select class="js-example-basic-multiple" id="dropdown" name="selectedTests[]" multiple="multiple">
+                                        <select class="js-example-basic-multiple w-[100%]" id="dropdown" name="selectedTests[]" multiple="multiple">
 
                                         </select>
                                     </div>
                                     <!-- Hiiden Input -->
                                     <input type="hidden" name="id" id="patient-id" />
                                     <!-- Amount Manage -->
-                                    <input type="hidden" name="totalAmount" id="total-amount-value" />
-                                    <input type="hidden" name="disAmount" id="dis-amount-value" />
-                                    <input type="hidden" name="netAmount" id="net-amount-value" />
+                                    <input type="hidden" name="totAmount" id="total-amount" />
+                                    <input type="hidden" name="netAmount" id="net-amount" />
+                                    <input type="hidden" name="balAmount" id="bal-amount" />
+
                                 </div>
                             </div>
                         </div>
                         <div class="lg:col-span-1 card adaptable-card !border-b pb-6  rounded-br-none rounded-bl-none">
-                            <table class="table-default table-">
+                            <table class="table-default table" style="padding: 0px;">
                                 <thead>
                                     <tr>
                                         <th class="w-[250px]">Selected Test</th>
@@ -168,18 +188,34 @@
                                 <tfoot>
                                     <tr>
                                         <td class="font-bold">Total Amount</td>
-                                        <td id="total-amount"></td>
+                                        <td>
+                                            <input
+                                                class="input h-6 p-2"
+                                                type="number"
+                                                name="totalAmount"
+                                                autocomplete="off"
+                                                id="total-amount-value"
+                                                disabled
+                                                placeholder="Rs" />
+                                        </td>
                                     </tr>
                                     <tr>
                                         <td class="font-bold">Discount</td>
                                         <td id="discount">
-                                            <input
-                                                class="input "
-                                                type="text"
-                                                name="discount"
-                                                autocomplete="off"
-                                                id="dis-amount"
-                                                placeholder="10%" />
+                                            <div class="input-dropdown-dis">
+                                                <input
+                                                    class="input input-dis h-6 p-2"
+                                                    type="number"
+                                                    maxlength="5"
+                                                    name="disAmount"
+                                                    autocomplete="off"
+                                                    id="dis-amount-value"
+                                                    placeholder="Discount" />
+                                                <select class="dropdown-dis" id="select-dis" name="dis_type">
+                                                    <option value="Rs">Rs</option>
+                                                    <option value="%">%</option>
+                                                </select>
+                                            </div>
                                             <div class="hidden" id="dis-error">
 
                                             </div>
@@ -187,8 +223,44 @@
                                     </tr>
                                     <tr>
                                         <td class="font-bold">Net Amount</td>
-                                        <td id="net-amount"></td>
+                                        <td>
+                                            <input
+                                                class="input h-6 p-2"
+                                                type="number"
+                                                autocomplete="off"
+                                                id="net-amount-value"
+                                                disabled
+                                                placeholder="Rs" />
+                                        </td>
                                     </tr>
+                                    <tr>
+                                        <td class="font-bold">Recevied Amount</td>
+                                        <td id="discount">
+                                            <input
+                                                class="input h-6 p-2"
+                                                type="number"
+                                                name="recAmount"
+                                                autocomplete="off"
+                                                id="rec-amount-value"
+                                                placeholder="Rs" />
+                                            <div class="hidden" id="rec-error">
+
+                                            </div>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td class="font-bold">Balance Amount</td>
+                                        <td>
+                                            <input
+                                                class="input h-6 p-2"
+                                                type="number"
+                                                autocomplete="off"
+                                                id="bal-amount-value"
+                                                disabled
+                                                placeholder="Rs" />
+                                        </td>
+                                    </tr>
+
                                 </tfoot>
                             </table>
                         </div>
@@ -269,9 +341,6 @@
 
     $(document).ready(function() {
 
-
-
-
         $('.js-example-basic-multiple').html(options).select2();
 
         $('#dropdown').on('change', function() {
@@ -283,24 +352,25 @@
                 collectSelectItems.push(value);
             })
 
-
-
-
-
+            // Show Selected Test
             showSelectedTests();
         });
     });
 
+    let totalAmount = document.getElementById('total-amount');
+    let netAmount = document.getElementById('net-amount');
+    let balAmount = document.getElementById('bal-amount');
+    let balAmountValue = document.getElementById('bal-amount-value');
+
     function showSelectedTests() {
+
         let testData = document.getElementById('test-data')
         let testDone = document.getElementById('test-done');
-        let totalAmount = document.getElementById('total-amount');
         let totalAmountValue = document.getElementById('total-amount-value');
-        let netAmount = document.getElementById('net-amount');
         let netAmountValue = document.getElementById('net-amount-value')
-        let disAmount = document.getElementById('dis-amount');
         let disAmountValue = document.getElementById('dis-amount-value');
-
+        let balAmountValue = document.getElementById('bal-amount-value');
+        let recAmountValue = document.getElementById('rec-amount-value');
 
         testDone.innerHTML = '';
         let price = 0;
@@ -314,70 +384,143 @@
             price += item.price
         })
 
-        totalAmount.innerHTML = price;
         totalAmountValue.value = price;
         testDone.innerHTML += row;
-        netAmount.innerHTML = price
         netAmountValue.value = price;
-        disAmount.value = 0;
+        balAmountValue.value = price;
+        recAmountValue.value = 0;
         disAmountValue.value = 0;
-        // testData.value = collectSelectItems
+
+        totalAmount.value = price;
+        netAmount.value = price;
+        balAmount.value = price;
+        console.log(netAmount.value);
     }
 
-    document.getElementById('dis-amount').addEventListener('input', (event) => {
-        let disValue = event.target.value;
-        let error = document.getElementById('dis-error')
-        let netAmount = document.getElementById('net-amount')
-        let totalAmount = document.getElementById('total-amount')
+    document.getElementById('select-dis').addEventListener('change', function() {
+
         let totalAmountValue = document.getElementById('total-amount-value')
         let netAmountValue = document.getElementById('net-amount-value')
         let disAmountValue = document.getElementById('dis-amount-value')
-        netAmountValue.innerHTML = totalAmountValue.value;
+        let disValue = disAmountValue.value;
+        let selectedValue = this.value;
 
-        error.className = 'hidden';
-        if (/[a-zA-Z]/.test(disValue) || disValue[0] == '%' || disValue[3] == '%' || disValue[4] == '%') {
-            error.className = 'text-red-500 text-xs';
-            error.innerHTML = 'Invalid Value';
-        } else if (disValue[1] == '%' || disValue[2] == '%' && disValue.length == 3) {
-            if (disValue[1] == '%') {
-                let res = totalAmountValue.value - totalAmountValue.value * (disValue[0] / 100);
-                netAmount.innerHTML = res
-                netAmountValue.value = res
-            } else if (disValue[2] == '%') {
-                let res = totalAmountValue.value - totalAmountValue.value * (disValue.slice(0, 2) / 100);
-                netAmount.innerHTML = res
-                netAmountValue.value = res
-            }
-            // console.log(netAmountValue-disValue)
-        } else if (disValue.length <= 5 && /[0-9]/.test(disValue)) {
+        if (selectedValue === 'Rs') {
             let res = totalAmountValue.value - disValue;
-            netAmount.innerHTML = res
             netAmountValue.value = res
-        } else if (disValue.length >= 5) {
-            error.className = 'text-red-500 text-xs';
-            error.innerHTML = 'Max 5 character';
-        } else if (/[!@#$^&*()_+}{|":?><';/.,<>=-]/.test(disValue)) {
-            error.className = 'text-red-500 text-xs';
-            error.innerHTML = 'Only Numbers'
+            balAmountValue.value = res
+
+            netAmount.value = res;
+            balAmount.value = res;
+        } else if (selectedValue === '%' && disValue.length < 3) {
+            let res = totalAmountValue.value - totalAmountValue.value * (disValue / 100);
+            netAmountValue.value = res
+            balAmountValue.value = res
+
+            netAmount.value = res;
+            balAmount.value = res;
         }
+    });
+
+    document.getElementById('dis-amount-value').addEventListener('input', (event) => {
+        let disValue = event.target.value;
+        let disError = document.getElementById('dis-error')
+        let totalAmountValue = document.getElementById('total-amount-value')
+        let recAmountValue = document.getElementById('rec-amount-value')
+        let netAmountValue = document.getElementById('net-amount-value')
+        let disAmountValue = document.getElementById('dis-amount-value')
+        let selectDis = document.getElementById('select-dis');
+        disError.innerHTML = '';
+        recAmountValue.value = 0;
+
+        if (disValue.length > 5 || (disValue.length >= 3 && selectDis.value === '%')) {
+            disError.className = 'text-red-500 text-xs';
+            disError.innerHTML = 'Invalid Value';
+            return
+        }
+
+        if (selectDis.value === 'Rs') {
+            let res = totalAmountValue.value - disAmountValue.value;
+            netAmountValue.value = res
+            balAmountValue.value = res
+
+            netAmount.value = res;
+            balAmount.value = res;
+        } else if (selectDis.value === '%' && disValue.length < 3) {
+            let res = totalAmountValue.value - totalAmountValue.value * (disAmountValue.value / 100);
+            netAmountValue.value = res;
+            balAmountValue.value = res
+
+            netAmount.value = res;
+            balAmount.value = res;
+        }
+
+        // recAmount.value = 0;
+        // balAmount.innerHTML = 0;
+        // netAmountValue.innerHTML = totalAmountValue.value;
+
+        //     error.className = 'hidden';
+        //     // if (/[a-zA-Z]/.test(disValue) || disValue[0] == '%' || disValue[3] == '%' || disValue[4] == '%') {
+        //     //     error.className = 'text-red-500 text-xs';
+        //     //     error.innerHTML = 'Invalid Value';
+        //     // } else 
+        //     if (disValue[1] == '%' || disValue[2] == '%' && disValue.length == 3) {
+        //         if (disValue[1] == '%') {
+        //             let res = totalAmountValue.value - totalAmountValue.value * (disValue[0] / 100);
+        //             netAmount.innerHTML = res
+        //             netAmountValue.value = res
+        //         } else if (disValue[2] == '%') {
+        //             let res = totalAmountValue.value - totalAmountValue.value * (disValue.slice(0, 2) / 100);
+        //             netAmount.innerHTML = res
+        //             netAmountValue.value = res
+        //         }
+        //         // console.log(netAmountValue-disValue)
+        //     } else if (disValue.length <= 5 && /[0-9]/.test(disValue)) {
+        //         let res = totalAmountValue.value - disValue;
+        //         netAmount.innerHTML = res
+        //         netAmountValue.value = res
+        //     } else if (disValue.length >= 5) {
+        //         error.className = 'text-red-500 text-xs';
+        //         error.innerHTML = 'Max 5 character';
+        //     } else if (/[!@#$^&*()_+}{|":?><';\/.,<>=-]/.test(disValue)) {
+        //         error.className = 'text-red-500 text-xs';
+        //         error.innerHTML = 'Only Numbers'
+        //     }
     })
 
     // Event listener to block typing for alphabets but allow backspace
-    document.getElementById('dis-amount').addEventListener('keydown', function(event) {
-        const disValue = this.value;
-        let error = document.getElementById('dis-error')
+    // document.getElementById('dis-amount').addEventListener('keydown', function(event) {
+    //     const disValue = this.value;
+    //     let error = document.getElementById('dis-error')
 
-        if (/[a-zA-Z]/.test(disValue) && event.key != "Backspace") {
-            // Block all keys if alphabets are typed
-            event.preventDefault();
-            error.className = 'text-red-500 text-xs';
-             error.innerHTML = 'only press backspace';
-        } else if (/[!@#$^&*()_+}{|":?><';/.,<>=-]/.test(disValue) && event.key != "Backspace") {
-            event.preventDefault();
-            error.className = 'text-red-500 text-xs';
-            error.innerHTML = 'only press backspace';
-        }
-    });
+    //     if (/[a-zA-Z]/.test(disValue) && event.key != "Backspace") {
+    //         // Block all keys if alphabets are typed
+    //         event.preventDefault();
+    //         error.className = 'text-red-500 text-xs';
+    //         error.innerHTML = 'only press backspace';
+    //     } else if (/[!@#$^&*()_+}{|":?><';\/.,<>=-]/.test(disValue) && event.key != "Backspace") {
+    //         event.preventDefault();
+    //         error.className = 'text-red-500 text-xs';
+    //         error.innerHTML = 'only press backspace';
+    //     }
+    // });
+
+    document.getElementById('rec-amount-value').addEventListener('input', (event) => {
+        let recValue = event.target.value;
+        let recError = document.getElementById('rec-error');
+        let netAmountValue = document.getElementById('net-amount-value');
+        let balAmountValue = document.getElementById('bal-amount-value');
+        // if(recValue >= netAmountValue.value){
+        //     recError.className = 'text-red-500 text-xs';
+        //     recError.innerHTML = 'Invalid Value';
+        //     return
+        // }
+
+        let res = netAmountValue.value - recValue;
+        balAmountValue.value = res;
+        balAmount.value = res;
+        // console.log(balAmount);
+    })
 </script>
 
 
