@@ -41,15 +41,15 @@
                                                 <div class="space-y-2">
                                                     <div class="flex justify-between">
                                                         <h6 class="flex-1">Patient:</h6>
-                                                        <h6 class="flex-1">Fasi</h6>
+                                                        <h6 class="flex-1">{{ $patient_info->name}}</h6>
                                                     </div>
                                                     <div class="flex justify-between">
                                                         <h6 class="flex-1">Age:</h6>
-                                                        <h6 class="flex-1">30</h6>
+                                                        <h6 class="flex-1">{{ $patient_info->age }}</h6>
                                                     </div>
                                                     <div class="flex justify-between">
                                                         <h6 class="flex-1">Ref By:</h6>
-                                                        <h6 class="flex-1 w-32">Dr.Ahmed </h6>
+                                                        <h6 class="flex-1 w-32 first-letter:capitalize">{{ $ref_by->name }}</h6>
                                                     </div>
                                                 </div>
                                             </div>
@@ -68,36 +68,41 @@
                                                 <tr>
                                                     <th>Services</th>
                                                     <th>Rate</th>
+                                                    <th>Quantity</th>
                                                     <th>Amount</th>
                                                 </tr>
                                             </thead>
                                             <tbody>
                                                 @foreach($selectedValues as $selectedValue)
                                                 <tr>
-                                                    <td>{{ $selectedValue->name }}</td>
-                                                    <td class="text-center">{{ $selectedValue->price }}</td>
-                                                    <td class="text-center">{{ $selectedValue->price }}</td>
+                                                    <td>{{ $selectedValue->test_name }}</td>
+                                                    @php
+                                                    $per_test = $selectedValue->test_price / $selectedValue->quantity;
+                                                    @endphp
+                                                    <td class="text-center">{{ Str::limit($per_test,5) }}</td>
+                                                    <td class="text-center">{{ $selectedValue->quantity }}</td>
+                                                    <td class="text-center">{{ $selectedValue->test_price }}</td>
                                                 </tr>
                                                 @endforeach
                                                 <tr>
-                                                    <td class="font-bold text-center h-2" colspan="2">Total Amount</td>
-                                                    <td class="font-bold text-center">1350</td>
+                                                    <td class="font-bold text-center h-2" colspan="3">Total Amount</td>
+                                                    <td class="font-bold text-center">{{ $patient_info->total_amount}}</td>
                                                 </tr>
                                                 <tr>
-                                                    <td class="font-bold text-center h-2" colspan="2">Discount Amount</td>
-                                                    <td class="font-bold text-center">1350</td>
+                                                    <td class="font-bold text-center h-2" colspan="3">Discount Amount</td>
+                                                    <td class="font-bold text-center">{{ $patient_info->dis_amount.' '.$patient_info->dis_type}}</td>
                                                 </tr>
                                                 <tr>
-                                                    <td class="font-bold text-center h-5" colspan="2">Net Amount</td>
-                                                    <td class="font-bold text-center">1350</td>
+                                                    <td class="font-bold text-center h-5" colspan="3">Net Amount</td>
+                                                    <td class="font-bold text-center">{{$patient_info->net_amount}}</td>
                                                 </tr>
                                                 <tr>
-                                                    <td class="font-bold text-center h-5" colspan="2">Recevied Amount</td>
-                                                    <td class="font-bold text-center">1350</td>
+                                                    <td class="font-bold text-center h-5" colspan="3">Recevied Amount</td>
+                                                    <td class="font-bold text-center">{{$patient_info->recevied_amount}}</td>
                                                 </tr>
                                                 <tr>
-                                                    <td class="font-bold text-center h-5" colspan="2">Balance Amount</td>
-                                                    <td class="font-bold text-center">1350</td>
+                                                    <td class="font-bold text-center h-5" colspan="3">Balance Amount</td>
+                                                    <td class="font-bold text-center">{{$patient_info->balance_amount}}</td>
                                                 </tr>
                                             </tbody>
                                         </table>

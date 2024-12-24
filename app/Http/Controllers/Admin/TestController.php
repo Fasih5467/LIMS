@@ -125,7 +125,7 @@ class TestController extends Controller
             if ($value != 'undefined' && $value != null) {
                 TestFormat::where('id', $value)->delete();
             }
-            dd($deletedValues);
+            // dd($deletedValues);
         }
 
 
@@ -139,6 +139,7 @@ class TestController extends Controller
                         'type' => $item['type'],
                         'unit' => $item['unit'],
                         'value' => $item['value'],
+                        'order' => $item['order'],
                     ]);
             } else {
                 // New Entry
@@ -148,6 +149,7 @@ class TestController extends Controller
                 $add_format['type'] = $item['type'];
                 $add_format['unit'] = $item['unit'];
                 $add_format['value'] = $item['value'];
+                $add_format['order'] = $item['order'];
                 $add_format->save();
             }
         }

@@ -45,7 +45,6 @@ class PatientController extends Controller
 
     public function store(Request $request)
     {
-
         // dd($request);
         $request->validate([
             'contact' => 'required|min:11|max:13',
@@ -90,49 +89,53 @@ class PatientController extends Controller
                 $patientId = $patient->id;
             }
 
-
-            // dd($newPatientId);
-            if ($request->selectedTests != null) {
-
-                // Patient Pay Records
-                $patient_pay = new PatientPayRecord;
-                $patient_pay->patient_id = $patientId;
-                $patient_pay->total_amount = $request->totAmount;
-                $patient_pay->net_amount = $request->netAmount;
-                $patient_pay->dis_amount = $request->disAmount;
-                $patient_pay->dis_type = $request->dis_type;
-                $patient_pay->recevied_amount = $request->recAmount;
-                $patient_pay->balance_amount = $request->balAmount;
-                $patient_pay->save();
-
-                foreach ($request->selectedTests as $selectedTest) {
-                    $patient_record = new PatientRecord;
-                    $patient_record->patient_id = $patientId;
-                    $patient_record->test_id = $selectedTest;
-                    $patient_record->ref_by_id = $request->refBy;
-                    $patient_record->save();
-                }
-                $limit = count($request->selectedTests);
-                // $selectedValues = [];
-                // foreach ($request->selectedTests as $id) {
-                //     $result = LabTest::select('id', 'name', 'price')->where('id', $id)->first();
-                //     array_push($selectedValues, $result);
-                // };
-                $selectedValues = PatientRecord::join('lab_tests as lt', 'patient_records.test_id', '=', 'lt.id')
-                    ->select('lt.*', 'patient_records.*')
-                    ->where('patient_records.patient_id', $patientId)
-                    ->orderBy('patient_records.id', 'desc')
-                    ->limit($limit)
-                    ->get();
-                // dd($record);
-                $patient_info = Patient::join('patient_pay_records as ppr','patients.id','=','ppr.patient_id')
-                ->select('ppr.id as ppr_id','ppr.*','patients.*')->where('ppr.patient_id',$patientId)->orderByDesc('ppr.id')->first();
-                dd($patient_info);
-                $array = $request;
-                return view('admin.patient.slip', compact('array', 'selectedValues'));
+            if ($request->selectedTests == null) {
+                return redirect('/patient/list');
             }
 
-            return redirect('/patient/list');
+
+            // Patient Pay Records
+            $patient_pay = new PatientPayRecord;
+            $patient_pay->patient_id = $patientId;
+            $patient_pay->total_amount = $request->totalAmount;
+            $patient_pay->net_amount = $request->netAmount;
+            $patient_pay->dis_amount = $request->disAmount;
+            $patient_pay->dis_type = $request->dis_type;
+            $patient_pay->recevied_amount = $request->recAmount;
+            $patient_pay->balance_amount = $request->balAmount;
+            $patient_pay->save();
+
+            foreach ($request->selectedTests as $index => $selectedTest) {
+                $patient_record = new PatientRecord;
+                $patient_record->patient_id = $patientId;
+                $patient_record->test_id = $selectedTest;
+                $patient_record->test_price = $request->price[$index] ?? null;
+                $patient_record->test_name = $request->test_name[$index] ?? null;
+                $patient_record->quantity = $request->quantity[$index] ?? 1;
+                $patient_record->ref_by_id =  is_numeric($request->refBy) ? $request->refBy : null;
+                $patient_record->save();
+            }
+            $limit = count($request->selectedTests);
+
+            // $selectedValues = PatientRecord::join('lab_tests as lt', 'patient_records.test_id', '=', 'lt.id')
+            //     ->select('lt.*', 'patient_records.*')
+            //     ->where('patient_records.patient_id', $patientId)
+            //     ->orderBy('patient_records.id', 'desc')
+            //     ->limit($limit)
+            //     ->get();
+            $selectedValues= PatientRecord::where('patient_id',$patientId)
+                             ->orderBy('id','desc')
+                             ->limit($limit)
+                             ->get();
+    //   dd($selectedValues);
+            // Ref By 
+            $id = $selectedValues[0]->ref_by_id;
+            $ref_by = Doctor::where('id', $id)->first();
+
+            $patient_info = Patient::join('patient_pay_records as ppr', 'patients.id', '=', 'ppr.patient_id')
+                ->select('ppr.id as ppr_id', 'ppr.*', 'patients.*')->where('ppr.patient_id', $patientId)->orderByDesc('ppr.id')->first();
+
+            return view('admin.patient.slip', compact('ref_by', 'selectedValues', 'patient_info'));
         }
 
         // dd($request);
@@ -230,40 +233,40 @@ class PatientController extends Controller
         }
         $patient_id = $patient_record->patient_id;
         $patient_test_id = $patient_record->test_id;
-        
-        
+
+
         $data['test_result'] = TestFormat::leftJoin('result as r', function ($join) use ($patient_id, $id) {
             $join->on('test_format.id', '=', 'r.test_format_id')
-                 ->where('r.patient_id', $patient_id)
-                 ->where('r.patient_record_id', $id); 
+                ->where('r.patient_id', $patient_id)
+                ->where('r.patient_record_id', $id);
         })
-        ->where('test_format.test_id',  $patient_test_id)
-        ->select('test_format.id', 'test_format.key', 'test_format.unit', 'test_format.value', 'test_format.type', 'r.result')
-        ->orderBy('test_format.id', 'asc')
-        ->get();
+            ->where('test_format.test_id',  $patient_test_id)
+            ->select('test_format.id', 'test_format.key', 'test_format.unit', 'test_format.value', 'test_format.type', 'r.result')
+            ->orderBy('test_format.id', 'asc')
+            ->get();
 
 
-           
+
         $data['patient_info'] = \DB::table('patient_records as pr')
-        ->join('patients as p', 'pr.patient_id', '=', 'p.id')
-        ->join('lab_tests as lt', 'pr.test_id', '=', 'lt.id')
-        ->join('lab_test_categories as ltc', 'lt.category_id', '=', 'ltc.id')
-        ->join('doctors as d', 'd.id', '=', 'pr.ref_by_id')
-        ->select('p.name as patient_name', 'lt.name as lab_test_name', 'ltc.name as category_name','p.*','d.name as doctor_name')
-        ->where('pr.patient_id', $patient_id)
-        ->where('pr.test_id', $patient_test_id)
-        ->where('pr.id', $id)
-        ->first();
-            // dd($data['patient_info']);
+            ->join('patients as p', 'pr.patient_id', '=', 'p.id')
+            ->join('lab_tests as lt', 'pr.test_id', '=', 'lt.id')
+            ->join('lab_test_categories as ltc', 'lt.category_id', '=', 'ltc.id')
+            ->join('doctors as d', 'd.id', '=', 'pr.ref_by_id')
+            ->select('p.name as patient_name', 'lt.name as lab_test_name', 'ltc.name as category_name', 'p.*', 'd.name as doctor_name')
+            ->where('pr.patient_id', $patient_id)
+            ->where('pr.test_id', $patient_test_id)
+            ->where('pr.id', $id)
+            ->first();
+        // dd($data['patient_info']);
 
         if (empty($data['test_result'])) {
             return redirect()->back();
         }
 
-        if(!$data['patient_info']){
+        if (!$data['patient_info']) {
             return redirect()->back();
         }
-        
+
         $pdf = $this->generatePdfFormat($data);
         $pdfContent = $pdf->output();
         return response($pdfContent, 200)->header('Content-Type', 'application/pdf');

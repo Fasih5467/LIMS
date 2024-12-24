@@ -19,6 +19,29 @@
         font-size: 10px;
         cursor: pointer;
     }
+
+
+    /* Select2 main container height */
+    .select2-container .select2-selection {
+        height: 45px;
+        /* Increase height */
+        line-height: 50px;
+        /* Align text vertically */
+    }
+
+    /* Adjust the dropdown arrow position */
+    .select2-container .select2-selection__arrow {
+        height: 50px;
+        top: 50%;
+        /* Vertically align the arrow */
+        transform: translateY(-50%);
+    }
+
+    /* Adjust placeholder or text alignment */
+    .select2-container .select2-selection__rendered {
+        line-height: 50px;
+        /* Align placeholder text */
+    }
 </style>
 <!-- Content start -->
 <main class="h-full">
@@ -158,16 +181,39 @@
                                             @endforeach
                                         </select>
                                     </div>
-                                    <div class="form-item vertical">
-                                        <label class="form-label mb-2">Select Test</label>
-                                        <select class="js-example-basic-multiple w-[100%]" id="dropdown" name="selectedTests[]" multiple="multiple">
+                                    <div class="grid grid-cols-2 md:grid-cols-2 gap-4">
+                                        <div class="col-span-1">
+                                            <div class="form-item vertical">
+                                                <label class="form-label mb-2">Select Test</label>
+                                                <select class="input" id="select-test">
 
-                                        </select>
+                                                </select>
+                                            </div>
+                                        </div>
+                                        <div class="col-span-1">
+                                            <div style="margin-top:30px">
+                                                <button class="btn btn-solid mt-20" onclick="addTest(event)">Add</button>
+                                            </div>
+                                        </div>
                                     </div>
+                                    <table class="table-default table-hover table-compact">
+                                        <thead>
+                                            <tr>
+                                                <th>Test</th>
+                                                <th>Quantity</th>
+                                                <th>Price</th>
+                                                <th></th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="show-test">
+
+                                        </tbody>
+                                    </table>
+
                                     <!-- Hiiden Input -->
                                     <input type="hidden" name="id" id="patient-id" />
                                     <!-- Amount Manage -->
-                                    <input type="hidden" name="totAmount" id="total-amount" />
+                                    <input type="hidden" name="totalAmount" id="total-amount" />
                                     <input type="hidden" name="netAmount" id="net-amount" />
                                     <input type="hidden" name="balAmount" id="bal-amount" />
 
@@ -176,23 +222,19 @@
                         </div>
                         <div class="lg:col-span-1 card adaptable-card !border-b pb-6  rounded-br-none rounded-bl-none">
                             <table class="table-default table" style="padding: 0px;">
-                                <thead>
+                                <!-- <thead>
                                     <tr>
                                         <th class="w-[250px]">Selected Test</th>
                                         <th>Price</th>
                                     </tr>
-                                </thead>
-                                <tbody id="test-done">
-
-                                </tbody>
-                                <tfoot>
+                                </thead> -->
+                                <tbody>
                                     <tr>
-                                        <td class="font-bold">Total Amount</td>
+                                        <td class="font-bold w-[250px]">Total Amount</td>
                                         <td>
                                             <input
                                                 class="input h-6 p-2"
                                                 type="number"
-                                                name="totalAmount"
                                                 autocomplete="off"
                                                 id="total-amount-value"
                                                 disabled
@@ -261,7 +303,7 @@
                                         </td>
                                     </tr>
 
-                                </tfoot>
+                                </tbody>
                             </table>
                         </div>
                     </div>
@@ -340,52 +382,96 @@
     });
 
     $(document).ready(function() {
-
-        $('.js-example-basic-multiple').html(options).select2();
-
-        $('#dropdown').on('change', function() {
-
-            collectSelectItems = [];
-            const selectedValues = $(this).val();
-            selectedValues.forEach(selectedValue => {
-                let value = tests.find(test => test.id == selectedValue);
-                collectSelectItems.push(value);
-            })
-
-            // Show Selected Test
-            showSelectedTests();
+        //change selectboxes to selectize mode to be searchable
+        $("#select-test").each(function() {
+            const $this = $(this);
+            if (!$this.hasClass('input')) {
+                $this.addClass('input');
+            }
+            $this.html(options);
+            // $("#select-test").select2();
+            $this.select2();
         });
     });
 
+    function addTest(e) {
+        e.preventDefault();
+
+        // Use querySelector for unusual ID with '='
+        let test_id = document.querySelector('[id="select-test"]').value;
+        let value = tests.find(test => test.id == test_id);
+        let check = collectSelectItems.find(item => item.id == test_id);
+        value.quantity = 1;
+        value.showprice = value.price;
+        if (!check) {
+            collectSelectItems.push(value);
+        }
+
+        showTest();
+    }
+
+    // Manage Amount Id's
     let totalAmount = document.getElementById('total-amount');
     let netAmount = document.getElementById('net-amount');
     let balAmount = document.getElementById('bal-amount');
+    let totalAmountValue = document.getElementById('total-amount-value');
+    let netAmountValue = document.getElementById('net-amount-value')
+    let disAmountValue = document.getElementById('dis-amount-value');
     let balAmountValue = document.getElementById('bal-amount-value');
+    let recAmountValue = document.getElementById('rec-amount-value');
 
-    function showSelectedTests() {
+    function showTest() {
+        let showValue = document.getElementById('show-test');
 
-        let testData = document.getElementById('test-data')
-        let testDone = document.getElementById('test-done');
-        let totalAmountValue = document.getElementById('total-amount-value');
-        let netAmountValue = document.getElementById('net-amount-value')
-        let disAmountValue = document.getElementById('dis-amount-value');
-        let balAmountValue = document.getElementById('bal-amount-value');
-        let recAmountValue = document.getElementById('rec-amount-value');
 
-        testDone.innerHTML = '';
         let price = 0;
         let row = '';
-        collectSelectItems.forEach((item, index) => {
-            row += `<tr>
-                        <td>${item.name}</td>
-                        <td>${item.price}</td>
-                    </tr>`;
 
-            price += item.price
+        showValue.innerHTML = '';
+        collectSelectItems.forEach((test, index) => {
+            showValue.innerHTML += `  <tr>
+                                                <td class='w-[250px]'>${test.name}</td>
+                                                <td>
+                                                    <input
+                                                        class="w-[50px] input h-6 p-2 "
+                                                        type="number"
+                                                        name="quantity[]"
+                                                        autocomplete="off"
+                                                        oninput = quantity(${index},this) 
+                                                        onchange = 'showTest()'
+                                                        value = '${test.quantity}' 
+                                                        placeholder="Rs" />
+
+                                                         <input type= 'hidden' name = 'selectedTests[]' value='${test.id}' />
+                                                          <input type= 'hidden' name = 'test_name[]' value='${test.name}' />
+                                                </td>
+                                                <td class='w-[250px]'>
+                                                     <input
+                                                        class="input h-6 p-2 w-12 price-${index}"
+                                                        type="number"
+                                                        name="price[]"
+                                                        autocomplete="off"
+                                                        id='show-price-${index}'
+                                                        oninput = showPrice(${index},this) 
+                                                        onchange = 'showTest()'
+                                                        value = '${test.showprice}' 
+                                                        placeholder="Rs" />
+                                                </td>
+                                                <td>
+                                                    <span class="cursor-pointer hover:text-red-500">
+                                                        <button onclick= 'deleted(${index})'>
+                                                            <svg stroke="currentColor" fill="none" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true" height="1em" width="1em" xmlns="http://www.w3.org/2000/svg">
+                                                                <path stroke-linecap="round" stroke-linejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
+                                                            </svg>
+                                                        </a>
+                                                    </span>
+                                                </td>
+                                            </tr>`
+
+            price += test.showprice
         })
 
         totalAmountValue.value = price;
-        testDone.innerHTML += row;
         netAmountValue.value = price;
         balAmountValue.value = price;
         recAmountValue.value = 0;
@@ -394,14 +480,40 @@
         totalAmount.value = price;
         netAmount.value = price;
         balAmount.value = price;
-        console.log(netAmount.value);
+
     }
 
+    function quantity(index, element) {
+
+        // console.log(element.value)
+        console.log(collectSelectItems[index].price)
+        console.log('index : ' + index)
+        collectSelectItems[index].quantity = element.value
+
+        collectSelectItems[index].showprice =  element.value*collectSelectItems[index].price;
+
+        // Update only the price cell without losing focus
+        document.getElementById(`show-price-${index}`).value = element.value*collectSelectItems[index].price;
+
+
+    }
+
+    function showPrice(index, element) {
+
+        console.log(typeof(element.value))
+
+        collectSelectItems[index].showprice =  parseInt(element.value);
+       
+
+    }
+
+    function deleted(index) {
+        collectSelectItems.splice(index, 1)
+        showTest()
+    }
     document.getElementById('select-dis').addEventListener('change', function() {
 
-        let totalAmountValue = document.getElementById('total-amount-value')
-        let netAmountValue = document.getElementById('net-amount-value')
-        let disAmountValue = document.getElementById('dis-amount-value')
+
         let disValue = disAmountValue.value;
         let selectedValue = this.value;
 
@@ -425,10 +537,6 @@
     document.getElementById('dis-amount-value').addEventListener('input', (event) => {
         let disValue = event.target.value;
         let disError = document.getElementById('dis-error')
-        let totalAmountValue = document.getElementById('total-amount-value')
-        let recAmountValue = document.getElementById('rec-amount-value')
-        let netAmountValue = document.getElementById('net-amount-value')
-        let disAmountValue = document.getElementById('dis-amount-value')
         let selectDis = document.getElementById('select-dis');
         disError.innerHTML = '';
         recAmountValue.value = 0;
@@ -454,62 +562,13 @@
             netAmount.value = res;
             balAmount.value = res;
         }
-
-        // recAmount.value = 0;
-        // balAmount.innerHTML = 0;
-        // netAmountValue.innerHTML = totalAmountValue.value;
-
-        //     error.className = 'hidden';
-        //     // if (/[a-zA-Z]/.test(disValue) || disValue[0] == '%' || disValue[3] == '%' || disValue[4] == '%') {
-        //     //     error.className = 'text-red-500 text-xs';
-        //     //     error.innerHTML = 'Invalid Value';
-        //     // } else 
-        //     if (disValue[1] == '%' || disValue[2] == '%' && disValue.length == 3) {
-        //         if (disValue[1] == '%') {
-        //             let res = totalAmountValue.value - totalAmountValue.value * (disValue[0] / 100);
-        //             netAmount.innerHTML = res
-        //             netAmountValue.value = res
-        //         } else if (disValue[2] == '%') {
-        //             let res = totalAmountValue.value - totalAmountValue.value * (disValue.slice(0, 2) / 100);
-        //             netAmount.innerHTML = res
-        //             netAmountValue.value = res
-        //         }
-        //         // console.log(netAmountValue-disValue)
-        //     } else if (disValue.length <= 5 && /[0-9]/.test(disValue)) {
-        //         let res = totalAmountValue.value - disValue;
-        //         netAmount.innerHTML = res
-        //         netAmountValue.value = res
-        //     } else if (disValue.length >= 5) {
-        //         error.className = 'text-red-500 text-xs';
-        //         error.innerHTML = 'Max 5 character';
-        //     } else if (/[!@#$^&*()_+}{|":?><';\/.,<>=-]/.test(disValue)) {
-        //         error.className = 'text-red-500 text-xs';
-        //         error.innerHTML = 'Only Numbers'
-        //     }
     })
 
-    // Event listener to block typing for alphabets but allow backspace
-    // document.getElementById('dis-amount').addEventListener('keydown', function(event) {
-    //     const disValue = this.value;
-    //     let error = document.getElementById('dis-error')
 
-    //     if (/[a-zA-Z]/.test(disValue) && event.key != "Backspace") {
-    //         // Block all keys if alphabets are typed
-    //         event.preventDefault();
-    //         error.className = 'text-red-500 text-xs';
-    //         error.innerHTML = 'only press backspace';
-    //     } else if (/[!@#$^&*()_+}{|":?><';\/.,<>=-]/.test(disValue) && event.key != "Backspace") {
-    //         event.preventDefault();
-    //         error.className = 'text-red-500 text-xs';
-    //         error.innerHTML = 'only press backspace';
-    //     }
-    // });
 
     document.getElementById('rec-amount-value').addEventListener('input', (event) => {
         let recValue = event.target.value;
         let recError = document.getElementById('rec-error');
-        let netAmountValue = document.getElementById('net-amount-value');
-        let balAmountValue = document.getElementById('bal-amount-value');
         // if(recValue >= netAmountValue.value){
         //     recError.className = 'text-red-500 text-xs';
         //     recError.innerHTML = 'Invalid Value';
@@ -519,7 +578,7 @@
         let res = netAmountValue.value - recValue;
         balAmountValue.value = res;
         balAmount.value = res;
-        // console.log(balAmount);
+
     })
 </script>
 

@@ -128,6 +128,7 @@
                 let key = row.querySelector("input[name^='items'][name$='[key]']")?.value || "";
                 let unit = row.querySelector("input[name^='items'][name$='[unit]']")?.value || "";
                 let value = row.querySelector("input[name^='items'][name$='[value]']")?.value || "";
+                let order = row.querySelector("input[name^='items'][name$='[order]']")?.value || "";
                 let type = row.querySelector("select[name^='items'][name$='[type]']")?.value || ""; // For dropdowns
                 let id = row.querySelector("input[name^='items'][name$='[id]']")?.value || "";
 
@@ -139,6 +140,7 @@
                     unit: unit,
                     type: type,
                     value: value,
+                    order: order,
 
                 };
 
@@ -174,8 +176,8 @@
         const formData = document.getElementById("form-data");
         formData.innerHTML = "";
         array.forEach(function(item, index) {
-            formData.innerHTML += ` <div class="grid grid-cols-6 lg:grid-cols-6 gap-2">
-                                    <div class="lg:col-span-1">
+            formData.innerHTML += ` <div class="grid grid-cols-12 lg:grid-cols-12 gap-2">
+                                    <div class="lg:col-span-2">
                                         <div class="form-item vertical">
                                             <label class="form-label mb-2">Key</label>
                                             <div>
@@ -189,7 +191,7 @@
                                             </div>
                                         </div>
                                     </div>
-                                    <div class="lg:col-span-1">
+                                    <div class="lg:col-span-2">
                                         <div class="form-item vertical">
                                             <label class="form-label mb-2">Type</label>
                                              <div>
@@ -202,7 +204,7 @@
                                         </div>
                                     </div>
 
-                                    <div class="lg:col-span-1">
+                                    <div class="lg:col-span-2">
                                         <div class="form-item vertical">
                                             <label class="form-label mb-2">Unit</label>
                                             <div>
@@ -216,7 +218,7 @@
                                             </div>
                                         </div>
                                     </div>
-                                    <div class="lg:col-span-2">
+                                    <div class="lg:col-span-3">
                                         <div class="form-item vertical">
                                             <label class="form-label mb-2">Value</label>
                                             <input
@@ -227,6 +229,18 @@
                                                 placeholder="Normal Range"
                                                 value = '${item.value === undefined ? "" : item.value}' >
                                         </div>
+                                    </div>
+                                    <div class="lg:col-span-1">
+                                          <div class="form-item vertical">
+                                            <label class="form-label mb-2">Order</label>
+                                            <input
+                                                class="input"
+                                                type="number"
+                                                name="items[${index}][order]"
+                                                autocomplete="off"
+                                                placeholder="placement"
+                                                value = '${item.order === undefined ? "" : item.order}' >
+                                    </div>
                                          <div>
                                                 <input
                                                     class="input"
@@ -237,7 +251,7 @@
                                                     value='${item.id === undefined ? "" : item.id}' />
                                             </div>
                                     </div>
-                                    <div class="lg:col-span-1">
+                                    <div class="lg:col-span-2">
                                         <label class="form-label mb-2 invisible">Add</label>
                                          <button class="btn btn-plan" type="button" onclick="deletedValue(${index})">
                             <span class="flex items-center justify-center text-red-600">
