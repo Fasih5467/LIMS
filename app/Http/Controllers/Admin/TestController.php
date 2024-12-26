@@ -98,15 +98,18 @@ class TestController extends Controller
 
     public function createFormat($id)
     {
+        
         // dd($id);
         $test_id = $id;
+        $lab_test = LabTest::where('id',$test_id)->first();
+        // dd($lab_test);
         $test_formats = TestFormat::where('test_id', $id)->get();
         if ($test_formats->Count() > 0) {
             // dd($test_formats);
-            return view('admin.lab-tests.test-format', compact('test_formats', 'test_id'));
+            return view('admin.lab-tests.test-format', compact('lab_test','test_formats', 'test_id'));
         } else {
             // dd('not found');
-            return view('admin.lab-tests.test-format', compact('test_id'));
+            return view('admin.lab-tests.test-format', compact('lab_test','test_id'));
         }
     }
 

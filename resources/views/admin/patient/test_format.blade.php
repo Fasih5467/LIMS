@@ -23,7 +23,7 @@
                                     <input 
                                         type="text" 
                                         placeholder=""
-                                        class="w-1/2 p-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-400"
+                                        class="input m-2 w-1/2 p-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-400"
                                         value="{{$format->key}}"
                                         disabled
                                     />
@@ -35,7 +35,7 @@
                                     <input 
                                         type="text" 
                                         placeholder="Enter Result"
-                                        class="w-1/2 p-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-400"
+                                        class="input m-2 w-1/2 p-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-400"
                                         name="results[]" 
                                     />
 

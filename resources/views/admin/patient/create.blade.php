@@ -332,46 +332,55 @@
 @if(session('patients'))
 <script>
     // Get Previous Patients
-    let patients = <?php echo $patients ?>;
+    var patients = <?php echo $patients ?>;
+</script>
+@else
+<script>
+    // Get Previous Patients
+    var patients = null
 </script>
 @endif
 
-<script>
-    // Previous patients
-    document.getElementById('prePatient').addEventListener('change', function() {
-
-        let id = document.getElementById('patient-id')
-        let newPatient = document.getElementById('newPatient')
-        let age = document.getElementById('age')
-        let maleRadio = document.getElementById('maleRadio')
-        let femaleRadio = document.getElementById('femaleRadio')
-        if (this.value == 'new') {
-            document.getElementById('newPatient').type = 'text'
-            this.className += ' hidden';
-            newPatient.value = '';
-            age.value = '';
-            maleRadio.checked = false;
-            femaleRadio.checked = false;
-        } else {
-            let selectValue = patients.find(patient => patient.id == this.value);
-            age.value = selectValue['age'];
-            newPatient.value = selectValue['name'];
-            id.value = selectValue['id'];
-
-            if (selectValue['gender'] === 'male') {
-                maleRadio.checked = true;
-            } else if (selectValue['gender'] === 'female') {
-                femaleRadio.checked = true;
-            }
-        }
-    })
-</script>
 
 @endsection
 
 @section('scripts')
 
+
 <script>
+    console.log(patients)
+    // Section Previous Patients
+    if (patients !== null) {
+        document.getElementById('prePatient').addEventListener('change', function() {
+
+            let id = document.getElementById('patient-id')
+            let newPatient = document.getElementById('newPatient')
+            let age = document.getElementById('age')
+            let maleRadio = document.getElementById('maleRadio')
+            let femaleRadio = document.getElementById('femaleRadio')
+            if (this.value == 'new') {
+                document.getElementById('newPatient').type = 'text'
+                this.className += ' hidden';
+                newPatient.value = '';
+                age.value = '';
+                maleRadio.checked = false;
+                femaleRadio.checked = false;
+            } else {
+                let selectValue = patients.find(patient => patient.id == this.value);
+                age.value = selectValue['age'];
+                newPatient.value = selectValue['name'];
+                id.value = selectValue['id'];
+
+                if (selectValue['gender'] === 'male') {
+                    maleRadio.checked = true;
+                } else if (selectValue['gender'] === 'female') {
+                    femaleRadio.checked = true;
+                }
+            }
+        })
+    }
+
+
     // Section Lab Tests
     let tests = <?php echo $labTests; ?>;
     let collectSelectItems = [];
@@ -422,7 +431,6 @@
 
     function showTest() {
         let showValue = document.getElementById('show-test');
-
 
         let price = 0;
         let row = '';
@@ -484,16 +492,14 @@
     }
 
     function quantity(index, element) {
-
-        // console.log(element.value)
         console.log(collectSelectItems[index].price)
         console.log('index : ' + index)
         collectSelectItems[index].quantity = element.value
 
-        collectSelectItems[index].showprice =  element.value*collectSelectItems[index].price;
+        collectSelectItems[index].showprice = element.value * collectSelectItems[index].price;
 
         // Update only the price cell without losing focus
-        document.getElementById(`show-price-${index}`).value = element.value*collectSelectItems[index].price;
+        document.getElementById(`show-price-${index}`).value = element.value * collectSelectItems[index].price;
 
 
     }
@@ -502,8 +508,8 @@
 
         console.log(typeof(element.value))
 
-        collectSelectItems[index].showprice =  parseInt(element.value);
-       
+        collectSelectItems[index].showprice = parseInt(element.value);
+
 
     }
 
@@ -511,6 +517,7 @@
         collectSelectItems.splice(index, 1)
         showTest()
     }
+
     document.getElementById('select-dis').addEventListener('change', function() {
 
 

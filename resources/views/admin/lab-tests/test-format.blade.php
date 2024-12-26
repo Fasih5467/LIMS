@@ -13,7 +13,7 @@
                             <div class="card-body" id="form-container">
                                 <div class="grid grid-cols-2 lg:grid-cols-2 gap-2 mt-2">
                                     <div class="lg:col-span-1">
-                                        <h5>Test Format : CBC</h5>
+                                        <h5>Test Format : {{ $lab_test->name ?? ''}}</h5>
                                     </div>
                                     <div class="lg:col-span-1 text-right">
                                         <button class="btn btn-solid add-btn">ADD NEW</button>
