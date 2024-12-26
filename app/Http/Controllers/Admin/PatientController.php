@@ -26,8 +26,14 @@ class PatientController extends Controller
     {
         // $patients = Patient::Join('lab_tests as t','patients.test_id','=','t.id')
         // ->select('t.name as test_name','t.id as test_id','patients.*')->get();
-        $patients = Patient::get();
-        return view('admin.patient.list', compact('patients'));
+        // $patients = Patient::orderBy('id','desc')->get();
+
+        $tests = Patient::join('patient_records as pr', 'pr.patient_id', 'patients.id')
+        ->select('patients.id as p_id', 'patients.name as patient_name','pr.*')
+        ->orderBy('pr.id', 'desc')
+        ->get();
+        // dd($tests);
+        return view('admin.patient.list', compact('tests'));
     }
 
     public function create()
@@ -106,14 +112,17 @@ class PatientController extends Controller
             $patient_pay->save();
 
             foreach ($request->selectedTests as $index => $selectedTest) {
+
+                for($x= 0 ; $x < $request->quantity[$index] ; $x++){
                 $patient_record = new PatientRecord;
                 $patient_record->patient_id = $patientId;
                 $patient_record->test_id = $selectedTest;
                 $patient_record->test_price = $request->price[$index] ?? null;
                 $patient_record->test_name = $request->test_name[$index] ?? null;
-                $patient_record->quantity = $request->quantity[$index] ?? 1;
                 $patient_record->ref_by_id =  is_numeric($request->refBy) ? $request->refBy : null;
                 $patient_record->save();
+                }
+
             }
             $limit = count($request->selectedTests);
 

@@ -17,6 +17,7 @@ class TestController extends Controller
     {
         $labTests = LabTest::leftJoin('lab_test_categories as c', 'lab_tests.category_id', '=', 'c.id')
             ->select('c.name as category_name', 'lab_tests.*')
+            ->orderBy('lab_tests.id','desc')
             ->get();
         return view('admin.lab-tests.list', compact('labTests'));
     }

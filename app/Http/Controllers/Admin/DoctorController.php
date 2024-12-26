@@ -9,7 +9,7 @@ use Illuminate\Http\Request;
 class DoctorController extends Controller
 {
     public function index(){
-        $doctors = Doctor::get();
+        $doctors = Doctor::orderBy('id','desc')->get();
 
         return view('admin.doctor.list',compact('doctors'));
     }

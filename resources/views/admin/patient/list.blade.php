@@ -14,29 +14,49 @@
 						<table id="customers-data-table" class="table-default table-hover data-table">
 							<thead>
 								<tr>
+									<th>S.no</th>
 									<th>Name</th>
-									<th>Contact</th>
-									
+									<th>Test</th>
+									<th>Created</th>
+									<th>Test Generate</th>
+									<th>Status</th>
 									<th>Action</th>
 								</tr>
 							<tbody>
-								@foreach($patients as $patient)
+								@foreach($tests as $test)
 								<tr>
+									<td>{{ $test->id }}</td>
 									<td>
 										<div class="flex items-center">
-											<a class="hover:text-primary-600 ml-2 rtl:mr-2 font-semibold capitalize" href="">{{ $patient->name }}</a>
+											<a class="hover:text-primary-600 ml-2 rtl:mr-2 font-semibold capitalize" href="">{{ $test->patient_name }}</a>
 										</div>
 									</td>
-									<td>{{ $patient->contact }}</td>
+
+									<td>{{ $test->test_name }}</td>
+									<td>{{ $test->created_at }}</td>
+									<td>{{$test->is_result}}</td>
 									<td>
-										<div class="text-primary-600 cursor-pointer select-none font-semibold"><a href="{{url('/patient/tests/'. $patient->id)}}" >Show Tests</a></div>
-										<div class="flex items-center">{{ $patient->test_name }}</div>
+										<div class="flex items-center">
+											<span class="badge-dot bg-{{isset($test->status) && $test->status == 'recivied' ? 'emerald' : 'danger'}}-500"></span>
+											<span class="ml-2 rtl:mr-2 capitalize">{{isset($test->status) && $test->status == 'recivied' ? 'recivied' : 'pending'}}</span>
+										</div>
 									</td>
-									
-									
+									<td>
+
+										@if(isset($test->is_result) && $test->is_result == 'no')
+										<div class="text-primary-600 cursor-pointer select-none font-semibold">
+											<a href="{{url('/patient/test/result/'.$test->id)}}">Add Result</a>
+										</div>
+										@endif
+										@if(isset($test->is_result) && $test->is_result == 'yes')
+										<div class="text-primary-600 cursor-pointer select-none font-semibold">
+											<a href="{{url('/patient/generate_pdf/'.$test->id)}}">Generate Pdf</a>
+										</div>
+										@endif
+									</td>
 								</tr>
 								@endforeach
-								
+
 							</tbody>
 							</thead>
 						</table>

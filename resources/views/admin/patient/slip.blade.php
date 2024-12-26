@@ -41,7 +41,7 @@
                                                 <div class="space-y-2">
                                                     <div class="flex justify-between">
                                                         <h6 class="flex-1">Patient:</h6>
-                                                        <h6 class="flex-1">{{ $patient_info->name}}</h6>
+                                                        <h6 class="flex-1 capitalize">{{ $patient_info->name}}</h6>
                                                     </div>
                                                     <div class="flex justify-between">
                                                         <h6 class="flex-1">Age:</h6>
@@ -49,7 +49,7 @@
                                                     </div>
                                                     <div class="flex justify-between">
                                                         <h6 class="flex-1">Ref By:</h6>
-                                                        <h6 class="flex-1 w-32 first-letter:capitalize">{{ $ref_by->name }}</h6>
+                                                        <h6 class="flex-1 w-32 capitalize">{{ $ref_by->name }}</h6>
                                                     </div>
                                                 </div>
                                             </div>
