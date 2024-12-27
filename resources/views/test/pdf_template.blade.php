@@ -139,7 +139,7 @@
         <tr>
           <td>{{$result->key}}</td>
           <td>{{$result->result}}</td>
-		  <td>{{$result->unit}}</td>
+		      <td>{{$result->unit}}</td>
           <td>{{$result->value}}</td>
         </tr>
 		@endforeach
