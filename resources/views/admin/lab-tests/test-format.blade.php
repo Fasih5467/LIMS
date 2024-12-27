@@ -197,7 +197,7 @@
                                              <div>
                                                 <select class="input" name="items[${index}][type]" >
                                                     <option value="heading" ${item.type == 'heading'?'selected':''}>Heading</option>
-                                                    <option value="key" ${item.type == 'value'?'selected':''}>Key</option>
+                                                    <option value="key" ${item.type == 'key'?'selected':''}>Key</option>
                                                 </select>
                                             </div>
                                         </div>
