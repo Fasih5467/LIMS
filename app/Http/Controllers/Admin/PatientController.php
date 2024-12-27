@@ -117,9 +117,10 @@ class PatientController extends Controller
                     $patient_record = new PatientRecord;
                     $patient_record->patient_id = $patientId;
                     $patient_record->test_id = $selectedTest;
+                    $patient_record->is_result = 'no';
                     $patient_record->test_price = $request->price[$index] ?? null;
                     $patient_record->test_name = $request->test_name[$index] ?? null;
-                    $patient_record->quantity = $request->quantity[$index] ?? 1;
+                    $patient_record->quantity = 1;
                     $patient_record->ref_by_id =  is_numeric($request->refBy) ? $request->refBy : null;
                     $patient_record->save();
                 }
