@@ -47,7 +47,7 @@
 <main class="h-full">
     <div class="page-container relative h-full flex flex-auto flex-col px-4 sm:px-6 md:px-8 py-4 sm:py-6">
         <div class="container mx-auto" style="width:90%;">
-            <form action="{{url('patient/store')}}" method="post" enctype="multipart/form-data">
+            <form action="{{url('patient/slip')}}" method="post" enctype="multipart/form-data">
                 @csrf
                 <div class="form-container vertical">
                     <div class="grid grid-cols-1 lg:grid-cols-3 gap-4">
@@ -118,7 +118,7 @@
                                                 </div>
                                                 <div class="col-span-1">
                                                     <div style="margin-top:30px">
-                                                        <a href="{{url('patient/store')}}">
+                                                        <a href="{{url('patient/slip')}}">
                                                             <button class="btn btn-solid mt-20">Search</button>
                                                         </a>
                                                     </div>
@@ -184,7 +184,7 @@
                                     <div class="grid grid-cols-2 md:grid-cols-2 gap-4">
                                         <div class="col-span-1">
                                             <div class="form-item vertical">
-                                                <label class="form-label mb-2">Select Test</label>
+                                                <label class="form-label">Select Test</label>
                                                 <select class="input" id="select-test">
 
                                                 </select>
@@ -597,3 +597,4 @@
 <!-- Page js -->
 <script src="{{url('assets/js/pages/new-product.js')}}"></script>
 @endsection
+

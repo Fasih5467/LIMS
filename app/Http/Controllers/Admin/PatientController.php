@@ -11,6 +11,7 @@ use App\Models\PatientPayRecord;
 use App\Models\TestFormat;
 use App\Models\Result;
 use App\Models\LabTestCategory;
+use Illuminate\Support\Facades\DB;
 
 use Illuminate\Http\Request;
 use PDF;
@@ -29,9 +30,9 @@ class PatientController extends Controller
         // $patients = Patient::orderBy('id','desc')->get();
 
         $tests = Patient::join('patient_records as pr', 'pr.patient_id', 'patients.id')
-        ->select('patients.id as p_id', 'patients.name as patient_name','pr.*')
-        ->orderBy('pr.id', 'desc')
-        ->get();
+            ->select('patients.id as p_id', 'patients.name as patient_name', 'pr.*')
+            ->orderBy('pr.id', 'desc')
+            ->get();
         // dd($tests);
         return view('admin.patient.list', compact('tests'));
     }
@@ -61,12 +62,12 @@ class PatientController extends Controller
             // Check Patient Exist
             $patients = Patient::where('contact', $request->contact)->get();
             if ($patients->isEmpty()) {
-                return redirect('/patient/create')->with([
+                return redirect('/patient/')->with([
                     'not found' => 'Patient Not Found',
                     'contact' => $contact,
                 ]);
             }
-            return redirect('/patient/create')->with([
+            return redirect('/patient/')->with([
                 'patients' => $patients,
                 'contact' => $contact,
             ]);
@@ -105,39 +106,38 @@ class PatientController extends Controller
             $patient_pay->patient_id = $patientId;
             $patient_pay->total_amount = $request->totalAmount;
             $patient_pay->net_amount = $request->netAmount;
-            $patient_pay->dis_amount = $request->disAmount;
+            $patient_pay->dis_amount = $request->disAmount ?? null;
             $patient_pay->dis_type = $request->dis_type;
-            $patient_pay->recevied_amount = $request->recAmount;
-            $patient_pay->balance_amount = $request->balAmount;
+            $patient_pay->recevied_amount = $request->recAmount ?? null;
+            $patient_pay->balance_amount = $request->balAmount ?? null;
             $patient_pay->save();
 
             foreach ($request->selectedTests as $index => $selectedTest) {
-                for($x= 0 ; $x < $request->quantity[$index] ; $x++){
-                $patient_record = new PatientRecord;
-                $patient_record->patient_id = $patientId;
-                $patient_record->test_id = $selectedTest;
-                $patient_record->test_price = $request->price[$index] ?? null;
-                $patient_record->test_name = $request->test_name[$index] ?? null;
-                $patient_record->quantity = $request->quantity[$index] ?? 1;
-                $patient_record->ref_by_id =  is_numeric($request->refBy) ? $request->refBy : null;
-                $patient_record->save();
+                for ($x = 0; $x < $request->quantity[$index]; $x++) {
+                    $patient_record = new PatientRecord;
+                    $patient_record->patient_id = $patientId;
+                    $patient_record->test_id = $selectedTest;
+                    $patient_record->test_price = $request->price[$index] ?? null;
+                    $patient_record->test_name = $request->test_name[$index] ?? null;
+                    $patient_record->quantity = $request->quantity[$index] ?? 1;
+                    $patient_record->ref_by_id =  is_numeric($request->refBy) ? $request->refBy : null;
+                    $patient_record->save();
                 }
-
             }
             $limit = count($request->selectedTests);
 
-            // $selectedValues = PatientRecord::join('lab_tests as lt', 'patient_records.test_id', '=', 'lt.id')
-            //     ->select('lt.*', 'patient_records.*')
-            //     ->where('patient_records.patient_id', $patientId)
-            //     ->orderBy('patient_records.id', 'desc')
-            //     ->limit($limit)
-            //     ->get();
-            $selectedValues= PatientRecord::where('patient_id',$patientId)
-                             ->orderBy('id','desc')
-                             ->limit($limit)
-                             ->get();
-    //   dd($selectedValues);
-            // Ref By 
+            $selectedValues = DB::table('patient_records')
+                ->whereIn('id', function ($query) use ($patientId) {
+                    $query->selectRaw('MAX(id)')
+                        ->from('patient_records')
+                        ->where('patient_id', $patientId)
+                        ->groupBy('test_name');
+                })
+                ->orderBy('id', 'desc')
+                ->limit($limit)
+                ->get();
+
+           
             $id = $selectedValues[0]->ref_by_id;
             $ref_by = Doctor::where('id', $id)->first();
 

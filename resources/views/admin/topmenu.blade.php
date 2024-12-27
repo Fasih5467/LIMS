@@ -55,7 +55,7 @@
                     </a>
                 </li>
                 <li data-menu-item="decked-project-dashboard" class="menu-item">
-                    <a class="h-full w-full flex items-center" href="{{ url('/patient/create') }}">
+                    <a class="h-full w-full flex items-center" href="{{ url('/patient/') }}">
                         <span>Add New</span>
                     </a>
                 </li>

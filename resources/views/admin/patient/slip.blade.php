@@ -107,24 +107,6 @@
                                             </tbody>
                                         </table>
                                     </div>
-                                    <!-- <div class="overflow-x-auto" style="width:67%;margin-left:33%;">
-                                        <table class="table-default table-hover table-compact" style="width: 60%;">
-                                            <tbody>
-                                                <tr>
-                                                    <td class="font-bold text-left">Total Amount</td>
-                                                    <td class="font-bold text-right">1350</td>
-                                                </tr>
-                                                <tr>
-                                                    <td class="font-bold text-left">Discount Amount</td>
-                                                    <td class="font-bold text-right">350</td>
-                                                </tr>
-                                                <tr>
-                                                    <td class="font-bold text-left">Net Amount</td>
-                                                    <td class="font-bold text-right">1000</td>
-                                                </tr>
-                                            </tbody>
-                                        </table>
-                                    </div> -->
                                 </div>
                             </div>
                         </div>

@@ -58,9 +58,9 @@ Route::middleware([WebGuard::class])->prefix('/test')->group(function(){
 
 // Patients Route
 Route::middleware([WebGuard::class])->prefix('/patient')->group(function(){
+    Route::get('/',[PatientController::class,'create']);
     Route::get('/list',[PatientController::class,'index']);
-    Route::get('/create',[PatientController::class,'create']);
-    Route::post('/store',[PatientController::class,'store']);
+    Route::post('/slip',[PatientController::class,'store']);
     Route::get('/edit/{id}',[PatientController::class,'edit']);
     Route::post('/update',[PatientController::class,'update']);
     Route::get('/delete/{id}',[PatientController::class,'delete']);

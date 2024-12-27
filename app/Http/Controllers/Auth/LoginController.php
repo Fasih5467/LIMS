@@ -33,7 +33,7 @@ class LoginController extends Controller
             $user = Auth::User();
             $request->session()->regenerate();
             if ($user->user_type == 1) {
-                return redirect()->route('admin.dashboard');
+                return redirect('/patient/');
             } else if ($user->user_type == 2) {
                 return route('lead.list');
             }
