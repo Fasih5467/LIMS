@@ -252,7 +252,7 @@ class PatientController extends Controller
         })
             ->where('test_format.test_id',  $patient_test_id)
             ->select('test_format.id', 'test_format.key', 'test_format.unit', 'test_format.value', 'test_format.type', 'r.result')
-            ->orderBy('test_format.id', 'asc')
+            ->orderBy('test_format.order', 'asc')
             ->get();
 
 
