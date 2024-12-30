@@ -27,17 +27,18 @@ class LoginController extends Controller
 
 
         if (count($user) == 1) {
-            return redirect()->back()->withErrors(['error' => 'Please Contact Support...!']);
+            return redirect()->back()->with(['error' => 'Please Contact Support...!']);
         }
         if (Auth::attempt($credentials)) {
             $user = Auth::User();
             $request->session()->regenerate();
             if ($user->user_type == 1) {
-                return redirect('/patient/');
+                return redirect('/');
             } else if ($user->user_type == 2) {
                 return route('lead.list');
             }
         } else {
+            return redirect()->back()->with(['error' => 'Please Invalid Information...!']);  
         }
     }
 }

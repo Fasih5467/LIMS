@@ -49,7 +49,7 @@
                                                     </div>
                                                     <div class="flex justify-between">
                                                         <h6 class="flex-1">Ref By:</h6>
-                                                        <h6 class="flex-1 w-32 capitalize">{{ $ref_by->name }}</h6>
+                                                        <h6 class="flex-1 capitalize">{{ $ref_by->name }}</h6>
                                                     </div>
                                                 </div>
                                             </div>
@@ -62,8 +62,8 @@
                                         </div>
                                     </div>
 
-                                    <div class="overflow-x-auto" style="width:500px;">
-                                        <table class="table-default table-hover">
+                                    <div class="overflow-x-auto" >
+                                        <table class="table-compact table-hover" style="width: 100%;">
                                             <thead>
                                                 <tr>
                                                     <th>Services</th>
@@ -77,10 +77,10 @@
                                                 <tr>
                                                     <td>{{ $selectedValue->test_name }}</td>
                                                     @php
-                                                    $per_test = $selectedValue->test_price / $selectedValue->quantity;
+                                                    $per_test = $selectedValue->test_price / $selectedValue->test_quantity;
                                                     @endphp
                                                     <td class="text-center">{{ Str::limit($per_test,5) }}</td>
-                                                    <td class="text-center">{{ $selectedValue->quantity }}</td>
+                                                    <td class="text-center">{{ $selectedValue->test_quantity }}</td>
                                                     <td class="text-center">{{ $selectedValue->test_price }}</td>
                                                 </tr>
                                                 @endforeach
@@ -108,6 +108,18 @@
                                         </table>
                                     </div>
                                 </div>
+                            </div>
+                        </div>
+                        <div id="stickyFooter" class="sticky -bottom-1 px-8 flex items-center justify-end">
+                            <div class="md:flex items-center">
+                                <a class="btn btn-default btn-sm ltr:mr-2 rtl:ml-2" href="{{ url('/patient/list') }}">Back To List</a>
+                                <a href="/patient/">
+                                <button class="btn btn-solid btn-sm" type="submit">
+                                    <span class="flex items-center justify-center">
+                                        <span class="ltr:ml-1 rtl:mr-1">Add New</span>
+                                    </span>
+                                </button>
+                                </a>
                             </div>
                         </div>
                     </div>

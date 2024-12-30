@@ -16,11 +16,11 @@ class WebGuard
      */
     public function handle(Request $request, Closure $next): Response
     {
-        if (Auth::User() && Auth::User()->status == 1)
-
+        if (Auth::check() && Auth::user()->status == 1) {
             return $next($request);
+        }else {
 
-        else
             return redirect('/login');
+        }
     }
 }

@@ -11,6 +11,7 @@ use App\Models\PatientPayRecord;
 use App\Models\TestFormat;
 use App\Models\Result;
 use App\Models\LabTestCategory;
+use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
 
 use Illuminate\Http\Request;
@@ -81,6 +82,7 @@ class PatientController extends Controller
             ]);
 
             $patientId = $request->id;
+            $created_test = '';
 
             // New Patient Save In DB  
             if ($request->id == null) {
@@ -123,22 +125,24 @@ class PatientController extends Controller
                     $patient_record->quantity = 1;
                     $patient_record->ref_by_id =  is_numeric($request->refBy) ? $request->refBy : null;
                     $patient_record->save();
+
+                    $created_test = Carbon::parse($patient_record->created_at)->format('y-m-d H:i:s');
                 }
             }
-            $limit = count($request->selectedTests);
 
-            $selectedValues = DB::table('patient_records')
-                ->whereIn('id', function ($query) use ($patientId) {
-                    $query->selectRaw('MAX(id)')
-                        ->from('patient_records')
-                        ->where('patient_id', $patientId)
-                        ->groupBy('test_name');
-                })
-                ->orderBy('id', 'desc')
-                ->limit($limit)
+            // $limit = count($request->selectedTests);
+
+            $selectedValues =  DB::table('patient_records')
+                ->select(DB::raw('COUNT(test_name) AS test_quantity, test_price, test_name, ref_by_id'))
+                ->where('patient_id', $patientId)
+                ->where('created_at', $created_test)
+                ->groupBy('test_name', 'test_price','ref_by_id')
+                ->orderBy('id', 'DESC')
                 ->get();
+            
 
-           
+            // dd($selectedValues);
+            
             $id = $selectedValues[0]->ref_by_id;
             $ref_by = Doctor::where('id', $id)->first();
 

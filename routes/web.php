@@ -25,7 +25,9 @@ Route::get('/logout',function(Request $request){
     return redirect('/login')->with('success','Logout Successfuly.');
 });
 
-Route::get('/',[AdminDashboardController::class,'index'])->name('admin.dashboard')->middleware(WebGuard::class);
+Route::get('/', function(){
+    return redirect('patient/');
+});
 
 Route::get('/lead', function(){
     return view('welcome');
@@ -44,6 +46,7 @@ Route::middleware([WebGuard::class])->prefix('/test')->group(function(){
     Route::get('/delete/{id}',[TestController::class,'delete']);
     Route::get('/format/create/{id}',[TestController::class,'createFormat']);
     Route::post('/format/store',[TestController::class,'storeFormat']);
+
 
 
 // Test Category Route
