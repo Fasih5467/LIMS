@@ -83,6 +83,7 @@ Route::middleware([WebGuard::class])->prefix('/doctor')->group(function(){
 });
 
 Route::get('/patient/generate_pdf/{id}', [PatientController::class, 'generatePDF']);
+Route::get('/received_test/{id}', [PatientController::class, 'updateStatus']);
 // Route::get('/test/list',[TestController::class,'index']);
 // Route::get('/test/create',[TestController::class,'create']);
 // Route::post('/test/store',[TestController::class,'store']);

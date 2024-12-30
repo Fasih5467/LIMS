@@ -299,4 +299,13 @@ class PatientController extends Controller
 
         return $dompdf;
     }
+
+    public function updateStatus($id){
+        
+        $reciviedPatientResult = PatientRecord::where('id', $id)->update(['status' => 'Received']);
+        if (!$reciviedPatientResult) {
+            return redirect('/patient/list')->with('error','Record not update');
+        }
+        return redirect('/patient/list')->with('success','Record Updated');
+    }
 }

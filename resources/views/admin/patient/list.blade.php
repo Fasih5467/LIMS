@@ -9,6 +9,7 @@
 				<div class=" mb-4">
 					<h3>Patients</h3>
 				</div>
+				@include('alertmessage.flash-message')
 				<div class="card adaptable-card">
 					<div class="card-body">
 						<table id="customers-data-table" class="table-default table-hover data-table">
@@ -37,8 +38,8 @@
 									<td>{{$test->is_result}}</td>
 									<td>
 										<div class="flex items-center">
-											<span class="badge-dot bg-{{isset($test->status) && $test->status == 'recivied' ? 'emerald' : 'danger'}}-500"></span>
-											<span class="ml-2 rtl:mr-2 capitalize">{{isset($test->status) && $test->status == 'recivied' ? 'recivied' : 'pending'}}</span>
+											<span class="badge-dot bg-{{isset($test->status) && $test->status == 'Received' ? 'emerald' : 'danger'}}-500"></span>
+											<span class="ml-2 rtl:mr-2 capitalize">{{isset($test->status) && $test->status == 'Received' ? 'Received' : 'pending'}}</span>
 										</div>
 									</td>
 									<td>
@@ -51,6 +52,11 @@
 										@if(isset($test->is_result) && $test->is_result == 'yes')
 										<div class="text-primary-600 cursor-pointer select-none font-semibold">
 											<a href="{{url('/patient/generate_pdf/'.$test->id)}}">Generate Pdf</a>
+										</div>
+										@endif
+										@if($test->is_result !== 'no' && $test->status !== 'Received')
+										<div class="text-primary-600 cursor-pointer select-none font-semibold">
+											<a href="{{url('/received_test/'.$test->id)}}">Received Test</a>
 										</div>
 										@endif
 									</td>
