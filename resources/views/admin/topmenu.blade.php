@@ -91,6 +91,11 @@
                         <span>Category</span>
                     </a>
                 </li>
+                <li data-menu-item="decked-project-dashboard" class="menu-item">
+                    <a class="h-full w-full flex items-center" href="{{ url('/lab/management/list') }}">
+                        <span>Management</span>
+                    </a>
+                </li>
             </ul>
         </div>
         <div class="dropdown">

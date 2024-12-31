@@ -64,7 +64,6 @@
                                                 $patients = session('patients');
                                                 @endphp
                                                 <select class="input" id="prePatient">
-                                                    <option selected>Select Patient</option>
                                                     @foreach($patients as $patient)
                                                     <option value="{{ $patient->id }}">{{ $patient->name }}</option>
                                                     @endforeach
@@ -175,7 +174,6 @@
                                     <div class="form-item vertical">
                                         <label class="form-label mb-2">Ref By</label>
                                         <select class="input searchPicker" data-live-search="true" name="refBy">
-                                            <option selected>Select Doctor</option>
                                             @foreach($doctors as $doctor)
                                             <option value="{{$doctor->id}}">{{ $doctor->name }}</option>
                                             @endforeach
