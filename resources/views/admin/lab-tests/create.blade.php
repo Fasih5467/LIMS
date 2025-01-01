@@ -136,6 +136,10 @@
 </main>
 <!-- Content end -->
 
+@endsection
+
+@section('scripts')
+
 <script>
 document.getElementById('btn-save').addEventListener('click',function(){
 document.getElementById('btn-save').disabled = true;
@@ -145,10 +149,6 @@ document.getElementById('form-id').submit();
 })
 
 </script>
-
-@endsection
-
-@section('scripts')
 
 <!-- Other Vendors JS -->
 <script src="{{url('assets/vendors/quill/quill.min.js')}}"></script>

@@ -47,7 +47,7 @@
 <main class="h-full">
     <div class="page-container relative h-full flex flex-auto flex-col px-4 sm:px-6 md:px-8 py-4 sm:py-6">
         <div class="container mx-auto" style="width:90%;">
-            <form action="{{url('patient/slip')}}" method="post" enctype="multipart/form-data">
+            <form action="{{url('patient/slip')}}" method="post" id="form-id" enctype="multipart/form-data">
                 @csrf
                 <div class="form-container vertical">
                     <div class="grid grid-cols-1 lg:grid-cols-3 gap-4">
@@ -84,6 +84,7 @@
                                                         class="input"
                                                         type="text"
                                                         name="name"
+                                                        value="{{old('name')}}"
                                                         autocomplete="off"
                                                         placeholder="Name">
                                                 </div>
@@ -140,6 +141,7 @@
                                                         type="number"
                                                         name="age"
                                                         id="age"
+                                                        value="{{old('age')}}"
                                                         autocomplete="off"
                                                         placeholder="years">
                                                 </div>
@@ -155,11 +157,13 @@
                                                 <label class="form-label mb-2">Gender</label>
                                                 <div class="flex gap-4">
                                                     <label class="radio-label inline-flex">
-                                                        <input type="radio" class="radio text-blue-600" name="gender" id="maleRadio" value="male">
+                                                        <input type="radio" class="radio text-blue-600" name="gender" id="maleRadio" value="male"
+                                                            {{ old('gender')=='male'?'checked':'' }}>
                                                         <span>Male</span>
                                                     </label>
                                                     <label class="radio-label inline-flex">
-                                                        <input type="radio" class="radio text-green-600" name="gender" id="femaleRadio" value="female">
+                                                        <input type="radio" class="radio text-green-600" name="gender" id="femaleRadio" value="female"
+                                                            {{ old('gender')=='female'?'checked':'' }}>
                                                         <span>Female</span>
                                                     </label>
                                                 </div>
@@ -308,7 +312,7 @@
                     <div id="stickyFooter" class="sticky -bottom-1 -mx-8 px-8 flex items-center justify-end py-4">
                         <div class="md:flex items-center">
                             <a class="btn btn-default btn-sm ltr:mr-2 rtl:ml-2" href="{{ url('/patient/list') }}">Discard</a>
-                            <button class="btn btn-solid btn-sm" type="submit">
+                            <button class="btn btn-solid btn-sm" type="submit" id="btn-save">
                                 <span class="flex items-center justify-center">
                                     <span class="text-lg">
                                         <svg stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 1024 1024" height="1em" width="1em" xmlns="http://www.w3.org/2000/svg">
@@ -346,7 +350,6 @@
 
 
 <script>
-    console.log(patients)
     // Section Previous Patients
     if (patients !== null) {
         document.getElementById('prePatient').addEventListener('change', function() {
@@ -549,10 +552,12 @@
         if (disValue.length > 5 || (disValue.length >= 3 && selectDis.value === '%')) {
             disError.className = 'text-red-500 text-xs';
             disError.innerHTML = 'Invalid Value';
-            return
-        }
+            netAmountValue.value = 0;
+            balAmountValue.value = 0
 
-        if (selectDis.value === 'Rs') {
+            netAmount.value = 0;
+            balAmount.value = 0;
+        } else if (selectDis.value === 'Rs') {
             let res = totalAmountValue.value - disAmountValue.value;
             netAmountValue.value = res
             balAmountValue.value = res
@@ -572,19 +577,30 @@
 
 
     document.getElementById('rec-amount-value').addEventListener('input', (event) => {
-        let recValue = event.target.value;
-        let recError = document.getElementById('rec-error');
-        // if(recValue >= netAmountValue.value){
-        //     recError.className = 'text-red-500 text-xs';
-        //     recError.innerHTML = 'Invalid Value';
-        //     return
-        // }
+            let recValue = event.target.value;
+            let recError = document.getElementById('rec-error');
+            // if(recValue >= netAmountValue.value){
+            //     recError.className = 'text-red-500 text-xs';
+            //     recError.innerHTML = 'Invalid Value';
+            //     return
+            // }
 
-        let res = netAmountValue.value - recValue;
-        balAmountValue.value = res;
-        balAmount.value = res;
+            let res = netAmountValue.value - recValue;
+            balAmountValue.value = res;
+            balAmount.value = res;
 
-    })
+        })
+
+
+
+        // Save Btn
+        document.getElementById('btn-save').addEventListener('click', function() {
+            document.getElementById('btn-save').disabled = true;
+
+            // Submit the form
+            document.getElementById('form-id').submit();
+        })
+
 </script>
 
 
@@ -595,4 +611,3 @@
 <!-- Page js -->
 <script src="{{url('assets/js/pages/new-product.js')}}"></script>
 @endsection
-

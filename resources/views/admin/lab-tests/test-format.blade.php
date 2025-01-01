@@ -121,9 +121,10 @@
             let newArray = []; // Clear the array on every change
 
             // Select all rows
-            const rows = document.querySelectorAll(".grid.grid-cols-6");
+            const rows = document.querySelectorAll(".grid.grid-cols-12.lg\\:grid-cols-12.gap-2");
 
             rows.forEach((row) => {
+
                 // Get specific inputs for key, unit, and value in the current row
                 let key = row.querySelector("input[name^='items'][name$='[key]']")?.value || "";
                 let unit = row.querySelector("input[name^='items'][name$='[unit]']")?.value || "";
@@ -149,7 +150,8 @@
             });
 
             array = [...newArray];
-            console.log("Updated Array:", array);
+            // console.log(array)
+            // console.log("Updated Array:", newArray);
         }
     });
     let deletedItem = [];
@@ -255,19 +257,10 @@
                                          <button class="btn btn-plan" type="button" onclick="deletedValue(${index})">
                             <span class="flex items-center justify-center text-red-600">
                                 <span class="text-lg">
-                                    <svg
-                                        stroke="currentColor"
-                                        fill="none"
-                                        stroke-width="2"
-                                        viewBox="0 0 24 24"
-                                        aria-hidden="true"
-                                        height="1em"
-                                        width="1em"
-                                        xmlns="http://www.w3.org/2000/svg">
-                                        <path stroke-linecap="round" stroke-linejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
-                                    </svg>
+                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" aria-hidden="true" class="w-6 h-6">
+                                                                            <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"></path>
+                                                                        </svg>
                                 </span>
-                                <span class="ltr:ml-1 rtl:mr-1">Delete</span>
                             </span>
                         </button>
                                     </div>

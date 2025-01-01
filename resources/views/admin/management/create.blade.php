@@ -7,7 +7,7 @@ $typeValues = ['technologist','doctor'];
 <main class="h-full">
     <div class="page-container relative h-full flex flex-auto flex-col px-4 sm:px-6 md:px-8 py-4 sm:py-6">
         <div class="container mx-auto" style="width:75%;">
-            <form action="{{url('lab/management/store')}}" method="post" enctype="multipart/form-data">
+            <form action="{{url('lab/management/store')}}" method="post" id="form-id" enctype="multipart/form-data">
                 @csrf
                 <div class="form-container vertical">
                     <div class="grid grid-cols-1 lg:grid-cols-3 gap-4">
@@ -148,7 +148,7 @@ $typeValues = ['technologist','doctor'];
                     <div id="stickyFooter" class="sticky -bottom-1 -mx-8 px-8 flex items-center justify-end py-4">
                         <div class="md:flex items-center">
                             <a class="btn btn-default btn-sm ltr:mr-2 rtl:ml-2" href="{{ url('/lab/management/list') }}">Discard</a>
-                            <button class="btn btn-solid btn-sm" type="submit">
+                            <button class="btn btn-solid btn-sm" type="submit" id="btn-save">
                                 <span class="flex items-center justify-center">
                                     <span class="text-lg">
                                         <svg stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 1024 1024" height="1em" width="1em" xmlns="http://www.w3.org/2000/svg">
@@ -170,6 +170,15 @@ $typeValues = ['technologist','doctor'];
 @endsection
 
 @section('scripts')
+<script>
+document.getElementById('btn-save').addEventListener('click',function(){
+document.getElementById('btn-save').disabled = true;
+
+// Submit the form
+document.getElementById('form-id').submit();
+})
+
+</script>
 
 <!-- Other Vendors JS -->
 <script src="{{url('assets/vendors/quill/quill.min.js')}}"></script>

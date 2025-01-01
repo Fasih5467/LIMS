@@ -40,7 +40,7 @@
                                             <div class="card-body">
                                                 <div class="space-y-2">
                                                     <div class="flex justify-between">
-                                                        <h6 class="flex-1">Patient:</h6>
+                                                        <h6 class="flex-1">Name:</h6>
                                                         <h6 class="flex-1 capitalize">{{ $patient_info->name}}</h6>
                                                     </div>
                                                     <div class="flex justify-between">
