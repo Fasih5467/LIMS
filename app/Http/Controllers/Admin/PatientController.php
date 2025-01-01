@@ -284,15 +284,12 @@ class PatientController extends Controller
         
         // Get Technologist Id
         $tech_id = $data['patient_info']->technologist;
+        // dd($tech_id);
         // Get Lab Doctor Id
         $lab_doc_id = $data['patient_info']->lab_doctor;
-
+        // dd($lab_doc_id);
         $tech = LabManagement::where('id',$tech_id)->first();
         $lab_doc = LabManagement::where('id',$lab_doc_id)->first();
-
-        
-        $data['tech'] = $tech;
-        $data['lab_doc'] = $lab_doc;
 
         if (empty($lab_doc)) {
             return redirect()->back();
@@ -300,6 +297,9 @@ class PatientController extends Controller
         if (empty($tech)) {
             return redirect()->back();
         }
+
+        $data['tech'] = $tech;
+        $data['lab_doc'] = $lab_doc;  
 
         if ($data['test_result']->isEmpty()) {
             return redirect()->back();

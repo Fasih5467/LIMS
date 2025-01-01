@@ -151,8 +151,11 @@
     </div>
 	
     <div style="display: flex; justify-content: space-between; align-items: center; width: 100%;margin-top:40px">
+      
   <div style="text-align: left;">LAB TECH</div>
+  <div style="text-align: left;">{{ucfirst($tech->name) ?? ''}}</div>
   <div style="text-align: right; margin:right:100px">PATHOLOGIST</div>
+  <div style="text-align: right; margin:right:100px">{{ucfirst($lab_doc->name) ?? ''}}</div>
 </div>
   </div>
 
