@@ -1,10 +1,11 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Report {{ucwords($patient_info->category_name) ?? ''}}</title>
- 
+
   <style>
     body {
       font-family: Arial, sans-serif;
@@ -41,12 +42,13 @@
       margin-bottom: 20px;
     }
 
-    table th, table td {
+    table th,
+    table td {
       border: 1px solid black;
       padding-left: 4px;
       text-align: left;
     }
-	
+
 
     .remarks-section {
       margin-top: 20px;
@@ -69,27 +71,38 @@
     }
   </style>
 
-<style>
+  <style>
     table {
+      border-collapse: separate;
       width: 100%;
-      border-collapse: collapse;
+      overflow: hidden;
     }
-    table th, table td {
+
+
+    table td {
       /* border: 1px solid black; */
-      /* padding: 8px; */
+      padding-left: 5px;
       text-align: left;
+    }
+
+    tr td {
+      border: none;
+    }
+    tr {
+      border: none;
     }
   </style>
 </head>
+
 <body>
 
-<div class="container mt-5">
-    <table>
+  <div class="container mt-5">
+    <table style="border: 1px solid black; border-radius: 10px;">
       <tr>
         <td>Name:</td>
         <td>
-			{{ucfirst($patient_info->patient_name) ?? ''}}
-		</td>
+          {{ucfirst($patient_info->patient_name) ?? ''}}
+        </td>
         <td>Sex:</td>
         <td>{{ucfirst($patient_info->gender) ?? ''}}</td>
       </tr>
@@ -114,7 +127,7 @@
     </table>
   </div>
   <div class="invoice-container">
-    
+
     <div class="section-title">{{ucwords($patient_info->category_name) ?? ''}}</div>
 
     <table>
@@ -122,43 +135,44 @@
         <tr>
           <th>Test</th>
           <th>Result</th>
-		  <th>Unit</th>
+          <th>Unit</th>
           <th>Normal Range</th>
         </tr>
       </thead>
       <tbody>
-		@foreach($test_result as $result)
-			@if($result->type == 'heading')
-				<tr>
-					<td colspan="4">
-						<b>{{$result->key}}</b>
-					</td>
-				</tr>
-				@continue;
-			@endif
+        @foreach($test_result as $result)
+        @if($result->type == 'heading')
+        <tr>
+          <td colspan="4">
+            <b><u>{{$result->key}}</u></b>
+          </td>
+        </tr>
+        @continue;
+        @endif
         <tr>
           <td>{{$result->key}}</td>
           <td>{{$result->result}}</td>
-		      <td>{{$result->unit}}</td>
+          <td>{{$result->unit}}</td>
           <td>{{$result->value}}</td>
         </tr>
-		@endforeach
+        @endforeach
       </tbody>
     </table>
 
     <div class="remarks-section">
       <p>REMARKS:</p>
     </div>
-	
+
     <div style="display: flex; justify-content: space-between; align-items: center; width: 100%;margin-top:40px">
-      
-  <div style="text-align: left;">LAB TECH</div>
-  <div style="text-align: left;">{{ucfirst($tech->name) ?? ''}}</div>
-  <div style="text-align: right; margin:right:100px">PATHOLOGIST</div>
-  <div style="text-align: right; margin:right:100px">{{ucfirst($lab_doc->name) ?? ''}}</div>
-</div>
+
+      <div style="text-align: left;">LAB TECH</div>
+      <div style="text-align: left;">{{ucfirst($tech->name) ?? ''}}</div>
+      <div style="text-align: right; margin:right:100px">PATHOLOGIST</div>
+      <div style="text-align: right; margin:right:100px">{{ucfirst($lab_doc->name) ?? ''}}</div>
+    </div>
   </div>
 
- 
+
 </body>
+
 </html>
