@@ -35,8 +35,15 @@ class TestCategoryController extends Controller
     
         public function edit($id)
         {
-            $testCategory = LabTestCategory::find($id);
+            if(!$id){
+                return redirect()->back();
+            }
+
+            $testCategory = LabTestCategory::where('id',$id)->first();
             // dd($test);
+            if(empty($testCategory)){
+                return redirect('/test/category/list')->with('error','Record Not Found');
+            }
             return view('admin.test-category.edit',compact('testCategory'));
         }
     

@@ -59,6 +59,12 @@
                                             </div>
 
                                         </div>
+                                        <label class="form-label mb-2">Remark</label>
+                                        <select class="input capitalize" name="remark">
+                                            @foreach($remarks as $remark)
+                                            <option class="capitalize" value="{{ $remark->name }}">{{ $remark->name }}</option>
+                                            @endforeach
+                                        </select>
 
                                     </div>
                                     <a class="btn btn-default btn-sm ltr:mr-2 rtl:ml-2" href="{{ url('/patient/list') }}">Discard</a>

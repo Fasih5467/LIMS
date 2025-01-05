@@ -4,6 +4,7 @@ use App\Http\Controllers\Admin\AdminDashboardController;
 use App\Http\Controllers\Admin\DoctorController;
 use App\Http\Controllers\Admin\LabManagementController;
 use App\Http\Controllers\Admin\PatientController;
+use App\Http\Controllers\Admin\RemarkController;
 use App\Http\Controllers\Admin\TestController;
 use App\Http\Controllers\Admin\TestCategoryController;
 use App\Http\Controllers\Auth\LoginController;
@@ -69,6 +70,18 @@ Route::middleware([WebGuard::class])->prefix('/lab')->group(function () {
     Route::post('/management/update', [LabManagementController::class, 'update']);
     Route::get('/management/delete/{id}', [LabManagementController::class, 'delete']);
 });
+
+// Remarks Route
+Route::middleware([WebGuard::class])->prefix('/remark')->group(function () {
+
+    Route::get('/list', [RemarkController::class, 'index']);
+    Route::get('/create', [RemarkController::class, 'create']);
+    Route::post('/store', [RemarkController::class, 'store']);
+    Route::get('/edit/{id}', [RemarkController::class, 'edit']);
+    Route::post('/update', [RemarkController::class, 'update']);
+    Route::get('/delete/{id}', [RemarkController::class, 'delete']);
+});
+
 // Patients Route
 Route::middleware([WebGuard::class])->prefix('/patient')->group(function () {
     Route::get('/', [PatientController::class, 'create']);

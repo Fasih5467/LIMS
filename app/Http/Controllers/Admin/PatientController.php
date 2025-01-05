@@ -12,6 +12,7 @@ use App\Models\PatientPayRecord;
 use App\Models\TestFormat;
 use App\Models\Result;
 use App\Models\LabTestCategory;
+use App\Models\Remark;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
 
@@ -152,8 +153,6 @@ class PatientController extends Controller
 
             return view('admin.patient.slip', compact('ref_by', 'selectedValues', 'patient_info'));
         }
-
-      
     }
 
     // public function edit()
@@ -190,12 +189,17 @@ class PatientController extends Controller
         //  Gat Technologists
         $technologists = LabManagement::where('type', 'technologist')->get();
         if ($technologists->isEmpty()) {
-            return redirect('patient/list')->with('error','Technologist is required');
+            return redirect('patient/list')->with('error', 'Technologist is required');
         }
         //  Gat Doctors
         $lab_doctors = LabManagement::where('type', 'doctor')->get();
         if ($lab_doctors->isEmpty()) {
-            return redirect('patient/list')->with('error','Lab Doctor is required');
+            return redirect('patient/list')->with('error', 'Lab Doctor is required');
+        }
+        //  Gat Remarks
+        $remarks = Remark::orderBy('id', 'DESC')->get();
+        if ($remarks->isEmpty()) {
+            return redirect('patient/list')->with('error', 'Lab Doctor is required');
         }
 
         $patient_record = PatientRecord::where('id', $id)->first();
@@ -208,7 +212,7 @@ class PatientController extends Controller
         if ($test_format->isEmpty()) {
             return redirect()->back();
         }
-        return view('admin.patient.test_format', compact('test_format', 'patient_id', 'id', 'technologists', 'lab_doctors'));
+        return view('admin.patient.test_format', compact('test_format', 'patient_id', 'id', 'technologists', 'lab_doctors','remarks'));
     }
 
     public function patient_result_store(Request $request)
@@ -234,6 +238,7 @@ class PatientController extends Controller
         }
         $patient_record->technologist = $request->technologist;
         $patient_record->lab_doctor = $request->lab_doctor;
+        $patient_record->remark = $request->remark;
         $patient_record->is_result = 'yes';
         $patient_record->save();
 
@@ -276,20 +281,21 @@ class PatientController extends Controller
             ->join('lab_tests as lt', 'pr.test_id', '=', 'lt.id')
             ->join('lab_test_categories as ltc', 'lt.category_id', '=', 'ltc.id')
             ->join('doctors as d', 'd.id', '=', 'pr.ref_by_id')
-            ->select('p.name as patient_name', 'lt.name as lab_test_name', 'ltc.name as category_name', 'p.*', 'd.name as doctor_name','pr.technologist','pr.lab_doctor')
+            ->select('p.name as patient_name', 'lt.name as lab_test_name', 'ltc.name as category_name', 'p.*', 'd.name as doctor_name', 'pr.technologist', 'pr.lab_doctor','pr.remark')
             ->where('pr.patient_id', $patient_id)
             ->where('pr.test_id', $patient_test_id)
             ->where('pr.id', $id)
             ->first();
-        
+
+
         // Get Technologist Id
         $tech_id = $data['patient_info']->technologist;
         // dd($tech_id);
         // Get Lab Doctor Id
         $lab_doc_id = $data['patient_info']->lab_doctor;
         // dd($lab_doc_id);
-        $tech = LabManagement::where('id',$tech_id)->first();
-        $lab_doc = LabManagement::where('id',$lab_doc_id)->first();
+        $tech = LabManagement::where('id', $tech_id)->first();
+        $lab_doc = LabManagement::where('id', $lab_doc_id)->first();
 
         if (empty($lab_doc)) {
             return redirect()->back();
@@ -299,7 +305,7 @@ class PatientController extends Controller
         }
 
         $data['tech'] = $tech;
-        $data['lab_doc'] = $lab_doc;  
+        $data['lab_doc'] = $lab_doc;
 
         if ($data['test_result']->isEmpty()) {
             return redirect()->back();
@@ -328,12 +334,13 @@ class PatientController extends Controller
         return $dompdf;
     }
 
-    public function updateStatus($id){
-        
+    public function updateStatus($id)
+    {
+
         $reciviedPatientResult = PatientRecord::where('id', $id)->update(['status' => 'Received']);
         if (!$reciviedPatientResult) {
-            return redirect('/patient/list')->with('error','Record not update');
+            return redirect('/patient/list')->with('error', 'Record not update');
         }
-        return redirect('/patient/list')->with('success','Record Updated');
+        return redirect('/patient/list')->with('success', 'Record Updated');
     }
 }
