@@ -7,6 +7,7 @@ use App\Http\Controllers\Admin\PatientController;
 use App\Http\Controllers\Admin\RemarkController;
 use App\Http\Controllers\Admin\TestController;
 use App\Http\Controllers\Admin\TestCategoryController;
+use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Middleware\WebGuard;
 use Illuminate\Http\Request;
@@ -31,9 +32,20 @@ Route::get('/', function () {
     return redirect('patient/');
 });
 
-Route::get('/lead', function () {
-    return view('welcome');
-})->name('lead.list');
+// Route::get('/lead', function () {
+//     return view('welcome');
+// })->name('lead.list');
+
+// Users Route
+Route::middleware([WebGuard::class])->prefix('/user')->group(function () {
+
+    Route::get('/list', [UserController::class, 'index']);
+    Route::get('/signup', [UserController::class, 'create']);
+    Route::post('/store', [UserController::class, 'store']);
+    Route::get('/edit/{id}', [UserController::class, 'edit']);
+    Route::post('/update', [UserController::class, 'update']);
+    Route::get('/delete/{id}', [UserController::class, 'delete']);
+});
 
 
 // Tests Route

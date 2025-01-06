@@ -64,6 +64,7 @@
                                                 $patients = session('patients');
                                                 @endphp
                                                 <select class="input" id="prePatient">
+                                                    <option>Select Patient</option>
                                                     @foreach($patients as $patient)
                                                     <option value="{{ $patient->id }}">{{ $patient->name }}</option>
                                                     @endforeach
@@ -111,7 +112,7 @@
                                                                     name="contact"
                                                                     autocomplete="off"
                                                                     placeholder="03XX-XXXXXXX"
-                                                                    value="{{ session('contact') ? session('contact') : '' ; }}">
+                                                                    value="{{ session('contact') ? session('contact') : old('contact') ; }}">
                                                             </span>
                                                         </div>
                                                     </div>
@@ -577,30 +578,29 @@
 
 
     document.getElementById('rec-amount-value').addEventListener('input', (event) => {
-            let recValue = event.target.value;
-            let recError = document.getElementById('rec-error');
-            // if(recValue >= netAmountValue.value){
-            //     recError.className = 'text-red-500 text-xs';
-            //     recError.innerHTML = 'Invalid Value';
-            //     return
-            // }
+        let recValue = event.target.value;
+        let recError = document.getElementById('rec-error');
+        // if(recValue >= netAmountValue.value){
+        //     recError.className = 'text-red-500 text-xs';
+        //     recError.innerHTML = 'Invalid Value';
+        //     return
+        // }
 
-            let res = netAmountValue.value - recValue;
-            balAmountValue.value = res;
-            balAmount.value = res;
+        let res = netAmountValue.value - recValue;
+        balAmountValue.value = res;
+        balAmount.value = res;
 
-        })
+    })
 
 
 
-        // Save Btn
-        document.getElementById('btn-save').addEventListener('click', function() {
-            document.getElementById('btn-save').disabled = true;
+    // Save Btn
+    document.getElementById('btn-save').addEventListener('click', function() {
+        document.getElementById('btn-save').disabled = true;
 
-            // Submit the form
-            document.getElementById('form-id').submit();
-        })
-
+        // Submit the form
+        document.getElementById('form-id').submit();
+    })
 </script>
 
 
