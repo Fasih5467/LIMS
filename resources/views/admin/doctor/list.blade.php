@@ -41,6 +41,7 @@
 									<td>
 										<span>{{ $doctor->contact_no }}</span>
 									</td>
+									@if(Auth::user()->user_type == 1)
 									<td>
 										<div class="flex justify-end text-lg">
 											<span class="cursor-pointer p-2 hover:text-indigo-600">
@@ -59,6 +60,7 @@
 											</span>
 										</div>
 									</td>
+									@endif
 								</tr>
 								@endforeach
 								<!-- <tr>

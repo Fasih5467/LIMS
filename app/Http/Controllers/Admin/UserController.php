@@ -4,15 +4,17 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Hash;
 
 use App\Models\User;
+use Illuminate\Support\Facades\Auth;
 
 class UserController extends Controller
 {
     public function index()
     {
-        $remarks = User::orderBy('id', 'DESC')->get();
-        return view('admin.remark.list', compact('remarks'));
+        $users = User::orderBy('id', 'DESC')->get();
+        return view('admin.users.list', compact('users'));
     }
 
     public function create()
@@ -24,17 +26,22 @@ class UserController extends Controller
     public function store(Request $request)
     {
 
-        // dd($request->remark);
+        // dd($request);
         $request->validate([
-            'remark' => 'required',
+            'name' => 'required',
+            'email' => 'required',
+            'password' => 'required',
         ]);
 
-        $remark = new User;
-        $remark->name = $request->remark;
-        $remark->save();
+        $user = new User;
+        $user->name = $request->name;
+        $user->email = $request->email;
+        $user->user_type = 2;
+        $user->password = Hash::make($request->password);
+        $user->save();
 
 
-        return redirect('remark/list')->with('success', 'Add Record Successfuly');
+        return redirect('/');
     }
 
     public function edit($id)

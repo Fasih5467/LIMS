@@ -26,9 +26,10 @@
 								<tr>
 									<td>
 										<div class="flex items-center">
-											<span class="ml-2 rtl:mr-2 font-semibold">{{ $category->name }}</span>
+											<span class="ml-2 rtl:mr-2 font-semibold capitalize">{{ $category->name }}</span>
 										</div>
 									</td>
+									@if(Auth::user()->user_type == 1)
 									<td>
 										<div class="flex justify-end text-lg">
 											<span class="cursor-pointer p-2 hover:text-indigo-600">
@@ -47,6 +48,7 @@
 											</span>
 										</div>
 									</td>
+									@endif
 								</tr>
 								@endforeach
 								<!-- <tr>

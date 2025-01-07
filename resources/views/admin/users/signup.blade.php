@@ -34,13 +34,13 @@
                                             <p>Please enter your credentials to sign in!</p>
                                         </div>
                                         <div>
-                                            <form action="{{ url('/login_user') }}" method="post" id="form-id">
+                                            <form action="{{ url('/user/store') }}" method="post" id="form-id">
                                                 @csrf
                                                 <div class="form-container vertical">
                                                     <div class="form-item vertical">
                                                         <label class="form-label mb-2">Name</label>
                                                         <div>
-                                                            <input class="input" type="text" name="email" autocomplete="off" placeholder="Name">
+                                                            <input class="input" type="text" name="name" autocomplete="off" placeholder="Name">
                                                         </div>
                                                     </div>
                                                     <div class="form-item vertical">

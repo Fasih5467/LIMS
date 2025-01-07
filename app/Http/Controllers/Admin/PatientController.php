@@ -21,6 +21,7 @@ use PDF;
 
 use Dompdf\Dompdf;
 use Dompdf\Options;
+use Illuminate\Support\Facades\Auth;
 
 use function Laravel\Prompts\select;
 
@@ -106,6 +107,7 @@ class PatientController extends Controller
 
             // Patient Pay Records
             $patient_pay = new PatientPayRecord;
+            $patient_pay->user_id = Auth::user()->id;
             $patient_pay->patient_id = $patientId;
             $patient_pay->total_amount = $request->totalAmount;
             $patient_pay->net_amount = $request->netAmount;
@@ -119,6 +121,7 @@ class PatientController extends Controller
 
                 for ($x = 0; $x < $request->quantity[$index]; $x++) {
                     $patient_record = new PatientRecord;
+                    $patient_record->user_id = Auth::user()->id;
                     $patient_record->patient_id = $patientId;
                     $patient_record->test_id = $selectedTest;
                     $patient_record->is_result = 'no';

@@ -9,6 +9,7 @@ use App\Http\Controllers\Admin\TestController;
 use App\Http\Controllers\Admin\TestCategoryController;
 use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\Auth\LoginController;
+use App\Http\Middleware\Admin;
 use App\Http\Middleware\WebGuard;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -37,7 +38,7 @@ Route::get('/', function () {
 // })->name('lead.list');
 
 // Users Route
-Route::middleware([WebGuard::class])->prefix('/user')->group(function () {
+Route::middleware([WebGuard::class,Admin::class])->prefix('/user')->group(function () {
 
     Route::get('/list', [UserController::class, 'index']);
     Route::get('/signup', [UserController::class, 'create']);
@@ -54,12 +55,12 @@ Route::middleware([WebGuard::class])->prefix('/test')->group(function () {
     Route::get('/list', [TestController::class, 'index']);
     Route::get('/create', [TestController::class, 'create']);
     Route::post('/store', [TestController::class, 'store']);
-    Route::get('/edit/{id}', [TestController::class, 'edit']);
-    Route::post('/update', [TestController::class, 'update']);
+    Route::get('/edit/{id}', [TestController::class, 'edit'])->middleware(Admin::class);
+    Route::post('/update', [TestController::class, 'update'])->middleware(Admin::class);
     Route::get('/report-format', [TestController::class, 'show']);
-    Route::get('/delete/{id}', [TestController::class, 'delete']);
-    Route::get('/format/create/{id}', [TestController::class, 'createFormat']);
-    Route::post('/format/store', [TestController::class, 'storeFormat']);
+    Route::get('/delete/{id}', [TestController::class, 'delete'])->middleware(Admin::class);
+    Route::get('/format/create/{id}', [TestController::class, 'createFormat'])->middleware(Admin::class);
+    Route::post('/format/store', [TestController::class, 'storeFormat'])->middleware(Admin::class);
 
 
 
@@ -67,13 +68,13 @@ Route::middleware([WebGuard::class])->prefix('/test')->group(function () {
     Route::get('/category/list', [TestCategoryController::class, 'index']);
     Route::get('/category/create', [TestCategoryController::class, 'create']);
     Route::post('/category/store', [TestCategoryController::class, 'store']);
-    Route::get('/category/edit/{id}', [TestCategoryController::class, 'edit']);
-    Route::post('/category/update', [TestCategoryController::class, 'update']);
-    Route::get('/category/delete/{id}', [TestCategoryController::class, 'delete']);
+    Route::get('/category/edit/{id}', [TestCategoryController::class, 'edit'])->middleware(Admin::class);
+    Route::post('/category/update', [TestCategoryController::class, 'update'])->middleware(Admin::class);
+    Route::get('/category/delete/{id}', [TestCategoryController::class, 'delete'])->middleware(Admin::class);
 });
 
 // Lab Managements Route
-Route::middleware([WebGuard::class])->prefix('/lab')->group(function () {
+Route::middleware([WebGuard::class,Admin::class])->prefix('/lab')->group(function () {
 
     Route::get('/management/list', [LabManagementController::class, 'index']);
     Route::get('/management/create', [LabManagementController::class, 'create']);
@@ -84,7 +85,7 @@ Route::middleware([WebGuard::class])->prefix('/lab')->group(function () {
 });
 
 // Remarks Route
-Route::middleware([WebGuard::class])->prefix('/remark')->group(function () {
+Route::middleware([WebGuard::class,Admin::class])->prefix('/remark')->group(function () {
 
     Route::get('/list', [RemarkController::class, 'index']);
     Route::get('/create', [RemarkController::class, 'create']);
@@ -112,9 +113,9 @@ Route::middleware([WebGuard::class])->prefix('/doctor')->group(function () {
     Route::get('/list', [DoctorController::class, 'index']);
     Route::get('/create', [DoctorController::class, 'create']);
     Route::post('/store', [DoctorController::class, 'store']);
-    Route::get('/edit/{id}', [DoctorController::class, 'edit']);
-    Route::post('/update', [DoctorController::class, 'update']);
-    Route::get('/delete/{id}', [DoctorController::class, 'delete']);
+    Route::get('/edit/{id}', [DoctorController::class, 'edit'])->middleware(Admin::class);
+    Route::post('/update', [DoctorController::class, 'update'])->middleware(Admin::class);
+    Route::get('/delete/{id}', [DoctorController::class, 'delete'])->middleware(Admin::class);
 });
 
 Route::get('/patient/generate_pdf/{id}', [PatientController::class, 'generatePDF']);

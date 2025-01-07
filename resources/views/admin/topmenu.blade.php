@@ -91,13 +91,21 @@
                         <span>Category</span>
                     </a>
                 </li>
+                @if(Auth::user()->user_type == 1)
+                <li data-menu-item="decked-project-dashboard" class="menu-item">
+                    <a class="h-full w-full flex items-center" href="{{ url('/remark/list') }}">
+                        <span>Remarks</span>
+                    </a>
+                </li>
                 <li data-menu-item="decked-project-dashboard" class="menu-item">
                     <a class="h-full w-full flex items-center" href="{{ url('/lab/management/list') }}">
                         <span>Management</span>
                     </a>
                 </li>
+                @endif
             </ul>
         </div>
+        @if(Auth::user()->user_type == 1)
         <div class="dropdown">
             <div class="dropdown-toggle">
                 <div class="menu-item menu-item-hoverable">
@@ -111,7 +119,7 @@
             </div>
             <ul class="dropdown-menu">
                 <li data-menu-item="decked-project-dashboard" class="menu-item">
-                    <a class="h-full w-full flex items-center" href="{{url('/lead/list')}}">
+                    <a class="h-full w-full flex items-center" href="{{url('/user/list')}}">
                         <span>List</span>
                     </a>
                 </li>
@@ -128,5 +136,6 @@
 
             </ul>
         </div>
+        @endif
     </div>
 </div>
