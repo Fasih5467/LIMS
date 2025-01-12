@@ -51,7 +51,10 @@
 										@endif
 										@if(isset($test->is_result) && $test->is_result == 'yes')
 										<div class="text-primary-600 cursor-pointer select-none font-semibold">
-											<a target="__blank" href="{{url('/patient/generate_pdf/'.$test->id)}}">Generate Pdf</a>
+											<a target="__blank" href="{{url('/patient/generate_pdf/'.$test->id.'/No')}}">Generate Pdf</a>
+										</div>
+										<div class="text-primary-600 cursor-pointer select-none font-semibold">
+											<a target="__blank" href="{{url('/patient/generate_pdf/'.$test->id.'/Yes')}}">Generate Pdf With Header</a>
 										</div>
 										@endif
 										@if($test->is_result !== 'no' && $test->status !== 'Received')

@@ -99,7 +99,7 @@
                 </li>
                 <li data-menu-item="decked-project-dashboard" class="menu-item">
                     <a class="h-full w-full flex items-center" href="{{ url('/lab/management/list') }}">
-                        <span>Management</span>
+                        <span>Signature</span>
                     </a>
                 </li>
                 @endif
@@ -124,7 +124,7 @@
                     </a>
                 </li>
                 <li data-menu-item="decked-project-dashboard" class="menu-item">
-                    <a class="h-full w-full flex items-center" href="{{url('/lead/add')}}">
+                    <a class="h-full w-full flex items-center" href="{{url('/user/signup')}}">
                         <span>Add User</span>
                     </a>
                 </li>

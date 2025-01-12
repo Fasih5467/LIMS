@@ -21,9 +21,9 @@ class LoginController extends Controller
         $credentials = $request->only('email', 'password');
         $credentials['status'] = '1';
 
-        $user = User::where('status', '0')
+        $user = User::where('email', $request->email)
+            ->where('status', '0')
             ->get();
-
 
 
         if (count($user) == 1) {
@@ -38,7 +38,7 @@ class LoginController extends Controller
                 return redirect('/');
             }
         } else {
-            return redirect()->back()->with(['error' => 'Please Invalid Information...!']);  
+            return redirect()->back()->with(['error' => 'Please Invalid Information...!']);
         }
     }
 }

@@ -1,8 +1,4 @@
-@php
-$patient_info = $data['patient_info'];
-$ref_by = $data['ref_by'];
-$selectedValues = $data['selectedTests'];
-@endphp
+
 
 <!DOCTYPE html>
 <html lang="en" dir="ltr" class="light">
@@ -79,7 +75,7 @@ $selectedValues = $data['selectedTests'];
                                                 </tr>
                                             </thead>
                                             <tbody>
-                                                @foreach($selectedValues as $selectedValue)
+                                                @foreach($selectedTests as $selectedValue)
                                                 <tr>
                                                     <td>{{ $selectedValue->test_name }}</td>
                                                     @php

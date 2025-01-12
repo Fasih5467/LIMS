@@ -2,7 +2,7 @@
 @section('content')
 
 @php
-$typeValues = ['technologist','doctor'];
+$typeValues = ['technologist','pathologist'];
 @endphp
 
 <!-- Content start -->
@@ -124,7 +124,7 @@ $typeValues = ['technologist','doctor'];
                                                 <label class="form-label mb-2">Type</label>
                                                 <select class="input capitalize" name="type">
                                                     @foreach($typeValues as $value)
-                                                    <option value="{{$value}}" class="capitalize" {{$value == $labManagement->type ?'selected':'' }}>{{$value}}</option>
+                                                    <option value="{{$value}}" class="capitalize" {{($value == $labManagement->type)?'selected':'' }}>{{$value}}</option>
                                                     @endforeach
                                                 </select>
                                             </div>
@@ -151,7 +151,7 @@ $typeValues = ['technologist','doctor'];
                     </div>
                     <div id="stickyFooter" class="sticky -bottom-1 -mx-8 px-8 flex items-center justify-end py-4">
                         <div class="md:flex items-center">
-                            <a class="btn btn-default btn-sm ltr:mr-2 rtl:ml-2" href="{{ url('/doctor/list') }}">Discard</a>
+                            <a class="btn btn-default btn-sm ltr:mr-2 rtl:ml-2" href="{{ url('/lab/management/list') }}">Discard</a>
                             <button class="btn btn-solid btn-sm" type="submit">
                                 <span class="flex items-center justify-center">
                                     <span class="text-lg">

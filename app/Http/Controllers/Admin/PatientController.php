@@ -13,6 +13,7 @@ use App\Models\TestFormat;
 use App\Models\Result;
 use App\Models\LabTestCategory;
 use App\Models\Remark;
+use App\Models\Setting;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
 
@@ -117,6 +118,10 @@ class PatientController extends Controller
             $patient_pay->balance_amount = $request->balAmount ?? null;
             $patient_pay->save();
 
+            // Get the ID of the newly created patient
+            $slip_id = $patient_pay->id;
+
+
             foreach ($request->selectedTests as $index => $selectedTest) {
 
                 for ($x = 0; $x < $request->quantity[$index]; $x++) {
@@ -154,7 +159,9 @@ class PatientController extends Controller
             $patient_info = Patient::join('patient_pay_records as ppr', 'patients.id', '=', 'ppr.patient_id')
                 ->select('ppr.id as ppr_id', 'ppr.*', 'patients.*')->where('ppr.patient_id', $patientId)->orderByDesc('ppr.id')->first();
 
-            return view('admin.patient.slip', compact('ref_by', 'selectedValues', 'patient_info'));
+            return  redirect('patient/slip/' . $slip_id);
+
+            // return view('admin.patient.slip', compact('ref_by', 'selectedValues', 'patient_info'));
         }
     }
 
@@ -177,6 +184,52 @@ class PatientController extends Controller
         return redirect('/patient/list')->with('success', 'Remove Successfuly.');;
     }
 
+
+    public function slip($id)
+    {
+
+
+        $data['patient_info'] = Patient::join('patient_pay_records as ppr', 'patients.id', '=', 'ppr.patient_id')
+            ->select('ppr.id as ppr_id', 'ppr.*', 'patients.name', 'patients.age')->where('ppr.id', $id)->orderByDesc('ppr.id')->first();
+
+        $patientId = $data['patient_info']->patient_id;
+        $created_test = Carbon::parse($data['patient_info']->created_at)->format('y-m-d H:i:s');
+
+        $data['selectedTests'] =  DB::table('patient_records')
+            ->select(DB::raw('COUNT(test_name) AS test_quantity, test_price, test_name, ref_by_id'))
+            ->where('patient_id', $patientId)
+            ->where('created_at', $created_test)
+            ->groupBy('test_name', 'test_price', 'ref_by_id')
+            ->orderBy('id', 'DESC')
+            ->get();
+
+        $refId = $data['selectedTests'][0]->ref_by_id;
+        $data['ref_by'] = Doctor::where('id', $refId)->first();
+        // dd($data);
+
+        // return view('admin.patient.slip', compact('data'));
+
+        $pdf = $this->generatePdfSlip($data);
+        $pdfContent = $pdf->output();
+        return response($pdfContent, 200)->header('Content-Type', 'application/pdf');
+    }
+
+
+    private function generatePdfSlip($data)
+    {
+
+        // dd($data);
+        $pdfView = view('slip.pdf_template', $data);
+        $options = new Options();
+        $options->set('isHtml5ParserEnabled', true);
+        $options->set('isPhpEnabled', true);
+        $dompdf = new Dompdf($options);
+        $dompdf->loadHtml($pdfView->render());
+        $dompdf->render();
+
+        return $dompdf;
+    }
+
     public function show_patient_test($patient_id)
     {
 
@@ -189,17 +242,7 @@ class PatientController extends Controller
 
     public function get_test_format($id)
     {
-        //  Gat Technologists
-        $technologists = LabManagement::where('type', 'technologist')->get();
-        if ($technologists->isEmpty()) {
-            return redirect('patient/list')->with('error', 'Technologist is required');
-        }
-        //  Gat Doctors
-        $lab_doctors = LabManagement::where('type', 'doctor')->get();
-        if ($lab_doctors->isEmpty()) {
-            return redirect('patient/list')->with('error', 'Lab Doctor is required');
-        }
-        //  Gat Remarks
+        //  Get Remarks
         $remarks = Remark::orderBy('id', 'DESC')->get();
         if ($remarks->isEmpty()) {
             return redirect('patient/list')->with('error', 'Lab Doctor is required');
@@ -207,15 +250,15 @@ class PatientController extends Controller
 
         $patient_record = PatientRecord::where('id', $id)->first();
         if (!$patient_record) {
-            return redirect()->back();
+            return redirect()->back()->with('error', 'Record not found!');
         }
         $patient_id = $patient_record->patient_id;
         $test_id = $patient_record->test_id;
         $test_format = TestFormat::where('test_id', $test_id)->get();
         if ($test_format->isEmpty()) {
-            return redirect()->back();
+            return redirect()->back()->with('error', 'Test Format not avaliable!');
         }
-        return view('admin.patient.test_format', compact('test_format', 'patient_id', 'id', 'technologists', 'lab_doctors','remarks'));
+        return view('admin.patient.test_format', compact('test_format', 'patient_id', 'id', 'remarks'));
     }
 
     public function patient_result_store(Request $request)
@@ -239,8 +282,15 @@ class PatientController extends Controller
         if (!$patient_record) {
             return;
         }
-        $patient_record->technologist = $request->technologist;
-        $patient_record->lab_doctor = $request->lab_doctor;
+
+        $signatures = LabManagement::where('status', 1)->get();
+        foreach ($signatures as $sign) {
+            if ($sign->type == 'technologist') {
+                $patient_record->technologist = $sign->name;
+            } else  if ($sign->type == 'pathologist') {
+                $patient_record->pathologist = $sign->name;
+            }
+        }
         $patient_record->remark = $request->remark;
         $patient_record->is_result = 'yes';
         $patient_record->save();
@@ -253,10 +303,10 @@ class PatientController extends Controller
 
 
 
-    public function generatePDF($id)
+    public function generatePDF($id, $header)
     {
 
-        // dd($id);
+        $data['header'] = $header;
 
         $patient_record = PatientRecord::where('id', $id)->first();
 
@@ -284,31 +334,23 @@ class PatientController extends Controller
             ->join('lab_tests as lt', 'pr.test_id', '=', 'lt.id')
             ->join('lab_test_categories as ltc', 'lt.category_id', '=', 'ltc.id')
             ->join('doctors as d', 'd.id', '=', 'pr.ref_by_id')
-            ->select('p.name as patient_name', 'lt.name as lab_test_name', 'ltc.name as category_name', 'p.*', 'd.name as doctor_name', 'pr.technologist', 'pr.lab_doctor','pr.remark')
+            ->select('p.name as patient_name', 'lt.name as lab_test_name', 'ltc.name as category_name', 'p.*', 'd.name as doctor_name', 'pr.remark')
             ->where('pr.patient_id', $patient_id)
             ->where('pr.test_id', $patient_test_id)
             ->where('pr.id', $id)
             ->first();
 
+        // Get Laboratory Info
+        $setting = Setting::first();
+        $data['setting'] = $setting;
 
-        // Get Technologist Id
-        $tech_id = $data['patient_info']->technologist;
-        // dd($tech_id);
-        // Get Lab Doctor Id
-        $lab_doc_id = $data['patient_info']->lab_doctor;
-        // dd($lab_doc_id);
-        $tech = LabManagement::where('id', $tech_id)->first();
-        $lab_doc = LabManagement::where('id', $lab_doc_id)->first();
-
-        if (empty($lab_doc)) {
-            return redirect()->back();
-        }
-        if (empty($tech)) {
-            return redirect()->back();
+        //  Get Signatures
+        $signatures = LabManagement::where('status', 1)->get();
+        if ($signatures->isEmpty()) {
+            return redirect('patient/list')->with('error', 'Technologist is required');
         }
 
-        $data['tech'] = $tech;
-        $data['lab_doc'] = $lab_doc;
+        $data['signatures'] = $signatures;
 
         if ($data['test_result']->isEmpty()) {
             return redirect()->back();

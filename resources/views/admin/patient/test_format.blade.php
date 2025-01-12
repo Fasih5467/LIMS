@@ -42,29 +42,15 @@
 
                                         <div class="grid grid-cols-1 md:grid-cols-2 gap-4 py-4 mx-2">
                                             <div class="col-span-1">
-                                                <label class="form-label mb-2">Technologist</label>
-                                                <select class="input capitalize" name="technologist">
-                                                    @foreach($technologists as $tech)
-                                                    <option class="capitalize" value="{{ $tech->id }}">{{ $tech->name }}</option>
-                                                    @endforeach
-                                                </select>
-                                            </div>
-                                            <div class="col-span-1">
-                                                <label class="form-label mb-2">Doctor</label>
-                                                <select class="input capitalize" name="lab_doctor">
-                                                    @foreach($lab_doctors as $doc)
-                                                    <option class="capitalize" value="{{ $doc->id }}">{{ $doc->name }}</option>
+                                                <label class="form-label mb-2">Remark</label>
+                                                <select class="input capitalize" name="remark">
+                                                    @foreach($remarks as $remark)
+                                                    <option class="capitalize" value="{{ $remark->name }}">{{ $remark->name }}</option>
                                                     @endforeach
                                                 </select>
                                             </div>
 
                                         </div>
-                                        <label class="form-label mb-2">Remark</label>
-                                        <select class="input capitalize" name="remark">
-                                            @foreach($remarks as $remark)
-                                            <option class="capitalize" value="{{ $remark->name }}">{{ $remark->name }}</option>
-                                            @endforeach
-                                        </select>
 
                                     </div>
                                     <a class="btn btn-default btn-sm ltr:mr-2 rtl:ml-2" href="{{ url('/patient/list') }}">Discard</a>

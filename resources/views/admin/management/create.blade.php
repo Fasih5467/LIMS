@@ -1,7 +1,7 @@
 @extends('admin.master')
 @section('content')
 @php
-$typeValues = ['technologist','doctor'];
+$typeValues = ['technologist','pathologist'];
 @endphp
 <!-- Content start -->
 <main class="h-full">

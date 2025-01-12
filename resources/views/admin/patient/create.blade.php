@@ -47,7 +47,7 @@
 <main class="h-full">
     <div class="page-container relative h-full flex flex-auto flex-col px-4 sm:px-6 md:px-8 py-4 sm:py-6">
         <div class="container mx-auto" style="width:90%;">
-            <form action="{{url('patient/slip')}}" method="post" id="form-id" enctype="multipart/form-data">
+            <form action="{{url('patient/store')}}" method="post" id="form-id" enctype="multipart/form-data">
                 @csrf
                 <div class="form-container vertical">
                     <div class="grid grid-cols-1 lg:grid-cols-3 gap-4">

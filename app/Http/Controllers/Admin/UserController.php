@@ -50,9 +50,9 @@ class UserController extends Controller
         if (!$id) {
             return redirect()->back();
         }
-        $remark =User::where('id', $id)->first();
-        if(empty($remark)){
-            return redirect('remark/list')->with('error','Record Not Found');
+        $remark = User::where('id', $id)->first();
+        if (empty($remark)) {
+            return redirect('remark/list')->with('error', 'Record Not Found');
         }
         return view('admin.remark.edit', compact('remark'));
     }
@@ -64,7 +64,7 @@ class UserController extends Controller
             'remark' => 'required',
         ]);
 
-       User::where('id', $request->id)
+        User::where('id', $request->id)
             ->update([
                 'name' => $request->remark
             ]);
@@ -78,8 +78,34 @@ class UserController extends Controller
             return redirect()->back();
         }
 
-       User::where('id',$id)->delete();
+        User::where('id', $id)->delete();
 
-        return redirect('/remark/list')->with('success', 'Remove Successfuly.');
+        return redirect('/user/list')->with('success', 'Remove Successfuly.');
+    }
+
+    public function activate($id)
+    {
+        if (!$id || $id == null) {
+            return redirect()->back();
+        }
+        User::where('id', $id)
+            ->update([
+                'status' => 1
+            ]);
+
+        return redirect('/user/list')->with('success', 'Activate User');
+    }
+
+    public function deactivate($id)
+    {
+        if (!$id || $id == null) {
+            return redirect()->back();
+        }
+        User::where('id', $id)
+            ->update([
+                'status' => 0
+            ]);
+
+        return redirect('remark/list')->with('success', 'Deactivate User');
     }
 }

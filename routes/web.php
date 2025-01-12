@@ -46,6 +46,9 @@ Route::middleware([WebGuard::class,Admin::class])->prefix('/user')->group(functi
     Route::get('/edit/{id}', [UserController::class, 'edit']);
     Route::post('/update', [UserController::class, 'update']);
     Route::get('/delete/{id}', [UserController::class, 'delete']);
+    Route::get('/activate-user/{userId}', [UserController::class, 'activate']);
+    Route::get('/deactivate-user/{userId}', [UserController::class, 'deactivate']);
+
 });
 
 
@@ -82,6 +85,9 @@ Route::middleware([WebGuard::class,Admin::class])->prefix('/lab')->group(functio
     Route::get('/management/edit/{id}', [LabManagementController::class, 'edit']);
     Route::post('/management/update', [LabManagementController::class, 'update']);
     Route::get('/management/delete/{id}', [LabManagementController::class, 'delete']);
+    Route::get('/signature/activate/{id}', [LabManagementController::class, 'activate']);
+    Route::get('/signature/deactivate/{id}', [LabManagementController::class, 'deactivate']);
+
 });
 
 // Remarks Route
@@ -99,7 +105,8 @@ Route::middleware([WebGuard::class,Admin::class])->prefix('/remark')->group(func
 Route::middleware([WebGuard::class])->prefix('/patient')->group(function () {
     Route::get('/', [PatientController::class, 'create']);
     Route::get('/list', [PatientController::class, 'index']);
-    Route::post('/slip', [PatientController::class, 'store']);
+    Route::post('/store', [PatientController::class, 'store']);
+    Route::get('/slip/{id}', [PatientController::class, 'slip']);
     Route::get('/edit/{id}', [PatientController::class, 'edit']);
     Route::post('/update', [PatientController::class, 'update']);
     Route::get('/delete/{id}', [PatientController::class, 'delete']);
@@ -118,7 +125,7 @@ Route::middleware([WebGuard::class])->prefix('/doctor')->group(function () {
     Route::get('/delete/{id}', [DoctorController::class, 'delete'])->middleware(Admin::class);
 });
 
-Route::get('/patient/generate_pdf/{id}', [PatientController::class, 'generatePDF']);
+Route::get('/patient/generate_pdf/{id}/{header}', [PatientController::class, 'generatePDF']);
 Route::get('/received_test/{id}', [PatientController::class, 'updateStatus']);
 // Route::get('/test/list',[TestController::class,'index']);
 // Route::get('/test/create',[TestController::class,'create']);

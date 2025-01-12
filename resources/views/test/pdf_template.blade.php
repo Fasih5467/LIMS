@@ -12,6 +12,11 @@
       font-size: 14px;
     }
 
+    .container {
+      width: 100%;
+
+    }
+
     /* .invoice-container {
       max-width: 900px;
       margin: 20px auto;
@@ -32,14 +37,13 @@
       font-size: 18px;
       font-weight: bold;
       /* text-align: center; */
-      margin: 20px 0;
+      margin: 10px 0;
       text-transform: uppercase;
     }
 
     table {
       width: 100%;
       border-collapse: collapse;
-      margin-bottom: 20px;
     }
 
     table th,
@@ -55,7 +59,7 @@
     }
 
     .remarks-section p {
-      margin-bottom: 10px;
+      margin-bottom: 35px;
     }
 
     .footer-section {
@@ -88,6 +92,7 @@
     tr td {
       border: none;
     }
+
     tr {
       border: none;
     }
@@ -97,6 +102,18 @@
 <body>
 
   <div class="container mt-5">
+    @if($header == 'Yes')
+    <div style="text-align: center;">
+      <h1 style="padding: 0;margin:0;">{{ strtoupper($setting->name) ?? ''}}</h1>
+      <p>{{ ucfirst($setting->address) ?? ''}}</p>
+    </div>
+    @elseif($header == 'No')
+    <div style="margin-top: 55px;">
+
+    </div>
+
+    @endif
+    <hr />
     <table style="border: 1px solid black; border-radius: 10px;">
       <tr>
         <td>Name:</td>
@@ -127,8 +144,7 @@
     </table>
   </div>
   <div class="invoice-container">
-
-    <div class="section-title">{{ucwords($patient_info->category_name) ?? ''}}</div>
+    <div class="section-title" style="text-align: center;"><u>{{ucwords($patient_info->category_name) ?? ''}}</u></div>
 
     <table>
       <thead>
@@ -162,14 +178,32 @@
     <div class="remarks-section">
       <p>REMARKS: {{ ucfirst($patient_info->remark) ?? '' }}</p>
     </div>
+    <hr />
+    <table>
+      <tr>
+        @foreach($signatures as $sign)
+        <td style="text-align: center;">{{ strtoupper($sign->type) ?? '' }}<br /> {{ $sign->qualification ?? '' }}<br />{{ ucfirst($sign->name) ?? '' }}</td>
+        @endforeach
+      </tr>
+    </table>
 
-    <div style="display: flex; justify-content: space-between; align-items: center; width: 100%;margin-top:40px">
+    <table>
+      <tr>
 
-      <div style="text-align: left;">LAB TECH</div>
-      <div style="text-align: left;">{{ucfirst($tech->name) ?? ''}}</div>
-      <div style="text-align: right; margin-right:100px">PATHOLOGIST</div>
-      <div style="text-align: right; margin-right:100px">{{ucfirst($lab_doc->name) ?? ''}}</div>
-    </div>
+        <td style="text-align: right;padding-right:40px;background-color:#d3d3d3;">Printed on / by : {{ date("d/m/y h:i:sa") }} / {{ucfirst(Auth::user()->name) ?? ''}}</td>
+
+      </tr>
+    </table>
+
+    <!-- <div style="display: flex; justify-content: space-between; align-items: flex-start; width: 100%; gap: 20px;">
+      @foreach($signatures as $sign)
+      <div style="display: flex; flex-direction: column; text-align: left;">
+        <div>{{ strtoupper($sign->type) ?? '' }}</div>
+        <div>{{ $sign->qualification ?? '' }}</div>
+        <div>{{ ucfirst($sign->name) ?? '' }}</div>
+      </div>
+      @endforeach
+    </div> -->
   </div>
 
 

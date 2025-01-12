@@ -22,9 +22,9 @@
 								</tr>
 							</thead>
 							<tbody>
-								@foreach($users as $user)
+								@foreach($users as $index => $user)
 								@if($user->user_type == 1)
-								  @continue;
+								@continue;
 								@endif
 								<tr>
 									<td>{{$user->id}}</td>
@@ -39,9 +39,11 @@
 										</div>
 									</td>
 									<td>
-										<div class="flex items-center">
-											<span class="ml-2 rtl:mr-2 font-semibold">Active</span>
-										</div>
+										<label class="switcher">
+											<input type="checkbox" onchange="toggleSwitcher({{$user->id}},this)" {{($user->status == 1)? 'checked':'';}}>
+											<span class="switcher-toggle"></span>
+										</label>
+
 									</td>
 									<td>
 										<div class="flex justify-end text-lg">
@@ -76,6 +78,18 @@
 @endsection
 
 @section('scripts')
+
+<script>
+	function toggleSwitcher(userId, checkbox) {
+		const isChecked = checkbox.checked
+	
+		const route = isChecked ?`/user/activate-user/${userId}` :`/user/deactivate-user/${userId}`; 
+
+	
+		window.location.href = route;
+	}
+</script>
+
 <!-- Other Vendors JS -->
 <script src="{{url('assets/vendors/datatables/jquery.dataTables.min.js')}}"></script>
 <script src="{{url('assets/vendors/datatables/dataTables.custom-ui.min.js')}}"></script>

@@ -30,8 +30,8 @@
                                     @include('alertmessage.flash-message')
                                     <div>
                                         <div class="mb-4 text-center">
-                                            <h3 class="mb-1">Welcome back!</h3>
-                                            <p>Please enter your credentials to sign in!</p>
+                                            <h3 class="mb-1">Welcome!</h3>
+                                            <p>Please enter your information to sign up!</p>
                                         </div>
                                         <div>
                                             <form action="{{ url('/user/store') }}" method="post" id="form-id">
