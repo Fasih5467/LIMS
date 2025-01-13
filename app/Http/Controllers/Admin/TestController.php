@@ -8,6 +8,10 @@ use App\Models\LabTestCategory;
 use App\Models\TestFormat;
 use Illuminate\Http\Request;
 use Mockery\Undefined;
+use PDF;
+
+use Dompdf\Dompdf;
+use Dompdf\Options;
 
 use function PHPUnit\Framework\isEmpty;
 
@@ -161,19 +165,35 @@ class TestController extends Controller
         return redirect('/test/list')->with('success', 'Test Format Successfuly.');
     }
 
-    // public function show(Request $request)
-    // {
-    //     // $test_formats = TestFormat::get();
+  public function view_test_format($test_id){
+    
+    if(!$test_id){
+        return;
+    }
 
-    //     // dd($request->items);
-    //     // $items = $request->items;
+    $data['test_format'] = TestFormat::where('test_id',$test_id)->get();
 
-    //     // dd($items[0]['key']);
-    //     // foreach ($items as $index => $item) {
+    if($data['test_format']->isEmpty()){
+        return;
+    }
 
-    //     //     echo $index ;
-    //     //     echo $item['key']; // Add space after each array
-    //     // }
-    //     // return view('admin.lab-tests.report-format', compact('test_formats'));
-    // }
+    $pdf = $this->generatePdfFormat($data);
+        $pdfContent = $pdf->output();
+        return response($pdfContent, 200)->header('Content-Type', 'application/pdf');
+
+  }
+
+  private function generatePdfFormat($data)
+    {
+
+        $pdfView = view('test.pdf_format_view', $data);
+        $options = new Options();
+        $options->set('isHtml5ParserEnabled', true);
+        $options->set('isPhpEnabled', true);
+        $dompdf = new Dompdf($options);
+        $dompdf->loadHtml($pdfView->render());
+        $dompdf->render();
+
+        return $dompdf;
+    }
 }

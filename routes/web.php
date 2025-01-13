@@ -74,6 +74,7 @@ Route::middleware([WebGuard::class])->prefix('/test')->group(function () {
     Route::get('/category/edit/{id}', [TestCategoryController::class, 'edit'])->middleware(Admin::class);
     Route::post('/category/update', [TestCategoryController::class, 'update'])->middleware(Admin::class);
     Route::get('/category/delete/{id}', [TestCategoryController::class, 'delete'])->middleware(Admin::class);
+    Route::get('/view/{id}', [TestController::class, 'view_test_format']);
 });
 
 // Lab Managements Route
