@@ -5,6 +5,8 @@
 	<div class="page-container relative h-full flex flex-auto flex-col px-4 sm:px-6 md:px-8 py-8 sm:py-6">
 		<div class="container mx-auto" style="width: 70%;">
 			@include('alertmessage.flash-message')
+            <div class="hidden" id="error"></div>
+
 			<div class="card adaptable-card">
 				<div class="card-body">
 					<div class="lg:flex items-center justify-between mb-4">
@@ -20,7 +22,6 @@
 									<th>Name</th>
 									<th>Email</th>
 									<th>Gender</th>
-									<th>Contact</th>
 									<th>Type</th>
 									<th>Show</th>
 									<th></th>
@@ -41,14 +42,11 @@
 										<span>{{ $res->gender }}</span>
 									</td>
 									<td>
-										<span>{{ $res->contact }}</span>
-									</td>
-									<td>
 										<span>{{ $res->type }}</span>
 									</td>
 									<td>
 										<label class="switcher">
-											<input type="checkbox" onchange="toggleSwitcher({{$res->id}},this)" {{($res->status == 1)? 'checked':'';}}>
+											<input type="checkbox" class="limit-switch" onchange="toggleSwitcher({{$res->id}},this)" {{($res->status == 1)? 'checked':'';}}>
 											<span class="switcher-toggle"></span>
 										</label>
 									</td>
@@ -72,7 +70,7 @@
 									</td>
 								</tr>
 								@endforeach
-					
+
 							</tbody>
 						</table>
 					</div>
@@ -89,11 +87,29 @@
 <script>
 	function toggleSwitcher(userId, checkbox) {
 		const isChecked = checkbox.checked
-	
-		const route = isChecked ?`/lab/signature/activate/${userId}` :`/lab/signature/deactivate/${userId}`; 
 
-	
-		window.location.href = route;
+		const checkedCount = document.querySelectorAll('.limit-switch:checked').length;
+        
+		const MAX_LIMIT = 5;
+
+		let error = document.getElementById('error');
+
+		// If limit is exceeded, uncheck the current checkbox and show an alert
+		if (isChecked && checkedCount > MAX_LIMIT) {
+			checkbox.checked = false;
+			error.classList = '';
+			error.innerHTML = `<div class="alert alert-danger alert-block">
+				<!-- <button type="button" class="close" data-dismiss="alert">×</button>     -->
+				<strong>You can only select up to ${MAX_LIMIT} items.</strong>
+			</div>`;
+		
+			return;
+		} else {
+			const route = isChecked ? `/lab/signature/activate/${userId}` : `/lab/signature/deactivate/${userId}`;
+
+
+			window.location.href = route;
+		}
 	}
 </script>
 

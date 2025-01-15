@@ -26,7 +26,7 @@
                                                     placeholder="Category Name">
                                             </div>
                                             @error('category')
-                                            <div class="alert alert-danger">
+                                            <div class="text-red-500 mt-2">
                                                 {{ $message }}
                                             </div>
                                             @enderror
@@ -63,13 +63,12 @@
 @section('scripts')
 
 <script>
-document.getElementById('btn-save').addEventListener('click',function(){
-document.getElementById('btn-save').disabled = true;
+    document.getElementById('btn-save').addEventListener('click', function() {
+        document.getElementById('btn-save').disabled = true;
 
-// Submit the form
-document.getElementById('form-id').submit();
-})
-
+        // Submit the form
+        document.getElementById('form-id').submit();
+    })
 </script>
 
 <!-- Other Vendors JS -->

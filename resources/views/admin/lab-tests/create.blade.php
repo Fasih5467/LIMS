@@ -22,11 +22,12 @@
                                                         class="input"
                                                         type="text"
                                                         name="Tname"
+                                                        value="{{old('Tname')}}"
                                                         autocomplete="off"
                                                         placeholder="Test Name">
                                                 </div>
                                                 @error('Tname')
-                                                <div class="alert alert-danger">
+                                                <div class="text-red-500 mt-2">
                                                     {{ $message }}
                                                 </div>
                                                 @enderror
@@ -42,12 +43,13 @@
                                                             class="input pl-8"
                                                             type="number"
                                                             name="price"
+                                                            value="{{old('price')}}"
                                                             autocomplete="off"
                                                             placeholder="Price">
                                                     </span>
                                                 </div>
                                                 @error('price')
-                                                <div class="alert alert-danger">
+                                                <div class="text-red-500 mt-2">
                                                     {{ $message }}
                                                 </div>
                                                 @enderror
@@ -67,7 +69,7 @@
                                                     </select>
                                                 </div>
                                                 @error('category')
-                                                <div class="alert alert-danger">
+                                                <div class="text-red-500 mt-2">
                                                     {{ $message }}
                                                 </div>
                                                 @enderror
@@ -81,11 +83,12 @@
                                                         class="input"
                                                         type="text"
                                                         name="keyword"
+                                                        value="{{old('keyword')}}"
                                                         autocomplete="off"
                                                         placeholder="RBC">
                                                 </div>
                                                 @error('keyword')
-                                                <div class="alert alert-danger">
+                                                <div class="text-red-500 mt-2">
                                                     {{ $message }}
                                                 </div>
                                                 @enderror
@@ -99,11 +102,12 @@
                                                         class="input"
                                                         type="number"
                                                         name="duration"
+                                                        value="{{old('duration')}}"
                                                         autocomplete="off"
                                                         placeholder="Day">
                                                 </div>
                                                 @error('duration')
-                                                <div class="alert alert-danger">
+                                                <div class="text-red-500 mt-2">
                                                     {{ $message }}
                                                 </div>
                                                 @enderror
@@ -116,7 +120,7 @@
                     </div>
                     <div id="stickyFooter" class="sticky -bottom-1 -mx-8 px-8 flex items-center justify-end py-4">
                         <div class="md:flex items-center">
-                            <a class="btn btn-default btn-sm ltr:mr-2 rtl:ml-2" href= "{{ url('/test/list') }}">Discard</a>
+                            <a class="btn btn-default btn-sm ltr:mr-2 rtl:ml-2" href="{{ url('/test/list') }}">Discard</a>
                             <button class="btn btn-solid btn-sm" type="submit" id="btn-save">
                                 <span class="flex items-center justify-center">
                                     <span class="text-lg">
@@ -141,13 +145,12 @@
 @section('scripts')
 
 <script>
-document.getElementById('btn-save').addEventListener('click',function(){
-document.getElementById('btn-save').disabled = true;
+    document.getElementById('btn-save').addEventListener('click', function() {
+        document.getElementById('btn-save').disabled = true;
 
-// Submit the form
-document.getElementById('form-id').submit();
-})
-
+        // Submit the form
+        document.getElementById('form-id').submit();
+    })
 </script>
 
 <!-- Other Vendors JS -->

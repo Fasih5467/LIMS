@@ -25,11 +25,11 @@ class LabManagementController extends Controller
     public function store(Request $request)
     {
 
-        // $request->validate([
-        //     'name'=>'required',
-        //     'contact' => 'required',
-        //     'gender' => 'required'
-        // ]);
+        $request->validate([
+            'name'=>'required',
+            'contact' => 'required',
+            'gender' => 'required'
+        ]);
 
         $labManagement = new LabManagement;
         $labManagement->name = $request->name;
@@ -54,11 +54,11 @@ class LabManagementController extends Controller
     {
 
         // dd($request);
-        // $request->validate([
-        //     'name'=>'required',
-        //     'contact_no' => 'required',
-        //     'gender' => 'required'
-        // ]);
+        $request->validate([
+            'name'=>'required',
+            'contact_no' => 'required',
+            'gender' => 'required'
+        ]);
 
         $id = $request->id;
 

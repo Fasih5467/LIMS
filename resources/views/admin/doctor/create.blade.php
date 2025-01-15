@@ -22,11 +22,12 @@
                                                         class="input"
                                                         type="text"
                                                         name="name"
+                                                        value="{{old('name')}}"
                                                         autocomplete="off"
                                                         placeholder="Name">
                                                 </div>
                                                 @error('name')
-                                                <div class="alert alert-danger">
+                                                <div class="text-red-500 mt-2">
                                                     {{ $message }}
                                                 </div>
                                                 @enderror
@@ -40,11 +41,12 @@
                                                         class="input"
                                                         type="email"
                                                         name="email"
+                                                        value="{{old('email')}}"
                                                         autocomplete="off"
                                                         placeholder="xyz@gmail.com">
                                                 </div>
                                                 @error('email')
-                                                <div class="alert alert-danger">
+                                                <div class="text-red-500 mt-2">
                                                     {{ $message }}
                                                 </div>
                                                 @enderror
@@ -60,11 +62,12 @@
                                                         class="input"
                                                         type="text"
                                                         name="address"
+                                                        value="{{old('address')}}"
                                                         autocomplete="off"
                                                         placeholder="Address......">
                                                 </div>
                                                 @error('address')
-                                                <div class="alert alert-danger">
+                                                <div class="text-red-500 mt-2">
                                                     {{ $message }}
                                                 </div>
                                                 @enderror
@@ -78,11 +81,12 @@
                                                         class="input"
                                                         type="number"
                                                         name="contact_no"
+                                                        value="{{old('contact_no')}}"
                                                         autocomplete="off"
                                                         placeholder="03XX-XXXXXXX">
                                                 </div>
                                                 @error('contact_no')
-                                                <div class="alert alert-danger">
+                                                <div class="text-red-500 mt-2">
                                                     {{ $message }}
                                                 </div>
                                                 @enderror
@@ -96,11 +100,12 @@
                                                         class="input"
                                                         type="number"
                                                         name="age"
+                                                        value="{{old('age')}}"
                                                         autocomplete="off"
                                                         placeholder="years">
                                                 </div>
                                                 @error('age')
-                                                <div class="alert alert-danger">
+                                                <div class="text-red-500 mt-2">
                                                     {{ $message }}
                                                 </div>
                                                 @enderror
@@ -120,7 +125,7 @@
                                             </label>
                                         </div>
                                         @error('gender')
-                                        <div class="alert alert-danger">
+                                        <div class="text-red-500 mt-2">
                                             {{ $message }}
                                         </div>
                                         @enderror
@@ -156,13 +161,12 @@
 @section('scripts')
 
 <script>
-document.getElementById('btn-save').addEventListener('click',function(){
-document.getElementById('btn-save').disabled = true;
+    document.getElementById('btn-save').addEventListener('click', function() {
+        document.getElementById('btn-save').disabled = true;
 
-// Submit the form
-document.getElementById('form-id').submit();
-})
-
+        // Submit the form
+        document.getElementById('form-id').submit();
+    })
 </script>
 
 <!-- Other Vendors JS -->

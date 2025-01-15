@@ -42,12 +42,22 @@
                                                         <div>
                                                             <input class="input" type="text" name="name" autocomplete="off" placeholder="Name">
                                                         </div>
+                                                        @error('name')
+                                                        <div class="text-red-500">
+                                                            {{ $message }}
+                                                        </div>
+                                                        @enderror
                                                     </div>
                                                     <div class="form-item vertical">
                                                         <label class="form-label mb-2">Email</label>
                                                         <div>
                                                             <input class="input" type="email" name="email" autocomplete="off" placeholder="Email">
                                                         </div>
+                                                        @error('email')
+                                                        <div class="text-red-500">
+                                                            {{ $message }}
+                                                        </div>
+                                                        @enderror
                                                     </div>
                                                     <div class="form-item vertical">
                                                         <label class="form-label mb-2">Password</label>
@@ -103,6 +113,7 @@
                                                         </div> -->
                                                 </div>
                                             </form>
+                                            <button class="btn btn-solid w-full my-2"><a href = "{{url('/user/list')}}">Back To List</button>
                                         </div>
                                     </div>
                                 </div>

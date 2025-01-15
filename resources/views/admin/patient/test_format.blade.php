@@ -5,6 +5,7 @@
 <main class="h-full">
     <div class="page-container relative h-full flex flex-auto flex-col px-4 sm:px-6 md:px-8 py-4 sm:py-6">
         <div class="container mx-auto" style="width:75%;">
+			@include('alertmessage.flash-message')
             <form action="{{url('patient/result/store')}}" method="post" id="form-id" enctype="multipart/form-data">
                 @csrf
                 <div class="form-container vertical">
@@ -34,7 +35,8 @@
                                                 type="text"
                                                 placeholder="Enter Result"
                                                 class="input m-2 w-1/2 p-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-400"
-                                                name="results[]" />
+                                                name="results[]"
+                                                value="{{  old('results.' . $loop->index)}}" />
 
                                         </div>
 
@@ -54,7 +56,11 @@
 
                                     </div>
                                     <a class="btn btn-default btn-sm ltr:mr-2 rtl:ml-2" href="{{ url('/patient/list') }}">Discard</a>
-                                    <button type="submit" class="mt-4 px-4 py-2 bg-blue-500 text-white rounded">Submit</button>
+                                    <button class="btn btn-solid btn-sm" type="submit" id="btn-save">
+                                        <span class="flex items-center justify-center">
+                                            <span class="ltr:ml-1 rtl:mr-1">Save</span>
+                                        </span>
+                                    </button>
 
                                 </div>
                             </div>
@@ -71,5 +77,14 @@
 @endsection
 
 @section('scripts')
-
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Save Btn
+        document.getElementById('btn-save').addEventListener('click', function() {
+            console.log('button')
+            this.disabled = true; // Disable the button
+            document.getElementById('form-id').submit(); // Submit the form
+        });
+    });
+</script>
 @endsection

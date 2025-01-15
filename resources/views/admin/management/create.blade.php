@@ -28,7 +28,7 @@ $typeValues = ['technologist','pathologist'];
                                                         placeholder="Name">
                                                 </div>
                                                 @error('name')
-                                                <div class="alert alert-danger">
+                                                <div class="text-red-500">
                                                     {{ $message }}
                                                 </div>
                                                 @enderror
@@ -46,7 +46,7 @@ $typeValues = ['technologist','pathologist'];
                                                         placeholder="xyz@gmail.com">
                                                 </div>
                                                 @error('email')
-                                                <div class="alert alert-danger">
+                                                <div class="text-red-500">
                                                     {{ $message }}
                                                 </div>
                                                 @enderror
@@ -66,7 +66,7 @@ $typeValues = ['technologist','pathologist'];
                                                         placeholder="Qualification.....">
                                                 </div>
                                                 @error('qualification')
-                                                <div class="alert alert-danger">
+                                                <div class="text-red-500">
                                                     {{ $message }}
                                                 </div>
                                                 @enderror
@@ -84,7 +84,7 @@ $typeValues = ['technologist','pathologist'];
                                                         placeholder="03XX-XXXXXXX">
                                                 </div>
                                                 @error('contact')
-                                                <div class="alert alert-danger">
+                                                <div class="text-red-500">
                                                     {{ $message }}
                                                 </div>
                                                 @enderror
@@ -102,7 +102,7 @@ $typeValues = ['technologist','pathologist'];
                                                         placeholder="years">
                                                 </div>
                                                 @error('age')
-                                                <div class="alert alert-danger">
+                                                <div class="text-red-500">
                                                     {{ $message }}
                                                 </div>
                                                 @enderror
@@ -134,7 +134,7 @@ $typeValues = ['technologist','pathologist'];
                                                     </label>
                                                 </div>
                                                 @error('gender')
-                                                <div class="alert alert-danger">
+                                                <div class="text-red-500">
                                                     {{ $message }}
                                                 </div>
                                                 @enderror
@@ -171,13 +171,12 @@ $typeValues = ['technologist','pathologist'];
 
 @section('scripts')
 <script>
-document.getElementById('btn-save').addEventListener('click',function(){
-document.getElementById('btn-save').disabled = true;
+    document.getElementById('btn-save').addEventListener('click', function() {
+        document.getElementById('btn-save').disabled = true;
 
-// Submit the form
-document.getElementById('form-id').submit();
-})
-
+        // Submit the form
+        document.getElementById('form-id').submit();
+    })
 </script>
 
 <!-- Other Vendors JS -->

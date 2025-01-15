@@ -8,4 +8,8 @@ class LabManagement extends Model
 {
     //
     protected $table = 'lab_managements';
+
+    protected $casts = [
+        'signature' => 'array',
+    ];
 }

@@ -38,6 +38,10 @@ class PatientController extends Controller
             ->select('patients.id as p_id', 'patients.name as patient_name', 'pr.*')
             ->orderBy('pr.id', 'desc')
             ->get();
+
+        if ($tests->isEmpty()) {
+            return redirect()->back()->with('error', 'Tests not found')->withInput();
+        }
         // dd($tests);
         return view('admin.patient.list', compact('tests'));
     }
@@ -49,6 +53,8 @@ class PatientController extends Controller
             ->get();
 
         $categories = LabTestCategory::get();
+
+
 
         $doctors = Doctor::get();
         // $patients = Patient::get();
@@ -159,7 +165,7 @@ class PatientController extends Controller
             $patient_info = Patient::join('patient_pay_records as ppr', 'patients.id', '=', 'ppr.patient_id')
                 ->select('ppr.id as ppr_id', 'ppr.*', 'patients.*')->where('ppr.patient_id', $patientId)->orderByDesc('ppr.id')->first();
 
-            return  redirect('patient/slip/' . $slip_id);
+            return  redirect('patient/slip/00' . $slip_id);
 
             // return view('admin.patient.slip', compact('ref_by', 'selectedValues', 'patient_info'));
         }
@@ -185,12 +191,24 @@ class PatientController extends Controller
     }
 
 
-    public function slip($id)
+    public function slip($num)
     {
+        $data['num'] = $num;
 
+        $id = trim($num,"0");
+
+        $setting = Setting::orderBy('id','DESC')->first();
+        if(empty($setting)){
+            return redirect()->back()->with('error','Company information not found')->withInput();
+        }
+        $data['setting'] = $setting;
 
         $data['patient_info'] = Patient::join('patient_pay_records as ppr', 'patients.id', '=', 'ppr.patient_id')
             ->select('ppr.id as ppr_id', 'ppr.*', 'patients.name', 'patients.age')->where('ppr.id', $id)->orderByDesc('ppr.id')->first();
+
+        if (empty($data['patient_info'])) {
+            return redirect()->back()->with('error', 'Patient Information not found')->withInput();
+        }
 
         $patientId = $data['patient_info']->patient_id;
         $created_test = Carbon::parse($data['patient_info']->created_at)->format('y-m-d H:i:s');
@@ -203,11 +221,16 @@ class PatientController extends Controller
             ->orderBy('id', 'DESC')
             ->get();
 
+        if ($data['selectedTests']->isEmpty()) {
+            return redirect()->back()->with('error', 'Selected Tests not found')->withInput();
+        }
+
         $refId = $data['selectedTests'][0]->ref_by_id;
         $data['ref_by'] = Doctor::where('id', $refId)->first();
-        // dd($data);
 
-        // return view('admin.patient.slip', compact('data'));
+        if (empty($data['ref_by'])) {
+            return redirect()->back()->with('error', 'Refference Doctor not found')->withInput();
+        }
 
         $pdf = $this->generatePdfSlip($data);
         $pdfContent = $pdf->output();
@@ -242,10 +265,9 @@ class PatientController extends Controller
 
     public function get_test_format($id)
     {
-        //  Get Remarks
         $remarks = Remark::orderBy('id', 'DESC')->get();
         if ($remarks->isEmpty()) {
-            return redirect('patient/list')->with('error', 'Lab Doctor is required');
+            return redirect()->back()->with('error', 'Record not found!');
         }
 
         $patient_record = PatientRecord::where('id', $id)->first();
@@ -263,7 +285,21 @@ class PatientController extends Controller
 
     public function patient_result_store(Request $request)
     {
-        // dd($request->all());
+        // Step 1: Validate the input array
+        $validatedData = $request->validate([
+            'results' => 'required|array', // Ensure 'results' is an array and required
+            'results.*' => 'nullable|string', // Each value can be null or a string
+        ]);
+
+        // Step 2: Check if any index in the array is empty
+        $results = $validatedData['results'];
+        foreach ($results as $index => $value) {
+            if (is_null($value) || trim($value) === '') {
+                return redirect()->back()->with('error', "All fields are required")->withInput();
+            }
+        }
+
+
         $patient_id = $request->patient_id;
         $patient_record_id = $request->patient_record_id;
         $keys_id = $request->keys;
@@ -283,14 +319,15 @@ class PatientController extends Controller
             return;
         }
 
-        $signatures = LabManagement::where('status', 1)->get();
-        foreach ($signatures as $sign) {
-            if ($sign->type == 'technologist') {
-                $patient_record->technologist = $sign->name;
-            } else  if ($sign->type == 'pathologist') {
-                $patient_record->pathologist = $sign->name;
-            }
+        $signatures = LabManagement::select('name', 'type', 'qualification')
+            ->where('status', 1)
+            ->get();
+
+        if ($signatures->isEmpty()) {
+            return redirect()->back()->with('error', 'Signature not applied')->withInput();;
         }
+
+        $patient_record->signature = $signatures->toArray();
         $patient_record->remark = $request->remark;
         $patient_record->is_result = 'yes';
         $patient_record->save();
@@ -311,7 +348,7 @@ class PatientController extends Controller
         $patient_record = PatientRecord::where('id', $id)->first();
 
         if (!$patient_record) {
-            return redirect('/patient/list');
+            return redirect('/patient/list')->with('error', 'Record not found');
         }
         $patient_id = $patient_record->patient_id;
         $patient_test_id = $patient_record->test_id;
@@ -334,30 +371,31 @@ class PatientController extends Controller
             ->join('lab_tests as lt', 'pr.test_id', '=', 'lt.id')
             ->join('lab_test_categories as ltc', 'lt.category_id', '=', 'ltc.id')
             ->join('doctors as d', 'd.id', '=', 'pr.ref_by_id')
-            ->select('p.name as patient_name', 'lt.name as lab_test_name', 'ltc.name as category_name', 'p.*', 'd.name as doctor_name', 'pr.remark')
+            ->select('p.name as patient_name', 'lt.name as lab_test_name', 'ltc.name as category_name', 'p.*', 'd.name as doctor_name', 'pr.remark', 'pr.signature')
             ->where('pr.patient_id', $patient_id)
             ->where('pr.test_id', $patient_test_id)
             ->where('pr.id', $id)
             ->first();
 
+        // Signatures
+        $signatures = json_decode($data['patient_info']->signature);
+
         // Get Laboratory Info
         $setting = Setting::first();
         $data['setting'] = $setting;
 
-        //  Get Signatures
-        $signatures = LabManagement::where('status', 1)->get();
-        if ($signatures->isEmpty()) {
-            return redirect('patient/list')->with('error', 'Technologist is required');
-        }
-
         $data['signatures'] = $signatures;
 
+        if (empty($data['signatures'])) {
+            return redirect()->back()->with('error', 'Signature is empty');
+        }
+
         if ($data['test_result']->isEmpty()) {
-            return redirect()->back();
+            return redirect()->back()->with('error', 'Result not found');
         }
 
         if (empty($data['patient_info'])) {
-            return redirect()->back();
+            return redirect()->back()->with('error', 'Patient information not found');
         }
 
         $pdf = $this->generatePdfFormat($data);
