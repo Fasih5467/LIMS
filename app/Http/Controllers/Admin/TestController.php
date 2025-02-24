@@ -21,7 +21,7 @@ class TestController extends Controller
     {
         $labTests = LabTest::leftJoin('lab_test_categories as c', 'lab_tests.category_id', '=', 'c.id')
             ->select('c.name as category_name', 'lab_tests.*')
-            ->orderBy('lab_tests.id','desc')
+            ->orderBy('lab_tests.id', 'desc')
             ->get();
         return view('admin.lab-tests.list', compact('labTests'));
     }
@@ -102,24 +102,25 @@ class TestController extends Controller
 
     public function createFormat($id)
     {
-        
+
         // dd($id);
         $test_id = $id;
-        $lab_test = LabTest::where('id',$test_id)->first();
+        $lab_test = LabTest::where('id', $test_id)->first();
         // dd($lab_test);
         $test_formats = TestFormat::where('test_id', $id)->get();
         if ($test_formats->Count() > 0) {
             // dd($test_formats);
-            return view('admin.lab-tests.test-format', compact('lab_test','test_formats', 'test_id'));
+            return view('admin.lab-tests.test-format', compact('lab_test', 'test_formats', 'test_id'));
         } else {
             // dd('not found');
-            return view('admin.lab-tests.test-format', compact('lab_test','test_id'));
+            return view('admin.lab-tests.test-format', compact('lab_test', 'test_id'));
         }
     }
 
 
     public function storeFormat(Request $request)
     {
+        // dd($request);
         // Get All Show Input Values
         $items = $request->items;
 
@@ -136,10 +137,9 @@ class TestController extends Controller
             // dd($deletedValues);
         }
 
+            foreach ($items as $item) {
 
-        foreach ($items as $item) {
-
-            if ($item['id']) {
+                if ($item['id']) {
                 // Update Data
                 TestFormat::where('id', $item['id'])
                     ->update([
@@ -148,8 +148,9 @@ class TestController extends Controller
                         'unit' => $item['unit'],
                         'value' => $item['value'],
                         'order' => $item['order'],
+                        'description' => $item['description'],
                     ]);
-            } else {
+                } else {
                 // New Entry
                 $add_format = new TestFormat;
                 $add_format['test_id'] = $test_id;
@@ -158,32 +159,44 @@ class TestController extends Controller
                 $add_format['unit'] = $item['unit'];
                 $add_format['value'] = $item['value'];
                 $add_format['order'] = $item['order'];
+                $add_format['description'] = $item['description'];
                 $add_format->save();
-            }
-        }
+               }
+           }
 
         return redirect('/test/list')->with('success', 'Test Format Successfuly.');
     }
 
-  public function view_test_format($test_id){
-    
-    if(!$test_id){
-        return;
+    public function deleteFormat($id) {
+            //    dd($id);
+              $deleteRows = TestFormat::where('test_id',$id)->delete();
+
+              if($deleteRows > 0){
+                return redirect('/test/list')->with('success','All fields are delete...');
+              } else {
+                return redirect()->back()->with('error','Fields already delete...');
+              }
     }
 
-    $data['test_format'] = TestFormat::where('test_id',$test_id)->get();
+    public function view_test_format($test_id)
+    {
 
-    if($data['test_format']->isEmpty()){
-        return;
-    }
+        if (!$test_id) {
+            return;
+        }
 
-    $pdf = $this->generatePdfFormat($data);
+        $data['test_format'] = TestFormat::where('test_id', $test_id)->get();
+
+        if ($data['test_format']->isEmpty()) {
+            return;
+        }
+
+        $pdf = $this->generatePdfFormat($data);
         $pdfContent = $pdf->output();
         return response($pdfContent, 200)->header('Content-Type', 'application/pdf');
+    }
 
-  }
-
-  private function generatePdfFormat($data)
+    private function generatePdfFormat($data)
     {
 
         $pdfView = view('test.pdf_format_view', $data);

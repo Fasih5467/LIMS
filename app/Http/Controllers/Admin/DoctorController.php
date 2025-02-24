@@ -40,6 +40,10 @@ class DoctorController extends Controller
 
     public function edit($id){
         $doctor = Doctor::find($id);
+
+        if(empty($doctor)){
+            return redirect()->back()->with('error','Doctor not found.');
+        }
         return view('admin.doctor.edit',compact('doctor'));
     }
 

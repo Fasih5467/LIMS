@@ -101,9 +101,9 @@
 
 <body>
 
-  
+
   <div class="invoice-container">
-    
+
     <table>
       <thead>
         <tr>
@@ -118,23 +118,52 @@
         @if($result->type == 'heading')
         <tr>
           <td colspan="4">
-            <b><u>{{$result->key}}</u></b>
+            <b><u>{{($result->key == 'null')? '': $result->key; }}</u></b>
           </td>
         </tr>
-        @continue;
-        @endif
+        @if($result->description != null)
         <tr>
-          <td>{{$result->key}}</td>
-          <td>{{$result->result}}</td>
-          <td>{{$result->unit}}</td>
+          <td colspan="4">
+            {!! $result->description !!}
+          </td>
+        </tr>
+        @endif
+        @continue;
+        @elseif($result->key == 'null' || $result->key == null)
+        <tr>
+          <td></td>
+          <td></td>
+          <td></td>
           <td>{{$result->value}}</td>
         </tr>
+        @if($result->description != null)
+        <tr>
+          <td colspan="4">
+            {!! $result->description !!}
+          </td>
+        </tr>
+        @endif
+        @continue
+        @endif
+        <tr>
+          <td>{{$result->key == 'null'? '' : $result->key}}</td>
+          <td>{{$result->result == 'null'? '' : $result->result}}</td>
+          <td>{{$result->unit == 'null'? '' : $result->unit}}</td>
+          <td>{{$result->value == 'null'? '' : $result->value}}</td>
+        </tr>
+        @if($result->description != null)
+        <tr>
+          <td colspan="4">
+            {!! $result->description !!}
+          </td>
+        </tr>
+        @endif
         @endforeach
       </tbody>
     </table>
 
 
-   
+
   </div>
 
 

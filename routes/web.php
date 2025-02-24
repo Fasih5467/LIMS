@@ -20,6 +20,12 @@ use Illuminate\Support\Facades\Session;
 //     return view('welcome');
 // });
 
+// Route::get('/start-server', function () {
+//     include base_path('serve-script.php'); // Script ko run kare
+//     return "Server command executed!";
+// });
+
+
 Route::get('/login', [LoginController::class, 'create']);
 Route::post('/login_user', [LoginController::class, 'authenticate']);
 Route::get('/logout', function (Request $request) {
@@ -39,7 +45,6 @@ Route::get('/', function () {
 
 // Users Route
 Route::middleware([WebGuard::class,Admin::class])->prefix('/user')->group(function () {
-
     Route::get('/list', [UserController::class, 'index']);
     Route::get('/signup', [UserController::class, 'create']);
     Route::post('/store', [UserController::class, 'store']);
@@ -48,13 +53,10 @@ Route::middleware([WebGuard::class,Admin::class])->prefix('/user')->group(functi
     Route::get('/delete/{id}', [UserController::class, 'delete']);
     Route::get('/activate-user/{userId}', [UserController::class, 'activate']);
     Route::get('/deactivate-user/{userId}', [UserController::class, 'deactivate']);
-
 });
-
 
 // Tests Route
 Route::middleware([WebGuard::class])->prefix('/test')->group(function () {
-
     Route::get('/list', [TestController::class, 'index']);
     Route::get('/create', [TestController::class, 'create']);
     Route::post('/store', [TestController::class, 'store']);
@@ -64,8 +66,7 @@ Route::middleware([WebGuard::class])->prefix('/test')->group(function () {
     Route::get('/delete/{id}', [TestController::class, 'delete'])->middleware(Admin::class);
     Route::get('/format/create/{id}', [TestController::class, 'createFormat'])->middleware(Admin::class);
     Route::post('/format/store', [TestController::class, 'storeFormat'])->middleware(Admin::class);
-
-
+    Route::get('/format/delete/{id}', [TestController::class, 'deleteFormat'])->middleware(Admin::class);
 
     // Test Category Route
     Route::get('/category/list', [TestCategoryController::class, 'index']);
@@ -79,7 +80,6 @@ Route::middleware([WebGuard::class])->prefix('/test')->group(function () {
 
 // Lab Managements Route
 Route::middleware([WebGuard::class,Admin::class])->prefix('/lab')->group(function () {
-
     Route::get('/management/list', [LabManagementController::class, 'index']);
     Route::get('/management/create', [LabManagementController::class, 'create']);
     Route::post('/management/store', [LabManagementController::class, 'store']);
@@ -88,7 +88,6 @@ Route::middleware([WebGuard::class,Admin::class])->prefix('/lab')->group(functio
     Route::get('/management/delete/{id}', [LabManagementController::class, 'delete']);
     Route::get('/signature/activate/{id}', [LabManagementController::class, 'activate']);
     Route::get('/signature/deactivate/{id}', [LabManagementController::class, 'deactivate']);
-
 });
 
 // Remarks Route
@@ -107,13 +106,20 @@ Route::middleware([WebGuard::class])->prefix('/patient')->group(function () {
     Route::get('/', [PatientController::class, 'create']);
     Route::get('/list', [PatientController::class, 'index']);
     Route::post('/store', [PatientController::class, 'store']);
+    Route::get('/slip/list', [PatientController::class, 'slip_list']);
     Route::get('/slip/{id}', [PatientController::class, 'slip']);
     Route::get('/edit/{id}', [PatientController::class, 'edit']);
     Route::post('/update', [PatientController::class, 'update']);
+    Route::get('/balance/{id}', [PatientController::class, 'collectBalance']);
     Route::get('/delete/{id}', [PatientController::class, 'delete']);
     Route::get('/tests/{id}', [PatientController::class, 'show_patient_test']);
     Route::get('/test/result/{id}', [PatientController::class, 'get_test_format']);
     Route::post('/result/store/', [PatientController::class, 'patient_result_store']);
+    Route::get('/test/edit/{id}', [PatientController::class, 'edit_result']);
+    Route::post('/result/update', [PatientController::class, 'update_result']);
+    Route::get('/generate_pdf/{id}', [PatientController::class, 'generatePDF']);
+    Route::get('/all_generate_pdf/{id}', [PatientController::class, 'all_reports_PDF']);
+
 });
 
 // Doctors Route
@@ -126,7 +132,7 @@ Route::middleware([WebGuard::class])->prefix('/doctor')->group(function () {
     Route::get('/delete/{id}', [DoctorController::class, 'delete'])->middleware(Admin::class);
 });
 
-Route::get('/patient/generate_pdf/{id}/{header}', [PatientController::class, 'generatePDF']);
+// Route::get('/patient/generate_pdf/{id}', [PatientController::class, 'generatePDF']);
 Route::get('/received_test/{id}', [PatientController::class, 'updateStatus']);
 // Route::get('/test/list',[TestController::class,'index']);
 // Route::get('/test/create',[TestController::class,'create']);

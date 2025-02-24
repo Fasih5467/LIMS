@@ -9,7 +9,7 @@
 
     .input-dis {
         font-size: 14px;
-        box-sizing: border-box;
+        /* box-sizing: border-box; */
     }
 
     .dropdown-dis {
@@ -249,13 +249,15 @@
                                         <td id="discount">
                                             <div class="input-dropdown-dis">
                                                 <input
-                                                    class="input input-dis h-6 p-2"
+                                                    class="w-20 input input-dis input-sm h-6 p-2"
+                                                    style="width: 50px;"
                                                     type="number"
                                                     maxlength="5"
                                                     name="disAmount"
                                                     autocomplete="off"
                                                     id="dis-amount-value"
                                                     placeholder="Discount" />
+
                                                 <select class="dropdown-dis" id="select-dis" name="dis_type">
                                                     <option value="Rs">Rs</option>
                                                     <option value="%">%</option>
@@ -592,15 +594,23 @@
 
     })
 
-
-
     // Save Btn
-    document.getElementById('btn-save').addEventListener('click', function() {
+    document.getElementById('btn-save').addEventListener('click', function(e) {
+        e.preventDefault();
+
         document.getElementById('btn-save').disabled = true;
 
         // Submit the form
         document.getElementById('form-id').submit();
+
     })
+
+    // // Close dropdown if clicked outside
+    // document.getElementById('header-dropdown').addEventListener('blur', () => {
+    //     dropdown.classList.add('hidden');
+
+
+    // });
 </script>
 
 

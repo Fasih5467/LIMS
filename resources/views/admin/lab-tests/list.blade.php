@@ -9,9 +9,11 @@
 				<div class="card-body">
 					<div class="lg:flex items-center justify-between mb-4">
 						<h3 class="mb-4 lg:mb-0">Tests</h3>
+						@if(Auth::user()->user_type == 1)
 						<a href="{{ url('/test/create') }}">
 							<button class="btn btn-solid">ADD NEW</button>
 						</a>
+						@endif
 					</div>
 					<div class="overflow-x-auto">
 						<table id="product-list-data-table" class="table-default table-hover data-table">

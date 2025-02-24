@@ -6,7 +6,7 @@
     <div class="page-container relative h-full flex flex-auto flex-col px-4 sm:px-6 md:px-8 py-4 sm:py-6">
         <div class="container mx-auto" style="width:75%;">
             @include('alertmessage.flash-message')
-            <form action="{{url('patient/result/store')}}" method="post" id="form-id" enctype="multipart/form-data">
+            <form action="{{url('patient/result/update')}}" method="post" id="form-id" enctype="multipart/form-data">
                 @csrf
                 <div class="form-container vertical">
                     <div class="grid grid-cols-1 lg:grid-cols-3 gap-4">
@@ -14,30 +14,33 @@
                             <div class="card adaptable-card !border-b pb-6 py-4 rounded-br-none rounded-bl-none">
                                 <div class="card-body">
                                     <h5>Result</h5>
-                                    <input type="hidden" name="patient_id" value="{{$patient_id}}">
-                                    <input type="hidden" name="patient_record_id" value="{{$id}}">
+
                                     <div class="w-full max-w-md p-4 bg-white rounded shadow-md">
-                                        @foreach($test_format as $format)
-                                        @continue($format->type == 'heading')
-                                        @continue($format->key == null)
+                                        @foreach($records as $record)
+                                        @continue($record->type == 'heading')
+                                        @continue($record->key == null)
                                         <div class="flex space-x-4">
 
                                             <input
                                                 type="text"
                                                 placeholder=""
                                                 class="input m-2 w-1/2 p-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-400"
-                                                value="{{$format->key}}"
+                                                value="{{$record->key}}"
                                                 disabled />
                                             <input
                                                 type="hidden"
                                                 name="keys[]"
-                                                value="{{ $format->id }}" />
+                                                value="{{ $record->test_format_id }}" />
+                                            <input
+                                                type="hidden"
+                                                name="patient_id"
+                                                value="{{ $record->id }}" />
                                             <input
                                                 type="text"
                                                 placeholder="Enter Result"
                                                 class="input m-2 w-1/2 p-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-400"
                                                 name="results[]"
-                                                value="{{  old('results.' . $loop->index)}}" />
+                                                value="{{ $record->result }}" />
 
                                         </div>
 
@@ -52,7 +55,7 @@
                                                     @endforeach
                                                 </select>
                                             </div>
-                                            <div class="col-span-1 hidden" id="show-div">
+                                            <div class="col-span-1">
                                                 <table>
                                                     <thead>
                                                         <tr>
@@ -89,8 +92,21 @@
 
 @endsection
 
+<script>
+    let selectRemarks = [];
+</script>
+@if($records[0]->remark != null)
+<script>
+    selectRemarks = <?php echo $records[0]->remark ?>
+</script>
+@endif
+
 @section('scripts')
 <script>
+    console.log(selectRemarks)
+
+    showRemarks();
+
     document.addEventListener('DOMContentLoaded', function() {
         // Save Btn
         document.getElementById('btn-save').addEventListener('click', function() {
@@ -100,13 +116,10 @@
         });
     });
 
-    let selectRemarks = [];
+
     document.getElementById('select-remarks').addEventListener('change', function() {
-        let showDiv = document.getElementById('show-div');
-        showDiv.classList.remove('hidden');
 
         let check = selectRemarks.find(item => item == this.value)
-        
         if(!check){
         selectRemarks.push(this.value);
         showRemarks();
@@ -114,12 +127,13 @@
         // console.log(selectRemarks);
     })
 
-    let remarksValue = document.getElementById('remarks-value')
+
+
     function showRemarks() {
         let remarks = document.getElementById('show-select-remarks')
-       
-            remarks.innerHTML = '';
-        selectRemarks.forEach((item, index )=> {
+
+        remarks.innerHTML = '';
+        selectRemarks.forEach((item, index) => {
             remarks.innerHTML += `<tr>
                                                             <td class='w-[300px] py-4'>${item}</td>
                                                             <td>
@@ -132,15 +146,14 @@
                                                                 </span>
                                                             </td>
                                                         </tr>
-                                                         <input type="hidden" name="remark[]" value ="${item}" />`;
+                                                         <input type="hidden" name="remark[]" value="${item}"/>`;
         })
 
-        remarksValue.value = selectRemarks;
     }
-    function deleted(index){
-        selectRemarks.splice(index,1);
+
+    function deleted(index) {
+        selectRemarks.splice(index, 1);
         showRemarks();
-        remarksValue.value = selectRemarks;
     }
 </script>
 @endsection

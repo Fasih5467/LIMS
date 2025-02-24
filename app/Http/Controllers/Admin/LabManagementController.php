@@ -56,7 +56,7 @@ class LabManagementController extends Controller
         // dd($request);
         $request->validate([
             'name'=>'required',
-            'contact_no' => 'required',
+            'contact' => 'required',
             'gender' => 'required'
         ]);
 

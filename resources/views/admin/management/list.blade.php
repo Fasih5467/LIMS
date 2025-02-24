@@ -85,6 +85,8 @@
 
 @section('scripts')
 <script>
+	const baseUrl = window.location.origin + '/laravel/laboratory/lims/public'; // Laravel base URL
+
 	function toggleSwitcher(userId, checkbox) {
 		const isChecked = checkbox.checked
 
@@ -105,7 +107,7 @@
 		
 			return;
 		} else {
-			const route = isChecked ? `/lab/signature/activate/${userId}` : `/lab/signature/deactivate/${userId}`;
+			const route = isChecked ? `${baseUrl}/lab/signature/activate/${userId}` : `${baseUrl}/lab/signature/deactivate/${userId}`;
 
 
 			window.location.href = route;

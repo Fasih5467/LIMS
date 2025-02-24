@@ -6,6 +6,7 @@
     <div class="page-container relative h-full flex flex-auto flex-col">
         <div class="h-full">
             <div class="container mx-auto flex flex-col flex-auto items-center justify-center min-w-0 h-full">
+                @include('alertmessage.flash-message')
                 <form action="{{url('test/format/store')}}" method="post" enctype="multipart/form-data">
                     @csrf
                     <div class="form-container vertical">
@@ -24,11 +25,34 @@
                                 </div>
                                 <input type="hidden" name="test_id" value="{{ $test_id }}" />
                                 <input type="hidden" name="deleted_id[]" id="deleted-value" />
+                                <!-- <div class="form-item vertical">
+                                    <div class="rich-text-editor hidden" id="show-des">
+                                        <div class="grid grid-cols-4 lg:grid-cols-4 gap-2">
+                                            <div class="lg:col-span-3">
+                                                <div id="description">
+                                                </div>
+                                            </div>
+                                            <div class="lg:col-span-1">
+                                                <button class="btn btn-plan" type="button">
+                                                    <span class="flex items-center justify-center text-red-600">
+                                                        <span class="text-lg">
+                                                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" aria-hidden="true" class="w-6 h-6">
+                                                                <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"></path>
+                                                            </svg>
+                                                        </span>
+                                                    </span>
+                                                </button>
+                                            </div>  
+                                        </div>
+                                    </div>
+                                    <input type="hidden" name="desVlaue" id="des-value" />
+                                </div> -->
+
                             </div>
                         </div>
                     </div>
                     <div id="stickyFooter" class="sticky -bottom-1 px-8 flex items-center justify-between py-4">
-                        <button class="btn btn-plain btn-sm" type="button">
+                        <a href="{{url('/test/format/delete/'.$test_id)}}" class="btn btn-plain btn-sm">
                             <span class="flex items-center justify-center text-red-600">
                                 <span class="text-lg">
                                     <svg
@@ -45,7 +69,7 @@
                                 </span>
                                 <span class="ltr:ml-1 rtl:mr-1">Delete</span>
                             </span>
-                        </button>
+                        </a>
                         <div class="md:flex items-center">
                             <a href="{{ url('/test/list') }}">
                                 <button class="btn btn-default btn-sm ltr:mr-2 rtl:ml-2" type="button">Discard</button>
@@ -93,6 +117,9 @@
 
     document.addEventListener("DOMContentLoaded", function() {
 
+
+
+
         const formContainer = document.getElementById("form-container");
 
 
@@ -107,7 +134,30 @@
                 const rows = document.querySelectorAll(".grid.grid-cols-6");
 
 
+            }
 
+            if (e.target.classList.contains("add-des")) {
+
+                // console.log("add description")
+                e.preventDefault();
+                let index = e.target.getAttribute('data-index');
+                console.log(index)
+
+                var descDiv = document.getElementById(`show-des-${index}`);
+                descDiv.classList.remove("hidden");
+
+                let findQuill = Quill.find(document.querySelector(`#description-${index}`))
+
+                console.log(findQuill)
+
+                // Quill ko sirf tab initialize karein jab pehle nahi hua
+                if (!descDiv.dataset.quillInitialized) {
+                    let quill = new Quill(`#description-${index}`, {
+                        theme: 'snow'
+                    });
+
+                    descDiv.dataset.quillInitialized = true; // Avoid re-initialization
+                }
             }
 
 
@@ -115,6 +165,10 @@
 
 
     });
+
+
+
+
     document.addEventListener("input", function(e) {
         // Check if the event is triggered by an input with class "input"
         if (e.target.classList.contains("input")) {
@@ -123,7 +177,7 @@
             // Select all rows
             const rows = document.querySelectorAll(".grid.grid-cols-12.lg\\:grid-cols-12.gap-2");
 
-            rows.forEach((row) => {
+            rows.forEach((row, index) => {
 
                 // Get specific inputs for key, unit, and value in the current row
                 let key = row.querySelector("input[name^='items'][name$='[key]']")?.value || "";
@@ -147,6 +201,7 @@
 
                 // Push the object into the array
                 newArray.push(rowData);
+
             });
 
             array = [...newArray];
@@ -155,6 +210,7 @@
         }
     });
     let deletedItem = [];
+
 
     function deletedValue(index) {
         const formContainer = document.getElementById("form-container");
@@ -178,7 +234,7 @@
         const formData = document.getElementById("form-data");
         formData.innerHTML = "";
         array.forEach(function(item, index) {
-            formData.innerHTML += ` <div class="grid grid-cols-12 lg:grid-cols-12 gap-2">
+            formData.innerHTML += ` <div class="grid grid-cols-12 lg:grid-cols-12 gap-2 mt-2">
                                     <div class="lg:col-span-2">
                                         <div class="form-item vertical">
                                             <label class="form-label mb-2">Key</label>
@@ -189,7 +245,7 @@
                                                     name="items[${index}][key]"
                                                     autocomplete="off"
                                                     placeholder="Name"
-                                                    value='${item.key === undefined ? "" : item.key}' />
+                                                    value='${item.key ?? ""}' />
                                             </div>
                                         </div>
                                     </div>
@@ -244,17 +300,18 @@
                                     </div>
                                          <div>
                                                 <input
-                                                    class="input"
                                                     type="hidden"
                                                     name="items[${index}][id]"
-                                                    autocomplete="off"
-                                                    placeholder="Name"
                                                     value='${item.id === undefined ? "" : item.id}' />
                                             </div>
                                     </div>
-                                    <div class="lg:col-span-2">
-                                        <label class="form-label mb-2 invisible">Add</label>
-                                         <button class="btn btn-plan" type="button" onclick="deletedValue(${index})">
+                                    <div class="lg:col-span-1">
+                                        <label class="form-label mb-2">Description</label>
+                                         <button class="btn btn-solid add-des" data-index = "${index}">Editor</button>
+                                         </div>
+                                         <div class="lg:col-span-1">
+                                          <label class="form-label mb-2 invisible">Add</label>
+                                         <button class="btn btn-plan" type="button" onclick="deletedValue(${index})" style = "width:20px">
                             <span class="flex items-center justify-center text-red-600">
                                 <span class="text-lg">
                                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" aria-hidden="true" class="w-6 h-6">
@@ -264,8 +321,91 @@
                             </span>
                         </button>
                                     </div>
+                                </div>
+                                   <div class="form-item vertical">
+                                    <div class="rich-text-editor hidden" id="show-des-${index}">
+                                        <div class="grid grid-cols-4 lg:grid-cols-4 gap-2">
+                                            <div class="lg:col-span-3">
+                                               
+                                                <div id="description-${index}" class="quill-editor">
+                                                        ${item.description ?? ""}
+                                                </div>
+                                            </div>
+                                            <div class="lg:col-span-1">
+                                            <button class="btn btn-solid" id="get-value-${index}">Add</button>
+                                                <button class="btn btn-plan" type="button" onclick = "deletedDesc(${index})">
+                                                    <span class="flex items-center justify-center text-red-600">
+                                                        <span class="text-lg">
+                                                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" aria-hidden="true" class="w-6 h-6">
+                                                                <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"></path>
+                                                            </svg>
+                                                        </span>
+                                                    </span>
+                                                </button>
+                                            </div>  
+                                        </div>
+                                    </div>
+                                    <input type="hidden" name="items[${index}][description]" value = "${item.description ?? ""}" />
                                 </div>`;
         })
+
+    }
+
+    document.addEventListener('click', function(event) {
+        // Check karo agr clicked element button hai
+        if (event.target.tagName === 'BUTTON' && event.target.id.startsWith('get-value')) {
+            event.preventDefault()
+            let result = event.target.id.split('-');
+            let index = result[2]
+
+            let content = Quill.find(document.querySelector(`#description-${index}`))
+
+            array[index] = {
+                ...array[index],
+                "description": content.root.innerHTML
+            }
+
+            document.getElementById(`show-des-${index}`).classList.add('hidden')
+
+            // Render Values
+            formValue();
+        }
+    });
+
+
+
+    function deletedDesc(index) {
+
+        var descDiv = document.getElementById(`show-des-${index}`);
+        let content = Quill.find(document.querySelector(`#description-${index}`))
+        // Description Clear
+        var quill = new Quill(`#description-${index}`);
+        quill.setText("")
+        quill.root.innerHTML = "";
+
+        array[index] = {
+            ...array[index],
+            "description": "",
+        }
+
+        descDiv.classList.add("hidden");
+
+
+        // Render Values
+        formValue();
     }
 </script>
+
+
+@endsection
+
+
+
+@section('scripts')
+
+<!-- Other Vendors JS -->
+<script src="{{url('assets/vendors/quill/quill.min.js')}}"></script>
+
+<!-- Page js -->
+<script src="{{url('assets/js/pages/product-edit.js')}}"></script>
 @endsection

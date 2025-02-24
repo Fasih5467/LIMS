@@ -59,10 +59,9 @@
                                     <div class="grid grid-cols-4 md:grid-cols-4 gap-4">
                                         <div class="col-span-2">
                                             <div class="form-item vertical">
-                                                <label class="form-label mb-2">Category</label>
+                                                <label class="form-label mb-2">Select Category</label>
                                                 <div>
                                                     <select class="input" name="category">
-                                                        <option>Select...</option>
                                                         @foreach($categories as $category)
                                                         <option value="{{ $category->id }}">{{ $category->name }}</option>
                                                         @endforeach

@@ -15,7 +15,7 @@
   \***********************************/
 /***/ (() => {
 
-eval("$('#customers-data-table').DataTable({order: [],searching: true, paging: true, });\n\n//# sourceURL=webpack://elstar/./src/es/pages/customers.js?");
+eval("$('#customers-data-table').DataTable({order: [],searching: true, paging: false, });\n\n//# sourceURL=webpack://elstar/./src/es/pages/customers.js?");
 
 /***/ })
 
