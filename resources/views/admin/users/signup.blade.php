@@ -106,6 +106,15 @@
                                                         </div>
                                                         <div id="error"></div>
                                                     </div>
+                                                    <div class="form-item vertical">
+                                                        <label class="form-label mb-2">User Type</label>
+                                                        <div>
+                                                            <select class="input" name="user_type" >
+                                                                <option value="2">LAB Manager</option>
+                                                                <option value="3">OPD Manager</option>
+                                                            </select>
+                                                        </div>
+                                                    </div>
                                                     <button class="btn btn-solid w-full" type="submit" id="btn-save">Sign Up</button>
                                                     <!-- <div class="mt-4 text-center">
                                                             <span>Don't have an account yet?</span>
@@ -113,7 +122,7 @@
                                                         </div> -->
                                                 </div>
                                             </form>
-                                            <button class="btn btn-solid w-full my-2"><a href = "{{url('/user/list')}}">Back To List</button>
+                                            <button class="btn btn-solid w-full my-2"><a href="{{url('/user/list')}}">Back To List</button>
                                         </div>
                                     </div>
                                 </div>

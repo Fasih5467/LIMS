@@ -134,7 +134,7 @@ $reporting_date = $record['reporting'];
 
 <body>
 
-<!-- 
+    <!-- 
     <div class="watermark">
         ORIGINAL
     </div> -->
@@ -161,29 +161,33 @@ $reporting_date = $record['reporting'];
         <hr />
         <table style="border: 1px solid black; border-radius: 10px;">
             <tr>
-                <td>Name:</td>
-                <td>
-                    {{ucfirst($patient_info->patient_name) ?? ''}}
-                </td>
+                <td>Lab No:</td>
+                <td>AMC{{ Carbon::parse($patient_info->collection)->format('ymd')?? ''}}0{{$patient_info->record_id ?? ''}}</td>
+
                 <td>Sex:</td>
                 <td>{{ucfirst($patient_info->gender) ?? ''}}</td>
             </tr>
             <tr>
-                <td>Contact:</td>
-                <td>{{ $patient_info->patient_contact ?? ''}}</td>
+                <td>Name:</td>
+                <td>
+                    {{ strtoupper($patient_info->patient_name) ?? ''}}
+                </td>
 
                 <td>Collection Date:</td>
                 <td>{{ Carbon::parse($patient_info->collection)->format('d-m-y H:m:s') ?? ''}}</td>
             </tr>
             <tr>
-                <td>Lab No:</td>
-                <td>AMC{{ Carbon::parse($patient_info->collection)->format('ymd')?? ''}}0{{$patient_info->record_id ?? ''}}</td>
+                <td>Age:</td>
+                <td>{{ucfirst($patient_info->age) ?? ''}} {{ $patient_info->age_type ?? '' }}</td>
+
                 <td>Reporting Date:</td>
                 <td>{{ $reporting_date ?? ''}}</td>
             </tr>
             <tr>
-                <td>Age:</td>
-                <td>{{ucfirst($patient_info->age) ?? ''}}</td>
+                <td>Contact:</td>
+                <td>{{ $patient_info->patient_contact ?? ''}}</td>
+
+
                 <td>Ref by:</td>
                 <td>{{ucfirst($patient_info->doctor_name) ?? ''}}</td>
 
@@ -194,7 +198,7 @@ $reporting_date = $record['reporting'];
     </div>
     <div class="invoice-container">
         <div class="section-title" style="text-align: center;"><u>{{ucwords($patient_info->category_name) ?? ''}}</u></div>
-        <div style="height: 480px;">
+        <div style="height: 510px;">
             <table>
                 <thead>
                     <tr>
@@ -253,21 +257,20 @@ $reporting_date = $record['reporting'];
                 </tbody>
             </table>
 
+            @if(!empty($remarks))
             <div class="remarks-section">
                 <div style="display: flex;width:90%;height:auto">
                     <p style="font-weight: bold; margin: 0 10px;display:inline-block;">Remarks:</p>
                     <div style="margin-left: 40px; width:100%">
-                        @if(!empty($remarks))
+
                         @foreach($remarks as $remark)
                         <p style="margin: 0;">{{ $remark }}</p>
                         @endforeach
-                        @endif
+
                     </div>
                 </div>
-
-
-
             </div>
+            @endif
 
         </div>
         <hr />
@@ -294,7 +297,7 @@ $reporting_date = $record['reporting'];
             </tr>
         </table>
 
-   
+
     </div>
 
 

@@ -46,6 +46,7 @@
 								<tr>
 									<th>Doc Id.</th>
 									<th>Name</th>
+									<th>Contact</th>
 									<th>Created</th>
 									<th>Balance</th>
 									<th>Pay</th>
@@ -63,6 +64,7 @@
 											{{ $slip->name }}
 										</div>
 									</td>
+									<td>{{ $slip->contact }}</td>
 									<td>{{ $slip->created_at }}</td>
 									<td>{{ $slip->balance_amount }}</td>
 									<td><a onclick="showModal('{{url('/patient/balance/0'.$slip->id)}}')">

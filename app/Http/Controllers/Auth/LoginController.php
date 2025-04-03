@@ -36,6 +36,8 @@ class LoginController extends Controller
                 return redirect('/');
             } else if ($user->user_type == 2) {
                 return redirect('/');
+            } else if ($user->user_type == 3) {
+                return redirect('/opd/');
             }
         } else {
             return redirect()->back()->with(['error' => 'Please Invalid Information...!']);

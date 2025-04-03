@@ -46,7 +46,7 @@
 
 									</td>
 									<td>
-										<div class="flex justify-end text-lg">
+										<!-- <div class="flex justify-end text-lg">
 											<span class="cursor-pointer p-2 hover:text-indigo-600">
 												<a href="{{ url('/remark/edit/') }}">
 													<svg stroke="currentColor" fill="none" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true" height="1em" width="1em" xmlns="http://www.w3.org/2000/svg">
@@ -61,7 +61,7 @@
 													</svg>
 												</a>
 											</span>
-										</div>
+										</div> -->
 									</td>
 								</tr>
 								@endforeach
@@ -80,10 +80,12 @@
 @section('scripts')
 
 <script>
+	const baseUrl = '/laravel/laboratory/lims/public';
+
 	function toggleSwitcher(userId, checkbox) {
 		const isChecked = checkbox.checked
 	
-		const route = isChecked ?`/user/activate-user/${userId}` :`/user/deactivate-user/${userId}`; 
+		const route = isChecked ?`${baseUrl}/user/activate-user/${userId}` : `${baseUrl}/user/deactivate-user/${userId}`; 
 
 	
 		window.location.href = route;

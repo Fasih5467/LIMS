@@ -47,14 +47,14 @@
 <main class="h-full">
     <div class="page-container relative h-full flex flex-auto flex-col px-4 sm:px-6 md:px-8 py-4 sm:py-6">
         <div class="container mx-auto" style="width:90%;">
-            <form action="{{url('patient/store')}}" method="post" id="form-id" enctype="multipart/form-data">
+            <form action="{{url('/opd/store')}}" method="post" id="form-id" enctype="multipart/form-data">
                 @csrf
                 <div class="form-container vertical">
                     <div class="grid grid-cols-1 lg:grid-cols-3 gap-4">
                         <div class="lg:col-span-2">
                             <div class="card adaptable-card !border-b pb-6 py-4 rounded-br-none rounded-bl-none">
                                 <div class="card-body">
-                                    <h5>Add Test</h5>
+                                    <h5>ADD NEW</h5>
                                     <div class="grid grid-cols-2 md:grid-cols-2 gap-4 py-4">
                                         <div class="col-span-1">
                                             <div class="form-item vertical">
@@ -119,9 +119,9 @@
                                                 </div>
                                                 <div class="col-span-1">
                                                     <div style="margin-top:30px">
-                                                        <a href="{{url('patient/slip')}}">
-                                                            <button class="btn btn-solid mt-20">Search</button>
-                                                        </a>
+                                                        <!-- <a href="{{url('patient/slip')}}"> -->
+                                                        <button class="btn btn-solid mt-20">Search</button>
+                                                        <!-- </a> -->
                                                     </div>
                                                 </div>
                                             </div>
@@ -183,108 +183,72 @@
                                             </div>
                                         </div>
                                     </div>
-                                    <div class="form-item vertical">
-                                        <label class="form-label mb-2">Ref By</label>
-                                        <select class="input searchPicker" data-live-search="true" name="refBy">
-                                            @foreach($doctors as $doctor)
-                                            <option value="{{$doctor->id}}">{{ $doctor->name }}</option>
-                                            @endforeach
-                                        </select>
-                                    </div>
-                                    <div class="grid grid-cols-2 md:grid-cols-2 gap-4">
-                                        <div class="col-span-1">
+                                    <div class="grid grid-cols-3 md:grid-cols-3 gap-2">
+                                        <div class="col-span-2">
                                             <div class="form-item vertical">
-                                                <label class="form-label">Select Test</label>
-                                                <select class="input" id="select-test">
-
+                                                <label class="form-label">Select Doctor</label>
+                                                <select class="input" name="selectDoctor" id="select-consultant">
+                                                    <option>Select Doctor</option>
+                                                    @foreach($doctors as $doc)
+                                                    <option value="{{ $doc->id }}">{{ $doc->name }}</option>
+                                                    @endforeach
                                                 </select>
                                             </div>
                                         </div>
                                         <div class="col-span-1">
-                                            <div style="margin-top:30px">
-                                                <button class="btn btn-solid mt-20" onclick="addTest(event)">Add</button>
+                                            <div class="form-item vertical">
+                                                <label class="form-label">Token</label>
+                                                <input
+                                                        class="input"
+                                                        style="font-weight: bold;"
+                                                        type="number"
+                                                        id="token-no"
+                                                        disabled/>
                                             </div>
                                         </div>
                                     </div>
-                                    <table class="table-default table-hover table-compact">
-                                        <thead>
-                                            <tr>
-                                                <th>Test</th>
-                                                <th>Quantity</th>
-                                                <th>Price</th>
-                                                <th></th>
-                                            </tr>
-                                        </thead>
-                                        <tbody id="show-test">
-
-                                        </tbody>
-                                    </table>
 
                                     <!-- Hiiden Input -->
                                     <input type="hidden" name="id" id="patient-id" />
-                                    <!-- Amount Manage -->
-                                    <input type="hidden" name="totalAmount" id="total-amount" />
-                                    <input type="hidden" name="netAmount" id="net-amount" />
-                                    <input type="hidden" name="balAmount" id="bal-amount" />
+                                      <!-- Amount Manage -->
+                                    <input type="hidden" name="docFee" id="consult-value" />
+                                    <input type="hidden" name="recAmount" id="rec-value" />
 
                                 </div>
                             </div>
                         </div>
                         <div class="lg:col-span-1 card adaptable-card !border-b pb-6  rounded-br-none rounded-bl-none">
                             <table class="table-default table" style="padding: 0px;">
-                                <!-- <thead>
-                                    <tr>
-                                        <th class="w-[250px]">Selected Test</th>
-                                        <th>Price</th>
-                                    </tr>
-                                </thead> -->
                                 <tbody>
                                     <tr>
-                                        <td class="font-bold w-[250px]">Total Amount</td>
+                                        <td class="font-bold w-[250px]">Fees</td>
                                         <td>
                                             <input
                                                 class="input h-6 p-2"
                                                 type="number"
                                                 autocomplete="off"
-                                                id="total-amount-value"
+                                                name="consultFee"
+                                                id="consult-fee"
                                                 disabled
                                                 placeholder="Rs" />
                                         </td>
                                     </tr>
                                     <tr>
                                         <td class="font-bold">Discount</td>
-                                        <td id="discount">
-                                            <div class="input-dropdown-dis">
-                                                <input
-                                                    class="w-20 input input-dis input-sm h-6 p-2"
-                                                    style="width: 100px;"
-                                                    type="number"
-                                                    maxlength="5"
-                                                    name="disAmount"
-                                                    autocomplete="off"
-                                                    id="dis-amount-value"
-                                                    placeholder="Discount" />
+                                        <td>
+                                            <input
+                                                class="input input-dis input-sm"
+                                                style="width: 100px;"
+                                                type="number"
+                                                maxlength="5"
+                                                name="disAmount"
+                                                autocomplete="off"
+                                                id="dis-amount"
+                                                placeholder="Discount" />
 
-                                                <select class="dropdown-dis" id="select-dis" name="dis_type">
-                                                    <option value="Rs">Rs</option>
-                                                    <option value="%">%</option>
-                                                </select>
-                                            </div>
                                             <div class="hidden" id="dis-error">
 
                                             </div>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td class="font-bold">Net Amount</td>
-                                        <td>
-                                            <input
-                                                class="input h-6 p-2"
-                                                type="number"
-                                                autocomplete="off"
-                                                id="net-amount-value"
-                                                disabled
-                                                placeholder="Rs" />
                                         </td>
                                     </tr>
                                     <tr>
@@ -295,23 +259,9 @@
                                                 type="number"
                                                 name="recAmount"
                                                 autocomplete="off"
-                                                id="rec-amount-value"
-                                                placeholder="Rs" />
-                                            <div class="hidden" id="rec-error">
-
-                                            </div>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td class="font-bold">Balance Amount</td>
-                                        <td>
-                                            <input
-                                                class="input h-6 p-2"
-                                                type="number"
-                                                autocomplete="off"
-                                                id="bal-amount-value"
-                                                disabled
-                                                placeholder="Rs" />
+                                                id="rec-amount"
+                                                placeholder="Rs"
+                                                disabled />
                                         </td>
                                     </tr>
 
@@ -353,13 +303,11 @@
 </script>
 @endif
 
-
 @endsection
 
 @section('scripts')
-
-
 <script>
+    const baseUrl = "http://localhost/laravel/laboratory/lims/public";
     // Section Previous Patients
     if (patients !== null) {
         document.getElementById('prePatient').addEventListener('change', function() {
@@ -390,7 +338,7 @@
                 } else if (selectValue['gender'] === 'female') {
                     femaleRadio.checked = true;
                 }
-          
+
                 document.getElementById('newPatient').type = 'text';
                 this.className = 'hidden';
             }
@@ -398,234 +346,59 @@
     }
 
 
-    // Section Lab Tests
-    let tests = <?php echo $labTests; ?>;
-    let collectSelectItems = [];
+    let arrays = <?php echo $doctors; ?>
 
-    let options = '';
-    tests.map(test => {
-        return options += `<option value='${test.id}'>${test.name}</option>`;
-    });
+    // console.log(array)
 
     $(document).ready(function() {
         //change selectboxes to selectize mode to be searchable
-        $("#select-test").each(function() {
+        $("#select-consultant").each(function() {
             const $this = $(this);
             if (!$this.hasClass('input')) {
                 $this.addClass('input');
             }
-            $this.html(options);
-            // $("#select-test").select2();
+
             $this.select2();
+        });
+
+        $("#select-consultant").on("change", function() {
+            console.log("Selected Value:", $(this).val());
+            var value = $(this).val();
+            changeValue(value)
         });
     });
 
-    function addTest(e) {
-        e.preventDefault();
+   async function changeValue(value) {
+        let res = arrays.find(array => array.id == value)
+        document.getElementById('consult-fee').value = res.opd_rate;
+        document.getElementById('consult-value').value = res.opd_rate;
+        document.getElementById('rec-amount').value =  res.opd_rate;
+        document.getElementById('rec-value').value = res.opd_rate;
+        let tokenNo = document.getElementById('token-no');
 
-        // Use querySelector for unusual ID with '='
-        let test_id = document.querySelector('[id="select-test"]').value;
-        let value = tests.find(test => test.id == test_id);
-        let check = collectSelectItems.find(item => item.id == test_id);
-        value.quantity = 1;
-        value.showprice = value.price;
-        if (!check) {
-            collectSelectItems.push(value);
-        }
-
-        showTest();
+        await fetch(`${baseUrl}/opd/token/${value}`)
+        .then(response => response.json())
+        .then(data => {
+                 console.log(data)
+                 tokenNo.value = data;
+        }) 
+        .catch(error => console.error('Error fetching users:', error));
     }
 
-    // Manage Amount Id's
-    let totalAmount = document.getElementById('total-amount');
-    let netAmount = document.getElementById('net-amount');
-    let balAmount = document.getElementById('bal-amount');
-    let totalAmountValue = document.getElementById('total-amount-value');
-    let netAmountValue = document.getElementById('net-amount-value')
-    let disAmountValue = document.getElementById('dis-amount-value');
-    let balAmountValue = document.getElementById('bal-amount-value');
-    let recAmountValue = document.getElementById('rec-amount-value');
-
-    function showTest() {
-        let showValue = document.getElementById('show-test');
-
-        let price = 0;
-        let row = '';
-
-        showValue.innerHTML = '';
-        collectSelectItems.forEach((test, index) => {
-            showValue.innerHTML += `  <tr>
-                                                <td class='w-[250px]'>${test.name}</td>
-                                                <td>
-                                                    <input
-                                                        class="w-[50px] input h-6 p-2 "
-                                                        type="number"
-                                                        name="quantity[]"
-                                                        autocomplete="off"
-                                                        oninput = quantity(${index},this) 
-                                                        onchange = 'showTest()'
-                                                        value = '${test.quantity}' 
-                                                        placeholder="Rs" />
-
-                                                         <input type= 'hidden' name = 'selectedTests[]' value='${test.id}' />
-                                                          <input type= 'hidden' name = 'test_name[]' value='${test.name}' />
-                                                </td>
-                                                <td class='w-[250px]'>
-                                                     <input
-                                                        class="input h-6 p-2 w-12 price-${index}"
-                                                        type="number"
-                                                        name="price[]"
-                                                        autocomplete="off"
-                                                        id='show-price-${index}'
-                                                        oninput = showPrice(${index},this) 
-                                                        onchange = 'showTest()'
-                                                        value = '${test.showprice}' 
-                                                        placeholder="Rs" />
-                                                </td>
-                                                <td>
-                                                    <span class="cursor-pointer hover:text-red-500">
-                                                        <button onclick= 'deleted(${index})'>
-                                                            <svg stroke="currentColor" fill="none" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true" height="1em" width="1em" xmlns="http://www.w3.org/2000/svg">
-                                                                <path stroke-linecap="round" stroke-linejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
-                                                            </svg>
-                                                        </a>
-                                                    </span>
-                                                </td>
-                                            </tr>`
-
-            price += test.showprice
-        })
-
-        totalAmountValue.value = price;
-        netAmountValue.value = price;
-        balAmountValue.value = price;
-        recAmountValue.value = 0;
-        disAmountValue.value = 0;
-
-        totalAmount.value = price;
-        netAmount.value = price;
-        balAmount.value = price;
-
-    }
-
-    function quantity(index, element) {
-        console.log(collectSelectItems[index].price)
-        console.log('index : ' + index)
-        collectSelectItems[index].quantity = element.value
-
-        collectSelectItems[index].showprice = element.value * collectSelectItems[index].price;
-
-        // Update only the price cell without losing focus
-        document.getElementById(`show-price-${index}`).value = element.value * collectSelectItems[index].price;
-
-
-    }
-
-    function showPrice(index, element) {
-
-        console.log(typeof(element.value))
-
-        collectSelectItems[index].showprice = parseInt(element.value);
-
-
-    }
-
-    function deleted(index) {
-        collectSelectItems.splice(index, 1)
-        showTest()
-    }
-
-    document.getElementById('select-dis').addEventListener('change', function() {
-
-
-        let disValue = disAmountValue.value;
-        let selectedValue = this.value;
-
-        if (selectedValue === 'Rs') {
-            let res = totalAmountValue.value - disValue;
-            netAmountValue.value = res
-            balAmountValue.value = res
-
-            netAmount.value = res;
-            balAmount.value = res;
-        } else if (selectedValue === '%' && disValue.length < 3) {
-            let res = totalAmountValue.value - totalAmountValue.value * (disValue / 100);
-            netAmountValue.value = res
-            balAmountValue.value = res
-
-            netAmount.value = res;
-            balAmount.value = res;
-        }
-    });
-
-    document.getElementById('dis-amount-value').addEventListener('input', (event) => {
-        let disValue = event.target.value;
-        let disError = document.getElementById('dis-error')
-        let selectDis = document.getElementById('select-dis');
-        disError.innerHTML = '';
-        recAmountValue.value = 0;
-
-        if (disValue.length > 5 || (disValue.length >= 3 && selectDis.value === '%')) {
-            disError.className = 'text-red-500 text-xs';
-            disError.innerHTML = 'Invalid Value';
-            netAmountValue.value = 0;
-            balAmountValue.value = 0
-
-            netAmount.value = 0;
-            balAmount.value = 0;
-        } else if (selectDis.value === 'Rs') {
-            let res = totalAmountValue.value - disAmountValue.value;
-            netAmountValue.value = res
-            balAmountValue.value = res
-
-            netAmount.value = res;
-            balAmount.value = res;
-        } else if (selectDis.value === '%' && disValue.length < 3) {
-            let res = totalAmountValue.value - totalAmountValue.value * (disAmountValue.value / 100);
-            netAmountValue.value = res;
-            balAmountValue.value = res
-
-            netAmount.value = res;
-            balAmount.value = res;
-        }
+    document.getElementById('dis-amount').addEventListener('input', function() {
+        let value = document.getElementById('consult-fee').value;
+        let res = value - this.value;
+        document.getElementById('rec-amount').value = res;
+        document.getElementById('rec-value').value = res;
     })
 
-
-
-    document.getElementById('rec-amount-value').addEventListener('input', (event) => {
-        let recValue = event.target.value;
-        let recError = document.getElementById('rec-error');
-        // if(recValue >= netAmountValue.value){
-        //     recError.className = 'text-red-500 text-xs';
-        //     recError.innerHTML = 'Invalid Value';
-        //     return
-        // }
-
-        let res = netAmountValue.value - recValue;
-        balAmountValue.value = res;
-        balAmount.value = res;
-
-    })
-
-    // Save Btn
-    document.getElementById('btn-save').addEventListener('click', function(e) {
-        e.preventDefault();
-
-        document.getElementById('btn-save').disabled = true;
-
-        // Submit the form
-        document.getElementById('form-id').submit();
-
-    })
-
-    // // Close dropdown if clicked outside
-    // document.getElementById('header-dropdown').addEventListener('blur', () => {
-    //     dropdown.classList.add('hidden');
-
-
-    // });
+    async function getAll(){
+       await fetch(`${baseUrl}/opd/all-users`)
+        .then(response => response.json())
+        .then(data => console.log(data)) 
+        .catch(error => console.error('Error fetching users:', error));
+    }
 </script>
-
 
 
 <!-- Other Vendors JS -->

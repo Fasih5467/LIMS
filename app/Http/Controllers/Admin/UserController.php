@@ -36,7 +36,7 @@ class UserController extends Controller
         $user = new User;
         $user->name = $request->name;
         $user->email = $request->email;
-        $user->user_type = 2;
+        $user->user_type = $request->user_type;
         $user->password = Hash::make($request->password);
         $user->save();
 
@@ -106,6 +106,6 @@ class UserController extends Controller
                 'status' => 0
             ]);
 
-        return redirect('remark/list')->with('success', 'Deactivate User');
+        return redirect('/user/list')->with('success', 'Deactivate User');
     }
 }

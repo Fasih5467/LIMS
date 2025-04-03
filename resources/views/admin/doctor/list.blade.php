@@ -45,7 +45,7 @@
 									</td>
 									@if(Auth::user()->user_type == 1)
 									<td>
-										<div class="flex justify-end text-lg">
+										<!-- <div class="flex justify-end text-lg">
 											<span class="cursor-pointer p-2 hover:text-indigo-600">
 												<a href="{{ url('/doctor/edit/'.$doctor->id) }}">
 													<svg stroke="currentColor" fill="none" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true" height="1em" width="1em" xmlns="http://www.w3.org/2000/svg">
@@ -60,7 +60,7 @@
 													</svg>
 												</a>
 											</span>
-										</div>
+										</div> -->
 									</td>
 									@endif
 								</tr>

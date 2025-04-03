@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\Doctor;
+use App\Models\DoctorRecord;
 use Illuminate\Http\Request;
 
 class DoctorController extends Controller
@@ -20,12 +21,14 @@ class DoctorController extends Controller
     }
 
     public function store(Request $request){
+        // dd($request);
         $request->validate([
             'name'=>'required',
             'contact_no' => 'required',
             'gender' => 'required'
         ]);
 
+        // Doctor Info
         $doctor = New Doctor;
         $doctor->name = $request->name;
         $doctor->email = $request->email;
@@ -33,7 +36,23 @@ class DoctorController extends Controller
         $doctor->gender = $request->gender;
         $doctor->age = $request->age;
         $doctor->contact_no = $request->contact_no;
+        $doctor->qualification = $request->qualification;
         $doctor->save();
+
+        $doc_id = $doctor->id;
+
+       
+        // Doctor Record
+        $doctor_record = new DoctorRecord;
+        $doctor_record->doc_id = $doc_id;
+        $doctor_record->type = $request->type;
+        $doctor_record->lab_doc_share= $request->lab_share;
+        $doctor_record->opd_rate = $request->opd_rate;
+        $doctor_record->opd_hosp_share = $request->hospital_share;
+        $doctor_record->opd_doc_share = $request->consultant_share;
+        $doctor_record->status = 1;
+        $doctor_record->save();
+
 
         return redirect('/doctor/list')->with('success','Add Record Successfuly');
     }
@@ -41,10 +60,14 @@ class DoctorController extends Controller
     public function edit($id){
         $doctor = Doctor::find($id);
 
+        $results = DoctorRecord::where('doc_id',$id)->get();
+
+        // dd($results);
+
         if(empty($doctor)){
             return redirect()->back()->with('error','Doctor not found.');
         }
-        return view('admin.doctor.edit',compact('doctor'));
+        return view('admin.doctor.edit',compact('doctor', 'results'));
     }
 
     public function update(Request $request){

@@ -112,7 +112,7 @@ class PatientController extends Controller
 
     public function store(Request $request)
     {
-        // dd($request->header);
+        // dd($request);
         $request->validate([
             'contact' => 'required|min:11|max:13',
         ]);
@@ -148,12 +148,24 @@ class PatientController extends Controller
                 $patient = new Patient;
                 $patient->name = $request->name;
                 $patient->age = $request->age;
+                $patient->age_type = $request->age_type;
                 $patient->gender = $request->gender;
                 $patient->contact = $request->contact;
                 $patient->save();
 
                 // Get the ID of the newly created patient
                 $patientId = $patient->id;
+            } else {
+
+                // Edit Patient
+                Patient::where('id',$request->id)
+                ->update([
+                    'name' => $request->name,
+                    'age' => $request->age,
+                    'age_type' => $request->age_type,
+                    'gender' => $request->gender,
+                ]);
+
             }
 
             if ($request->selectedTests == null) {
@@ -224,7 +236,7 @@ class PatientController extends Controller
     {
         $slips = DB::table('patient_pay_records as ppr')
             ->leftJoin('patients as p', 'ppr.patient_id', '=', 'p.id')
-            ->select('ppr.*', 'p.name')
+            ->select('ppr.*', 'p.name','p.contact')
             ->orderByDesc('ppr.id')
             ->get();
 
@@ -249,18 +261,19 @@ class PatientController extends Controller
         $id = ltrim($num, "0");
 
         $slip_count = PatientPayRecord::where('created_at', 'like', date('Y-m-d') . '%')->count();
-        $slip_count += 1;
 
         $data['slip_count'] = $slip_count;
 
-        $setting = Setting::orderBy('id', 'DESC')->first();
+        $setting = Setting::where('type',1)
+        ->orderBy('id', 'DESC')
+        ->first();
         if (empty($setting)) {
             return redirect()->back()->with('error', 'Company information not found')->withInput();
         }
         $data['setting'] = $setting;
 
         $data['patient_info'] = Patient::join('patient_pay_records as ppr', 'patients.id', '=', 'ppr.patient_id')
-            ->select('ppr.id as ppr_id', 'ppr.*', 'patients.name', 'patients.age')->where('ppr.id', $id)->orderByDesc('ppr.id')->first();
+            ->select('ppr.id as ppr_id', 'ppr.*', 'patients.name', 'patients.age','patients.age_type','patients.contact')->where('ppr.id', $id)->orderByDesc('ppr.id')->first();
 
         $ppr_id =  $data['patient_info']->ppr_id;
         if (empty($data['patient_info'])) {
@@ -341,13 +354,22 @@ class PatientController extends Controller
             if (is_null($value) || trim($value) === '') {
                 return redirect()->back()->with('error', "All fields are required")->withInput();
             }
-        }
+        } 
 
 
         $patient_id = $request->patient_id;
         $patient_record_id = $request->patient_record_id;
         $keys_id = $request->keys;
         $results = $request->results;
+
+        // Check Result
+        $check_results =  Result::where('patient_record_id',$patient_record_id)->get();
+
+        if(!$check_results->isEmpty()){
+            return redirect('/patient/list')->with('error','Record Already Set.');
+          
+        }
+
 
         foreach ($keys_id as $index => $key_id) {
             $result = new Result;
@@ -492,7 +514,7 @@ class PatientController extends Controller
         // dd($remarks);
 
         // Get Laboratory Info
-        $setting = Setting::first();
+        $setting = Setting::where('type',1)->first();
         $data['setting'] = $setting;
 
         if (empty($data['signatures'])) {

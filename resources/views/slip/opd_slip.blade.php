@@ -1,5 +1,5 @@
 <head>
-    <title>Slip</title>
+    <title>Opd Slip</title>
     <style>
         body {
             font-family: 'Arial';
@@ -152,106 +152,81 @@
     <div id="slip">
         <div class="container">
             <div>
-                @if($header == 'yes' || $header == '')
+                <!-- @if($header == 'yes' || $header == '') -->
                 <div>
                     <div style="display: flex;justify-content:center;align-item:center;">
                         <img src="{{ url($setting->file_path) }}" width="150px" height="100px" />
                     </div>
                     <p style="font-weight:900;font-size:24px;padding:5px">{{ $setting->name }}</p>
-                    <p style="font-size:12px">{{ $setting->address }}</p>
-                    <p style="font-size:12px;">Email: {{ $setting->email }}</p>
-                    <p style="font-size:12px;">Phone: {{ $setting->phone_1 }},
-                        {{ $setting->phone_2 }}<br />
-                        <img src="{{ url('/assets/img/logo/whatsapp-icon.png') }}" width="20px" height="15px" />Whatsapp: {{ $setting->whatsapp_num }}
-                    </p>
+                    <!-- <p style="font-size:12px">{{ $setting->address }}</p> -->
                 </div>
-                @elseif($header == 'no')
+                <!-- @elseif($header == 'no')
                 <div style="height: 50px;"></div>
-                @endif
+                @endif -->
                 <hr />
                 <div>
-                    <p style="text-align: center;font-size:14px">00{{ $slip_count }}</p>
                     <div>
                         @php
                         use Carbon\Carbon;
                         @endphp
                         <div style="text-align: left;display:inline-block;width:58%;">
-                            <h6>Doc:</h6>
-                            <h6>AMC{{ Carbon::parse($patient_info->created_at)->format('ymd') }}{{ $num }}</h6>
+                            <h6>AM{{ Carbon::parse($opdRecord->created_at)->format('ymd') }}0{{$opdRecord->id}}</h6>
                         </div>
                         <div style="display:inline-block;">
-                            <div style="font-size:14px;padding-right: 10px;text-align: right;">{{ Carbon::parse($patient_info->created_at)->format('d-m-y H:i:s') }}</div>
+                            <div style="font-size:14px;padding-right: 10px;text-align: right;">{{ Carbon::parse($opdRecord->created_at)->format('d-m-y H:i:s') }}</div>
+                        </div>
+                        <div style="background-color: #000000;color:#fff;font-weight:bold;width:fit-content;padding:2px 5px;">
+                        {{ strtoupper($opdRecord->doctor_name) }}
                         </div>
                     </div>
                     <div>
-                        <h6>Name:</h6>
-                        <h6>{{ strtoupper($patient_info->name) }}</h6>
+                        <h6 style="margin-right: 14px;">Patient Name :</h6>
+                        <h6>{{ strtoupper($opdRecord->patient_name) }}</h6>
                     </div>
                     <div>
-                        <h6>Age:</h6>
-                        <h6>{{ $patient_info->age }} {{$patient_info->age_type ?? ''}}</h6>
+                        <h6 style="margin-right: 15px;">Gender / Age :</h6>
+                        <h6>{{ $opdRecord->age }} {{$opdRecord->age_type ?? ''}}</h6>
                     </div>
                     <div>
-                        <h6>Ref By:</h6>
-                        <h6>{{ strtoupper($ref_by->name) }}</h6>
+                        <h6 style="margin-right: 50px;">Contact :</h6>
+                        <h6>{{ $opdRecord->contact ?? ''}}</h6>
                     </div>
                     <div>
-                        <h6>Contact:</h6>
-                        <h6>{{ $patient_info->contact ?? ''}}</h6>
+                        <h6 style="margin-right: 50px;">Doctor :</h6>
+                        <div style="width:65%;background-color: #000000;color:#fff;font-weight:bold;padding:2px 10px;display:inline-block">
+                            {{ strtoupper($opdRecord->doctor_name) }}
+                        </div>
                     </div>
                 </div>
-                <div>
-                    <table>
-                        <thead>
-                            <tr>
-                                <th colspan="2">Services</th>
-                                <!-- <th>Rate</th> -->
-                                <th>Quantity</th>
-                                <th>Amount</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            @foreach($selectedTests as $selectedValue)
-                            <tr>
-                                <td colspan="2">{{ $selectedValue->test_name }}</td>
-                                <!-- @php
-                                $per_test = $selectedValue->test_price / $selectedValue->test_quantity;
-                                @endphp
-                                <td>{{ Str::limit($per_test,5) }}</td> -->
-                                <td>{{ $selectedValue->test_quantity }}</td>
-                                <td style="text-align: center;">{{ $selectedValue->test_price }}</td>
-                            </tr>
-                            @endforeach
-                            <tr style="border-top: 1px solid #000000;">
-                                <td colspan="3" style="text-align: center;">Total Amount</td>
-                                <td style="text-align: center;">{{ $patient_info->total_amount }}</td>
-                            </tr>
-                            <tr>
-                                <td colspan="3" style="text-align: center;">Discount Amount</td>
-                                <td style="text-align: center;">- {{ $patient_info->dis_amount . ' ' . $patient_info->dis_type }}</td>
-                            </tr>
-                            <tr>
-                                <td colspan="3" style="text-align: center;">Net Amount</td>
-                                <td style="text-align: center;">{{ $patient_info->net_amount }}</td>
-                            </tr>
-                            <tr>
-                                <td colspan="3" style="text-align: center;">Received Amount</td>
-                                <td style="text-align: center;">{{ $patient_info->recevied_amount }}</td>
-                            </tr>
-                            <tr style="border-top: 1px solid #000000;border-bottom:1px solid #000000;">
-                                <td colspan="3" style="text-align: center;">Balance Amount</td>
-                                <td style="text-align: center;">{{ $patient_info->balance_amount }}</td>
-                            </tr>
-                        </tbody>
-                    </table>
+
+                <div style="width: 100%; height:180px; border: 1px solid black; display: flex; flex-direction: column; justify-content: space-between;margin:5px 0;">
+                    <div style="width: 100%; height: 30px; font-weight: bold; display: flex; justify-content: space-between; align-items: center; padding: 0 5px;">
+                        <div>Charges :</div>
+                        <div style="text-align: end;">{{ $opdRecord->doc_fee ?? ""}}</div>
+                    </div>
+                    <h1 style="height: 120px; text-align: center; font-size: 100px; margin: 0;">{{ $token }}</h1>
+                    <div style="width: 100%; height: 30px; font-weight: bold; margin-left: 5px; display: flex; align-items: center;">TOKEN NO :</div>
                 </div>
-                <p style="font-size: 15px;">Printed on / by : {{ date("d/m/y h:i:sa") }} / {{ucfirst(Auth::user()->name) ?? ''}}</p>
+                <div style="width: 100%; height: 80px; display: flex; justify-content: space-between; align-items: center;">
+                    <div>
+                        Slip Generated By<br />
+                        <span style="font-size: 20px; font-weight: bold;">Admin</span><br/>
+                        Printed Date 
+                    </div>
+                    <div>
+                        Amount Paid <span style="margin-left: 10px;padding-right:5px;font-weight:bold;">{{ $opdRecord->rec_amount ?? "" }}</span><br />
+                        Discount  <span style="margin-left: 39px;padding-right:5px;height:25px;font-weight:bold;">{{ $opdRecord->dis_amount ?? "" }}</span><br />
+                        {{ date('m/d/y h:i:s'); }}
+                    </div>
+                </div>
+
+                <!-- <p style="font-size: 15px;">Printed on / by : {{ date("d/m/y h:i:s") }} / {{ucfirst(Auth::user()->name) ?? ''}}</p> -->
             </div>
         </div>
     </div>
     <div style="display: flex;justify-content:end;padding-right:20px">
         @if($header == '')
-        <a href="{{ url('/patient/') }}"><button class="btn-primary">Back</button></a>
+        <a href="{{ url('/opd/') }}"><button class="btn-primary">Back</button></a>
         @endif
         <button class="btn-primary" onclick="printSlip()" >Print</button>
     </div>

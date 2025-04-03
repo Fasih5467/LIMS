@@ -127,19 +127,23 @@
                     @php
                     use Carbon\Carbon;
                     @endphp
-                    <div>{{ Carbon::parse($patient_info->created_at)->format('y-m-d H:i:s') }}</div>
+                    <div>{{ Carbon::parse($patient_info->created_at)->format('d-m-y H:i:s') }}</div>
                 </div>
                 <div>
                     <h6>Name:</h6>
-                    <h6>{{ ucfirst($patient_info->name) }}</h6>
+                    <h6>{{ ucfirst($patient_info->name) ?? '' }}</h6>
                 </div>
                 <div>
                     <h6>Age:</h6>
-                    <h6>{{ $patient_info->age }}</h6>
+                    <h6>{{ $patient_info->age ?? '' }} {{$patient_info->age_type ?? ''}}</h6>
                 </div>
                 <div>
                     <h6>Ref By:</h6>
                     <h6>{{ ucfirst($ref_by->name) }}</h6>
+                </div>
+                <div>
+                    <h6>Contact:</h6>
+                    <h6>{{ $patient_info->contact ?? ''}}</h6>
                 </div>
             </div>
             <div>

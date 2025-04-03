@@ -218,7 +218,7 @@ use Illuminate\Support\Facades\Auth;
                 <div class="inline-flex flex-wrap xl:flex gap-2">
                     ${item.is_result === 'no' ? `
                         <div class="text-primary-600 cursor-pointer select-none font-semibold">
-                            <a href="${baseUrl}/patient/test/result/${item.id}"><button class="btn btn-solid btn-sm">Add Result</button></a>
+                            <a href="${baseUrl}/patient/test/result/${item.id}"  target = "_blank" ><button class="btn btn-solid btn-sm">Add Result</button></a>
                         </div>
                     ` : ''}
                     ${item.is_result === 'yes' ? `
@@ -238,7 +238,7 @@ use Illuminate\Support\Facades\Auth;
             </td>
             <td>
                 ${userType == 1 && item.is_result === 'yes' ? `
-                    <a href="${baseUrl}/patient/test/edit/${item.id}">
+                    <a href="${baseUrl}/patient/test/edit/${item.id}"  target = "_blank" >
                         <svg stroke="currentColor" fill="none" stroke-width="2" viewBox="0 0 24 24" height="1em" width="1em">
                             <path stroke-linecap="round" stroke-linejoin="round" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"></path>
                         </svg>

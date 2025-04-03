@@ -3,6 +3,7 @@
 use App\Http\Controllers\Admin\AdminDashboardController;
 use App\Http\Controllers\Admin\DoctorController;
 use App\Http\Controllers\Admin\LabManagementController;
+use App\Http\Controllers\Admin\OpdManageController;
 use App\Http\Controllers\Admin\PatientController;
 use App\Http\Controllers\Admin\RemarkController;
 use App\Http\Controllers\Admin\TestController;
@@ -131,6 +132,20 @@ Route::middleware([WebGuard::class])->prefix('/doctor')->group(function () {
     Route::post('/update', [DoctorController::class, 'update'])->middleware(Admin::class);
     Route::get('/delete/{id}', [DoctorController::class, 'delete'])->middleware(Admin::class);
 });
+
+
+// Doctors Route
+Route::middleware([WebGuard::class])->prefix('/opd')->group(function () {
+    Route::get('/', [OpdManageController::class, 'create']);
+    Route::post('/store', [OpdManageController::class, 'store']);
+    Route::get('/slip/{id}', [OpdManageController::class, 'slip']);
+    Route::get('/token/{id}', [OpdManageController::class, 'token_no']);
+    // Route::get('/edit/{id}', [OpdManageController::class, 'edit'])->middleware(Admin::class);
+    // Route::post('/update', [OpdManageController::class, 'update'])->middleware(Admin::class);
+    // Route::get('/delete/{id}', [OpdManageController::class, 'delete'])->middleware(Admin::class);
+});
+
+// Route::get('/opd/',[OpdManageController::class,'create']);
 
 // Route::get('/patient/generate_pdf/{id}', [PatientController::class, 'generatePDF']);
 Route::get('/received_test/{id}', [PatientController::class, 'updateStatus']);
